@@ -1,0 +1,12 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.1",
+    "blobstream-contracts": "github:celestiaorg/blobstream-contracts",
+    "openzeppelin-contracts": "github:OpenZeppelin/openzeppelin-contracts"
+  }
+}
