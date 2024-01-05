@@ -7,7 +7,7 @@ import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 // TODO: settle on expiry if no one responds
 
 abstract contract ChallengeDataAvailability is ChallengeBase {
-    enum ChallengeStatus {
+    enum ChallengeDAStatus {
         None,
         ChallengerInitiated,
         DefenderResponded,
@@ -15,27 +15,27 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         DefenderWon
     }
 
-    struct Challenge {
+    struct ChallengeDA {
         uint256 blockIndex;
         address challenger;
         uint256 expiry;
-        ChallengeStatus status;
+        ChallengeDAStatus status;
     }
 
-    struct ChallengeProof {
+    struct ChallengeDAProof {
         uint256 blockIndex;
         uint256 rootNonce;
         BinaryMerkleProof proof;
     }
 
-    event ChallengeUpdate(
+    event ChallengeDAUpdate(
         uint256 indexed _blockIndex,
         uint256 _expiry,
-        ChallengeStatus indexed _status
+        ChallengeDAStatus indexed _status
     );
 
     // one challenge per block.
-    mapping(uint256 => Challenge) public daChallenges;
+    mapping(uint256 => ChallengeDA) public daChallenges;
 
     function challengeDataRootInclusion(
         uint256 _blockIndex
@@ -48,24 +48,24 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         returns (uint256)
     {
         // check if there is already a challenge for this block.
-        Challenge storage challenge = daChallenges[_blockIndex];
+        ChallengeDA storage challenge = daChallenges[_blockIndex];
         require(
-            challenge.status == ChallengeStatus.None,
+            challenge.status == ChallengeDAStatus.None,
             "challenge already exists"
         );
 
         // create a new challenge.
-        daChallenges[_blockIndex] = Challenge(
+        daChallenges[_blockIndex] = ChallengeDA(
             _blockIndex,
             msg.sender,
             block.timestamp + challengePeriod,
-            ChallengeStatus.ChallengerInitiated
+            ChallengeDAStatus.ChallengerInitiated
         );
 
-        emit ChallengeUpdate(
+        emit ChallengeDAUpdate(
             _blockIndex,
             block.timestamp + challengePeriod,
-            ChallengeStatus.ChallengerInitiated
+            ChallengeDAStatus.ChallengerInitiated
         );
 
         return _blockIndex;
@@ -73,11 +73,11 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
     function proveDataRootInclusion(
         uint256 _challengeId,
-        ChallengeProof memory _proof
+        ChallengeDAProof memory _proof
     ) public {
-        Challenge storage challenge = daChallenges[_challengeId];
+        ChallengeDA storage challenge = daChallenges[_challengeId];
         require(
-            challenge.status == ChallengeStatus.ChallengerInitiated,
+            challenge.status == ChallengeDAStatus.ChallengerInitiated,
             "challenge is not in the correct state"
         );
 
@@ -99,11 +99,11 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         // update the challenge.
-        challenge.status = ChallengeStatus.DefenderWon;
-        emit ChallengeUpdate(
+        challenge.status = ChallengeDAStatus.DefenderWon;
+        emit ChallengeDAUpdate(
             challenge.blockIndex,
             challenge.expiry,
-            ChallengeStatus.DefenderWon
+            ChallengeDAStatus.DefenderWon
         );
 
         // pay out the reward.
@@ -112,9 +112,9 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
     // settle the challenge in favor of the challenger if the defender does not respond.
     function settle(uint256 _challengeId) public {
-        Challenge storage challenge = daChallenges[_challengeId];
+        ChallengeDA storage challenge = daChallenges[_challengeId];
         require(
-            challenge.status == ChallengeStatus.ChallengerInitiated,
+            challenge.status == ChallengeDAStatus.ChallengerInitiated,
             "challenge is not in the correct state"
         );
         require(
@@ -123,11 +123,11 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         // update the challenge.
-        challenge.status = ChallengeStatus.ChallengerWon;
-        emit ChallengeUpdate(
+        challenge.status = ChallengeDAStatus.ChallengerWon;
+        emit ChallengeDAUpdate(
             challenge.blockIndex,
             challenge.expiry,
-            ChallengeStatus.ChallengerWon
+            ChallengeDAStatus.ChallengerWon
         );
 
         // pay out the reward.
