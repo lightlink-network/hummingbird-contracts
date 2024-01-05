@@ -14,10 +14,10 @@ contract ChallengeBase is Ownable {
 
     address defender; // The address of the defender.
 
-    ITreasury treasury; // The address of the treasury to pay out challenges.
-    ICanonicalStateChain chain; // The address of the canonical state chain.
-    IDAOracle daOracle; // The address of the data availability oracle.
-    IMipsChallenge mipsChallenge; // The address of the MIPS challenge contract.
+    ITreasury public treasury; // The address of the treasury to pay out challenges.
+    ICanonicalStateChain public chain; // The address of the canonical state chain.
+    IDAOracle public daOracle; // The address of the data availability oracle.
+    IMipsChallenge public mipsChallenge; // The address of the MIPS challenge contract.
 
     constructor(
         address _treasury,
@@ -29,6 +29,11 @@ contract ChallengeBase is Ownable {
         challengePeriod = 1 days;
         challengeFee = 0.1 ether;
         challengeReward = 0.2 ether;
+
+        treasury = ITreasury(_treasury);
+        chain = ICanonicalStateChain(_chain);
+        daOracle = IDAOracle(_daOracle);
+        mipsChallenge = IMipsChallenge(_mipsChallenge);
     }
 
     function _isTargetWithinChallengeWindow(
