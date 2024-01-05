@@ -9,7 +9,7 @@ export const setupCanonicalStateChain = async (
 ) => {
   let genesisHeader: Header = {
     epoch: 0,
-    l2Height: 0,
+    l2Height: 1,
     prevHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
     txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
@@ -29,7 +29,7 @@ export const setupCanonicalStateChain = async (
     genesisHeader
   );
 
-  return { canonicalStateChain, genesisHash };
+  return { canonicalStateChain, genesisHash, genesisHeader };
 };
 
 export const pushRandomHeader = async (
