@@ -3,7 +3,10 @@ import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { Header, hashHeader } from "./header";
 import { Contract } from "ethers";
 
-export const setupCanonicalStateChain = async (signer: HardhatEthersSigner) => {
+export const setupCanonicalStateChain = async (
+  signer: HardhatEthersSigner,
+  publisher: string
+) => {
   let genesisHeader: Header = {
     epoch: 0,
     l2Height: 0,
@@ -22,7 +25,7 @@ export const setupCanonicalStateChain = async (signer: HardhatEthersSigner) => {
   );
 
   const canonicalStateChain = await CanonicalStateChain.deploy(
-    signer.address,
+    publisher,
     genesisHeader
   );
 
