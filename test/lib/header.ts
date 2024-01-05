@@ -11,7 +11,7 @@ export interface Header {
   celestiaDataRoot: string;
 }
 
-export const hashHeader = (h: Header) =>
+export const packHeader = (h: Header) =>
   ethers.AbiCoder.defaultAbiCoder().encode(
     [
       "uint256",
@@ -34,3 +34,5 @@ export const hashHeader = (h: Header) =>
       h.celestiaDataRoot,
     ]
   );
+
+export const hashHeader = (h: Header) => ethers.keccak256(packHeader(h));
