@@ -2,11 +2,13 @@
   "name": "hardhat-project",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.3",
     "hardhat": "^2.19.4"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.1",
     "blobstream-contracts": "github:celestiaorg/blobstream-contracts",
+    "dotenv": "^16.3.1",
     "openzeppelin-contracts": "github:OpenZeppelin/openzeppelin-contracts"
   }
 }
