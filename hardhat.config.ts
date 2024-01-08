@@ -34,8 +34,8 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       hardhat: '123456',
-      mainnet: process.env.ETHEREUM_API_KEY || '',
-      sepolia: process.env.ETHEREUM_API_KEY || '',
+      mainnet: process.env.ETHERSCAN_API_KEY || '',
+      sepolia: process.env.ETHERSCAN_API_KEY || '',
     },
   },
 };
