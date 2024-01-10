@@ -7,12 +7,12 @@ import "./mips/IMipsChallenge.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 
 contract ChallengeBase is Ownable {
-    uint256 challengeWindow; // Maximum age of a block that can be challenged.
-    uint256 challengePeriod; // The period of time that a challenge is open for.
-    uint256 challengeFee; // The fee required to make a challenge.
-    uint256 challengeReward; // The reward for successfully challenging a block.
+    uint256 public challengeWindow; // Maximum age of a block that can be challenged.
+    uint256 public challengePeriod; // The period of time that a challenge is open for.
+    uint256 public challengeFee; // The fee required to make a challenge.
+    uint256 public challengeReward; // The reward for successfully challenging a block.
 
-    address defender; // The address of the defender.
+    address public defender; // The address of the defender.
 
     ITreasury public treasury; // The address of the treasury to pay out challenges.
     ICanonicalStateChain public chain; // The address of the canonical state chain.
