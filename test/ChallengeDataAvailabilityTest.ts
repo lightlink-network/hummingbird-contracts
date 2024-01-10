@@ -245,4 +245,82 @@ describe("ChallengeDataAvailability", function () {
       ).to.be.revertedWith("challenge is not in the correct state");
     });
   });
+
+  describe("settleDataRootInclusion", function () {
+    it("should not allow settling a non-existent challenge", async function () {
+      const hash = ethers.keccak256(ethers.toUtf8Bytes("None existent block"));
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("settleDataRootInclusion")
+          .send(hash)
+      ).to.be.revertedWith("challenge is not in the correct state");
+    });
+
+    it("should not allow settling a challenge that is already defended", async function () {
+      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+
+      await challenge
+        .connect(challengeOwner)
+        .getFunction("challengeDataRootInclusion")
+        .send(1, { value: challengeFee });
+
+      await challenge
+        .connect(publisher)
+        .getFunction("defendDataRootInclusion")
+        .send(hash, {
+          rootNonce: BigInt(500),
+          proof: {
+            sideNodes: [],
+            key: BigInt(0),
+            numLeaves: BigInt(0),
+          },
+        });
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("settleDataRootInclusion")
+          .send(hash)
+      ).to.be.revertedWith("challenge is not in the correct state");
+    });
+
+    it("should not settle challenge if challenge period is not over", async function () {
+      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+
+      await challenge
+        .connect(challengeOwner)
+        .getFunction("challengeDataRootInclusion")
+        .send(1, { value: challengeFee });
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("settleDataRootInclusion")
+          .send(hash)
+      ).to.be.revertedWith("challenge has not expired");
+    });
+
+    it("should settle challenge if challenge period is over", async function () {
+      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+
+      await challenge
+        .connect(challengeOwner)
+        .getFunction("challengeDataRootInclusion")
+        .send(1, { value: challengeFee });
+
+      // increase time by 25 hours
+      await ethers.provider.send("evm_increaseTime", [90000]);
+      await ethers.provider.send("evm_mine", []);
+
+      await challenge
+        .connect(challengeOwner)
+        .getFunction("settleDataRootInclusion")
+        .send(hash);
+
+      const c = await challenge.daChallenges(hash);
+      expect(c.status, "expect: daChallenges(hash).status = 3").to.equal(3);
+    });
+  });
 });
