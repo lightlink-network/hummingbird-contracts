@@ -115,8 +115,9 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         payable(defender).transfer(challengeReward);
     }
 
-    // settle the challenge in favor of the challenger if the defender does not respond.
-    function settle(bytes32 _blockhash) public {
+    // settle the challenge in favor of the challenger if the defender does not respond
+    // within the challenge period.
+    function settleDataRootInclusion(bytes32 _blockhash) public {
         ChallengeDA storage challenge = daChallenges[_blockhash];
         require(
             challenge.status == ChallengeDAStatus.ChallengerInitiated,
