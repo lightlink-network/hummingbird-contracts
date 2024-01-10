@@ -39,11 +39,10 @@ contract CanonicalStateChain is Ownable {
     address public challenge;
 
     // Rollup Blockchain.
-    uint256 public chainHead;
-    mapping(bytes32 => uint64) public timestamps;
-    mapping(bytes32 => Header) public headers;
-    mapping(bytes32 => HeaderMetadata) public headerMetadata;
-    mapping(uint256 => bytes32) public chain;
+    uint256 public chainHead; // The index of the last block in the chain.
+    mapping(bytes32 => Header) public headers; // block hash => header
+    mapping(bytes32 => HeaderMetadata) public headerMetadata; // block hash => metadata
+    mapping(uint256 => bytes32) public chain; // block number => block hash
 
     constructor(address _publisher, Header memory _header) Ownable(msg.sender) {
         publisher = _publisher;
@@ -56,6 +55,8 @@ contract CanonicalStateChain is Ownable {
 
     // pushBlock optimistically pushes block headers to the canonical chain.
     // The only fields that are checked are the epoch and prevHash.
+    // Other fields are optimistically assumed to be correct, however they can be
+    // challenged and rolled back via challenge contract.
     function pushBlock(Header calldata _header) external {
         require(msg.sender == publisher, "only publisher can add blocks");
 

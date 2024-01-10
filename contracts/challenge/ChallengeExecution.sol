@@ -2,7 +2,7 @@ pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
 
-// TODO: fix
+// TODO: NOT IMPLEMENTED YET
 
 abstract contract ChallengeExecution is ChallengeBase {
     enum ChallengeStatus {
