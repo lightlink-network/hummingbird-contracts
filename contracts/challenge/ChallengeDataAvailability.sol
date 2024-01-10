@@ -76,7 +76,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         return _blockIndex;
     }
 
-    function proveDataRootInclusion(
+    function defendDataRootInclusion(
         bytes32 _blockHash,
         ChallengeDAProof memory _proof
     ) public {
