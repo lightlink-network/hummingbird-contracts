@@ -1,13 +1,13 @@
 import { ethers } from "hardhat";
 
 export interface Header {
-  epoch: number;
-  l2Height: number;
+  epoch: bigint;
+  l2Height: bigint;
   prevHash: string;
   txRoot: string;
   blockRoot: string;
   stateRoot: string;
-  celestiaHeight: number;
+  celestiaHeight: bigint;
   celestiaDataRoot: string;
 }
 

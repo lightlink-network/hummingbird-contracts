@@ -67,18 +67,18 @@ describe("ChallengeHeader", function () {
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
           .send(100)
-      ).to.be.revertedWith("block index not found");
+      ).to.be.revertedWith("block not in the chain yet");
     });
 
     it("cannot invalidate a valid header", async function () {
       const validHeader: Header = {
-        epoch: 1,
-        l2Height: genesisHeader.l2Height + 1,
+        epoch: BigInt(1),
+        l2Height: genesisHeader.l2Height + BigInt(1),
         prevHash: genesisHash,
         txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaHeight: 1,
+        celestiaHeight: BigInt(1),
         celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
       };
 
@@ -97,13 +97,13 @@ describe("ChallengeHeader", function () {
 
     it("invalid header with incorrect L2 height", async function () {
       const invalidHeader: Header = {
-        epoch: 1,
-        l2Height: genesisHeader.l2Height - 1,
+        epoch: BigInt(1),
+        l2Height: genesisHeader.l2Height - BigInt(1),
         prevHash: genesisHash,
         txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaHeight: 1,
+        celestiaHeight: BigInt(1),
         celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
       };
 

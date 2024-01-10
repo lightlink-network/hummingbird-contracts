@@ -8,13 +8,13 @@ export const setupCanonicalStateChain = async (
   publisher: string
 ) => {
   let genesisHeader: Header = {
-    epoch: 0,
-    l2Height: 1,
+    epoch: BigInt(0),
+    l2Height: BigInt(1),
     prevHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
     txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    celestiaHeight: 0,
+    celestiaHeight: BigInt(0),
     celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
   };
 
@@ -39,20 +39,22 @@ export const pushRandomHeader = async (
   const head: Header = await canonicalStateChain.getHead();
   const headHash = hashHeader(head);
 
-  let header: Header = {
-    epoch: head.epoch + 1,
-    l2Height: head.l2Height + 5,
+  let header = {
+    epoch: head.epoch + BigInt(1),
+    l2Height: head.l2Height + BigInt(5),
     prevHash: headHash,
-    txRoot: ethers.hexlify(ethers.randomBytes(32)),
-    blockRoot: ethers.hexlify(ethers.randomBytes(32)),
-    stateRoot: ethers.hexlify(ethers.randomBytes(32)),
-    celestiaHeight: head.celestiaHeight + 5,
-    celestiaDataRoot: ethers.hexlify(ethers.randomBytes(32)),
+    txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    celestiaHeight: head.celestiaHeight + BigInt(5),
+    celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
   };
+
+  // push header
 
   await canonicalStateChain
     .connect(signer)
-    .getFunction("pushHeader")
+    .getFunction("pushBlock")
     .send(header);
 
   return hashHeader(header);
