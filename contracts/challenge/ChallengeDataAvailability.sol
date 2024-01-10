@@ -23,7 +23,6 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     }
 
     struct ChallengeDAProof {
-        uint256 blockIndex;
         uint256 rootNonce;
         BinaryMerkleProof proof;
     }
