@@ -48,14 +48,16 @@ contract ChallengeBase is Ownable {
     modifier mustBeWithinChallengeWindow(uint256 index) {
         require(index != 0, "cannot challenge genesis block");
         require(
-            _isTargetWithinChallengeWindow(index),
+            block.timestamp <=
+                chain.headerMetadata(chain.chain(index)).timestamp +
+                    challengeWindow,
             "block is too old to challenge"
         );
         _;
     }
 
     modifier mustBeCanonical(uint256 index) {
-        require(index <= chain.chainHead(), "block index not found");
+        require(index <= chain.chainHead(), "block not in the chain yet");
         _;
     }
 
@@ -75,5 +77,13 @@ contract ChallengeBase is Ownable {
 
     function setChallengeFee(uint256 _challengeFee) external onlyOwner {
         challengeFee = _challengeFee;
+    }
+
+    function setChallengeReward(uint256 _challengeReward) external onlyOwner {
+        challengeReward = _challengeReward;
+    }
+
+    function setDefender(address _defender) external onlyOwner {
+        defender = _defender;
     }
 }
