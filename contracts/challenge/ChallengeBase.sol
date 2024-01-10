@@ -62,7 +62,7 @@ contract ChallengeBase is Ownable {
     }
 
     modifier requireChallengeFee() {
-        require(msg.value >= challengeFee, "insufficient challenge fee");
+        require(msg.value >= challengeFee, "challenge fee not paid");
         _;
     }
 
