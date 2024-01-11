@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 import "./ChallengeBase.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 
-// TODO: ADD Non-reentrancy
 // TODO: settle on expiry if no one responds
 
+// no constructor
 abstract contract ChallengeDataAvailability is ChallengeBase {
     enum ChallengeDAStatus {
         None,
@@ -78,7 +78,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     function defendDataRootInclusion(
         bytes32 _blockHash,
         ChallengeDAProof memory _proof
-    ) public {
+    ) public nonReentrant {
         ChallengeDA storage challenge = daChallenges[_blockHash];
         require(
             challenge.status == ChallengeDAStatus.ChallengerInitiated,
@@ -112,12 +112,15 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         // pay out the reward.
-        payable(defender).transfer(challengeReward);
+        // use call to prevent failing receiver is a contract.
+        (bool success, ) = defender.call{value: challengeFee}("");
+
+        require(success, "failed to pay defender");
     }
 
     // settle the challenge in favor of the challenger if the defender does not respond
     // within the challenge period.
-    function settleDataRootInclusion(bytes32 _blockhash) public {
+    function settleDataRootInclusion(bytes32 _blockhash) public nonReentrant {
         ChallengeDA storage challenge = daChallenges[_blockhash];
         require(
             challenge.status == ChallengeDAStatus.ChallengerInitiated,
@@ -138,6 +141,9 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         // pay out the reward.
-        payable(challenge.challenger).transfer(challengeReward);
+        // use call to prevent failing receiver is a contract.
+        (bool success, ) = challenge.challenger.call{value: challengeFee}("");
+
+        require(success, "failed to pay challenger");
     }
 }
