@@ -13,7 +13,7 @@ describe("ChallengeDataAvailability", function () {
   let publisher: HardhatEthersSigner;
   let otherAccount: HardhatEthersSigner;
   let challengeOwner: HardhatEthersSigner;
-  let challengeFee = ethers.parseEther("1");
+  let challengeFee = ethers.parseEther("0"); // challenge fee is 0 for challengeDataAvailability
 
   let genesisHeader: Header;
   let genesisHash: string;
@@ -92,16 +92,16 @@ describe("ChallengeDataAvailability", function () {
       ).to.be.revertedWith("block not in the chain yet");
     });
 
-    it("should not allow challenge if challenge fee is not paid", async function () {
-      await pushRandomHeader(publisher, canonicalStateChain);
+    // it("should not allow challenge if challenge fee is not paid", async function () {
+    //   await pushRandomHeader(publisher, canonicalStateChain);
 
-      await expect(
-        challenge
-          .connect(challengeOwner)
-          .getFunction("challengeDataRootInclusion")
-          .send(1)
-      ).to.be.revertedWith("challenge fee not paid");
-    });
+    //   await expect(
+    //     challenge
+    //       .connect(challengeOwner)
+    //       .getFunction("challengeDataRootInclusion")
+    //       .send(1)
+    //   ).to.be.revertedWith("challenge fee not paid");
+    // });
 
     it("should allow challenge (if challenge fee is paid)", async function () {
       const hash = await pushRandomHeader(publisher, canonicalStateChain);
@@ -310,9 +310,9 @@ describe("ChallengeDataAvailability", function () {
         .getFunction("challengeDataRootInclusion")
         .send(1, { value: challengeFee });
 
-      // increase time by 25 hours
-      await ethers.provider.send("evm_increaseTime", [90000]);
-      await ethers.provider.send("evm_mine", []);
+      // increase time by 30 hours
+      await ethers.provider.send("evm_increaseTime", [30 * 60 * 60]);
+      await ethers.provider.send("evm_mine");
 
       await challenge
         .connect(challengeOwner)
