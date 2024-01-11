@@ -36,13 +36,21 @@ describe("ChallengeDataAvailability", function () {
     mockDaOracle = (await _MockDaOracle.deploy()) as any;
 
     // 3. deploy challenge contract
+    const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
     const challengeFactory: any = await ethers.getContractFactory("Challenge");
-    challenge = await challengeFactory.deploy(
-      ethers.ZeroAddress,
-      await canonicalStateChain.getAddress(),
-      await mockDaOracle.getAddress(),
-      ethers.ZeroAddress
+    const challengeImplementation = await challengeFactory.deploy();
+
+    const proxy = await proxyFactory.deploy(
+      await challengeImplementation.getAddress(),
+      challengeImplementation.interface.encodeFunctionData("initialize", [
+        ethers.ZeroAddress,
+        await canonicalStateChain.getAddress(),
+        await mockDaOracle.getAddress(),
+        ethers.ZeroAddress,
+      ])
     );
+
+    challenge = challengeFactory.attach(await proxy.getAddress());
 
     // set challenge contract in canonical state chain
     _chain.canonicalStateChain
