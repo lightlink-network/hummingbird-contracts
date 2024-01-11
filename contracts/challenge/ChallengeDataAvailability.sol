@@ -4,7 +4,7 @@ import "./ChallengeBase.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 
 // TODO: ADD Non-reentrancy
-// TODO: settle on expiry if no one responds
+// TODO: Use the treasury contract to pay out rewards.
 
 abstract contract ChallengeDataAvailability is ChallengeBase {
     enum ChallengeDAStatus {
@@ -42,10 +42,8 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         uint256 _blockIndex
     )
         external
-        payable
         mustBeCanonical(_blockIndex)
         mustBeWithinChallengeWindow(_blockIndex)
-        requireChallengeFee
         returns (uint256)
     {
         bytes32 h = chain.chain(_blockIndex);
@@ -112,7 +110,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         // pay out the reward.
-        payable(defender).transfer(challengeReward);
+        // payable(defender).transfer(challengeReward);
     }
 
     // settle the challenge in favor of the challenger if the defender does not respond
@@ -138,6 +136,6 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         // pay out the reward.
-        payable(challenge.challenger).transfer(challengeReward);
+        // payable(challenge.challenger).transfer(challengeReward);
     }
 }
