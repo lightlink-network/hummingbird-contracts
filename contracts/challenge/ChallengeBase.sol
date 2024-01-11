@@ -1,12 +1,21 @@
+// SPDX-License-Identifier: UNLICENSED
+
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+// UUPS
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "../interfaces/ITreasury.sol";
 import "../interfaces/ICanonicalStateChain.sol";
 import "./mips/IMipsChallenge.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 
-contract ChallengeBase is Ownable {
+contract ChallengeBase is
+    UUPSUpgradeable,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable
+{
     uint256 public challengeWindow; // Maximum age of a block that can be challenged.
     uint256 public challengePeriod; // The period of time that a challenge is open for.
     uint256 public challengeFee; // The fee required to make a challenge.
@@ -19,12 +28,18 @@ contract ChallengeBase is Ownable {
     IDAOracle public daOracle; // The address of the data availability oracle.
     IMipsChallenge public mipsChallenge; // The address of the MIPS challenge contract.
 
-    constructor(
+    function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    function __ChallengeBase_init(
         address _treasury,
         address _chain,
         address _daOracle,
         address _mipsChallenge
-    ) Ownable(msg.sender) {
+    ) internal {
+        __UUPSUpgradeable_init();
+        __Ownable_init(msg.sender);
+        __ReentrancyGuard_init();
+
         challengeWindow = 1 days;
         challengePeriod = 1 days;
         challengeFee = 0.1 ether;
@@ -86,4 +101,7 @@ contract ChallengeBase is Ownable {
     function setDefender(address _defender) external onlyOwner {
         defender = _defender;
     }
+
+    // gap
+    uint256[50] private __gap;
 }
