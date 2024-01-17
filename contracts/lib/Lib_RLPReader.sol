@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >0.5.0 <0.8.0;
+pragma solidity ^0.8.9;
 
 /**
  * @title Lib_RLPReader
@@ -261,7 +261,7 @@ library Lib_RLPReader {
 
         require(_in.length == 21, "Invalid RLP address value.");
 
-        return address(readUint256(_in));
+        return address(uint160(readUint256(_in)));
     }
 
     /**
@@ -297,7 +297,7 @@ library Lib_RLPReader {
      */
     function _decodeLength(
         RLPItem memory _in
-    ) internal pure returns (uint256, uint256, RLPItemType) {
+    ) private pure returns (uint256, uint256, RLPItemType) {
         require(_in.length > 0, "RLP item cannot be null.");
 
         uint256 ptr = _in.ptr;
@@ -384,7 +384,7 @@ library Lib_RLPReader {
         uint256 _src,
         uint256 _offset,
         uint256 _length
-    ) internal pure returns (bytes memory) {
+    ) private pure returns (bytes memory) {
         bytes memory out = new bytes(_length);
         if (out.length == 0) {
             return out;
@@ -407,11 +407,14 @@ library Lib_RLPReader {
         }
 
         // Pick out the remaining bytes.
-        uint256 mask = 256 ** (32 - (_length % 32)) - 1;
+        uint256 mask;
+        unchecked {
+            mask = 256 ** (32 - (_length % 32)) - 1;
+        }
+
         assembly {
             mstore(dest, or(and(mload(src), not(mask)), and(mload(dest), mask)))
         }
-
         return out;
     }
 
