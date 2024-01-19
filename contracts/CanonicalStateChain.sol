@@ -70,9 +70,12 @@ contract CanonicalStateChain is Ownable {
             "prevHash must be the previous block hash"
         );
 
+        // check that the block is not already in the chain.
+        bytes32 _hash = hash(_header);
+        require(headers[_hash].epoch == 0, "block already exists");
+
         // Add the block to the chain.
         chainHead++;
-        bytes32 _hash = hash(_header);
         headers[_hash] = _header;
         chain[chainHead] = _hash;
 
