@@ -26,13 +26,21 @@ describe("ChallengeHeader", function () {
     genesisHash = _chain.genesisHash;
     genesisHeader = _chain.genesisHeader;
 
+    const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
     const challengeFactory: any = await ethers.getContractFactory("Challenge");
-    challenge = await challengeFactory.deploy(
-      ethers.ZeroAddress,
-      await canonicalStateChain.getAddress(),
-      ethers.ZeroAddress,
-      ethers.ZeroAddress
+    const challengeImplementation = await challengeFactory.deploy();
+
+    const proxy = await proxyFactory.deploy(
+      await challengeImplementation.getAddress(),
+      challengeImplementation.interface.encodeFunctionData("initialize", [
+        ethers.ZeroAddress,
+        await canonicalStateChain.getAddress(),
+        ethers.ZeroAddress,
+        ethers.ZeroAddress,
+      ])
     );
+
+    challenge = challengeFactory.attach(await proxy.getAddress());
 
     _chain.canonicalStateChain
       .getFunction("setChallengeContract")

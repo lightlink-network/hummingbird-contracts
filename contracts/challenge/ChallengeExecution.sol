@@ -4,6 +4,7 @@ import "./ChallengeBase.sol";
 
 // TODO: NOT IMPLEMENTED YET
 
+// no constructor
 abstract contract ChallengeExecution is ChallengeBase {
     enum ChallengeStatus {
         None,

@@ -17,9 +17,11 @@ import "./ChallengeBase.sol";
 //
 // If any of these checks fail, the chain is rolled back to the previous block.
 // Just like with all challenges, the challenge window must be open.
+
+// no constructor
 abstract contract ChallengeHeader is ChallengeBase {
-    uint256 MAX_BUNDLESIZE = 1000;
-    uint256 CHALLENGE_PAYOUT = 0.2e18;
+    uint256 MAX_BUNDLESIZE;
+    uint256 CHALLENGE_PAYOUT;
 
     enum InvalidHeaderReason {
         InvalidEpoch,
@@ -33,6 +35,11 @@ abstract contract ChallengeHeader is ChallengeBase {
         bytes32 indexed _hash,
         InvalidHeaderReason indexed _reason
     );
+
+    function __ChallengeHeader_init() internal {
+        MAX_BUNDLESIZE = 1000;
+        CHALLENGE_PAYOUT = 0.2e18;
+    }
 
     // invalidateHeader challenges a block header by checking that the header is valid.
     // It has no payout.
@@ -102,4 +109,7 @@ abstract contract ChallengeHeader is ChallengeBase {
 
         return true;
     }
+
+    // gap
+    uint256[50] private __gap;
 }
