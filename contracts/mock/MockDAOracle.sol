@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: UNLICENSED
+// LightLink Hummingbird v0.0.1
+
 pragma solidity ^0.8.0;
 
 import "blobstream-contracts/src/IDAOracle.sol";
@@ -10,6 +13,9 @@ contract MockDAOracle is IDAOracle {
         DataRootTuple memory _tuple,
         BinaryMerkleProof memory _proof
     ) external view returns (bool) {
+        _tupleRootNonce; // To silence the compiler warning
+        _tuple; // To silence the compiler warning
+        _proof; // To silence the compiler warning
         return _result;
     }
 
