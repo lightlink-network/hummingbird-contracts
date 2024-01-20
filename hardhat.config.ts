@@ -17,11 +17,14 @@ const config: HardhatUserConfig = {
     },
     sepolia: {
       url: process.env.SEPOLIA_PROVIDER_URL || '',
-      accounts: [process.env.SEPOLIA_PRIVATE_KEY ?? ''],
+      accounts: [process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? '', process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? '0x000'],
     },
     ethereum: {
       url: process.env.ETHEREUM_PROVIDER_URL || '',
       accounts: [process.env.ETHEREUM_PRIVATE_KEY ?? ''],
+    },
+    pegasus: {
+      url: process.env.PEGASUS_PROVIDER_URL || '',
     },
   },
   mocha: {
