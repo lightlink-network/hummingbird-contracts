@@ -46,6 +46,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         uint256 _blockIndex
     )
         external
+        payable
         mustBeCanonical(_blockIndex)
         mustBeWithinChallengeWindow(_blockIndex)
         returns (uint256)
@@ -116,6 +117,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         // pay out the reward.
         // use call to prevent failing receiver is a contract.
         (bool success, ) = defender.call{value: challengeFee}("");
+        require(success, "failed to pay defender");
     }
 
     // settle the challenge in favor of the challenger if the defender does not respond
