@@ -2,6 +2,14 @@
 
 This repo contains smart contracts for the Hummingbird project. Work in progress.
 
+## Usage
+
+To update go bindings run:
+
+```bash
+npx hardhat gobind 
+```
+
 ## Overview
 
 ![Overview](image.png)
