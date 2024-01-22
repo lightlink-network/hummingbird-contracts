@@ -20,6 +20,7 @@ contract CanonicalStateChain is Ownable {
         // Pointer to the blocks contents on celestia.
         uint64 celestiaHeight;
         bytes32 celestiaDataRoot;
+        bytes32 celestiaTxHash;
     }
 
     struct HeaderMetadata {

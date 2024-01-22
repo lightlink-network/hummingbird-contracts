@@ -146,5 +146,8 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         // use call to prevent failing receiver is a contract.
         (bool success, ) = challenge.challenger.call{value: challengeFee}("");
         require(success, "failed to pay challenger");
+
+        // rollback the chain.
+        chain.rollback(challenge.blockIndex - 1);
     }
 }

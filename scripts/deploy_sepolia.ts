@@ -40,6 +40,7 @@ const main = async () => {
         stateRoot: latestBlock?.stateRoot, // fix state root
         celestiaHeight: 0,
         celestiaDataRoot: "0x0000000000000000000000000000000000000000000000000000000000000000",
+        celestiaTxHash: "0x0000000000000000000000000000000000000000000000000000000000000000"
     };
 
     ///
