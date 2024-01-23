@@ -28,6 +28,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
     struct ChallengeDAProof {
         uint256 rootNonce;
+        DataRootTuple dataRootTuple;
         BinaryMerkleProof proof;
     }
 
@@ -92,14 +93,16 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             chain.chain(challenge.blockIndex)
         );
 
+        require (
+            header.celestiaHeight == _proof.dataRootTuple.height,
+            "invalid celestia height"
+        );
+
         // verify the proof.
         require(
             daOracle.verifyAttestation(
                 _proof.rootNonce,
-                DataRootTuple(
-                    uint256(header.celestiaHeight),
-                    header.celestiaDataRoot
-                ),
+                _proof.dataRootTuple,
                 _proof.proof
             ),
             "invalid proof"

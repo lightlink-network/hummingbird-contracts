@@ -8,22 +8,22 @@ export interface Header {
   blockRoot: string;
   stateRoot: string;
   celestiaHeight: bigint;
-  celestiaDataRoot: string;
-  celestiaTxHash: string;
+  celestiaShareStart: bigint;
+  celestiaShareLen: bigint;
 }
 
 export const packHeader = (h: Header) =>
   ethers.AbiCoder.defaultAbiCoder().encode(
     [
-      "uint256",
-      "uint256",
-      "bytes32",
-      "bytes32",
-      "bytes32",
-      "bytes32",
-      "uint256",
-      "bytes32",
-      "bytes32",
+      "uint256", // epoch
+      "uint256", // l2Height
+      "bytes32", // prevHash
+      "bytes32", // txRoot
+      "bytes32", // blockRoot
+      "bytes32", // stateRoot
+      "uint256", // celestiaHeight
+      "uint256", // celestiaShareStart
+      "uint256", // celestiaShareLen
     ],
     [
       h.epoch,
@@ -33,8 +33,8 @@ export const packHeader = (h: Header) =>
       h.blockRoot,
       h.stateRoot,
       h.celestiaHeight,
-      h.celestiaDataRoot,
-      h.celestiaTxHash
+      h.celestiaShareStart,
+      h.celestiaShareLen,
     ]
   );
 

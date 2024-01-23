@@ -86,9 +86,9 @@ describe("ChallengeHeader", function () {
         txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaHeight: BigInt(1),
-        celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaHeight: BigInt(5),
+        celestiaShareStart: BigInt(1),
+        celestiaShareLen: BigInt(1),
       };
 
       await canonicalStateChain
@@ -113,8 +113,8 @@ describe("ChallengeHeader", function () {
         blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaHeight: BigInt(1),
-        celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaShareStart: BigInt(1),
+        celestiaShareLen: BigInt(1),
       };
 
       await canonicalStateChain
