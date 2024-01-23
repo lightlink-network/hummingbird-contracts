@@ -20,6 +20,7 @@ describe("CanonicalStateChain", function () {
     stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     celestiaHeight: 0,
     celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
   };
 
   let genesisHash = ethers.keccak256(
@@ -33,6 +34,7 @@ describe("CanonicalStateChain", function () {
         "bytes32",
         "uint256",
         "bytes32",
+        "bytes32",
       ],
       [
         genesisHeader.epoch,
@@ -43,6 +45,7 @@ describe("CanonicalStateChain", function () {
         genesisHeader.stateRoot,
         genesisHeader.celestiaHeight,
         genesisHeader.celestiaDataRoot,
+        genesisHeader.celestiaTxHash,
       ]
     )
   );
@@ -82,6 +85,7 @@ describe("CanonicalStateChain", function () {
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaHeight: 1,
         celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
       };
 
       await expect(
@@ -102,6 +106,7 @@ describe("CanonicalStateChain", function () {
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaHeight: 1,
         celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
       };
 
       await expect(
@@ -172,6 +177,7 @@ describe("CanonicalStateChain", function () {
           stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
           celestiaHeight: 1,
           celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+          celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
         });
 
       await expect(

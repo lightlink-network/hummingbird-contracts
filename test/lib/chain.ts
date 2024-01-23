@@ -16,6 +16,7 @@ export const setupCanonicalStateChain = async (
     stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     celestiaHeight: BigInt(0),
     celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
   };
 
   let genesisHash = hashHeader(genesisHeader);
@@ -48,6 +49,7 @@ export const pushRandomHeader = async (
     stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     celestiaHeight: head.celestiaHeight + BigInt(5),
     celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
   };
 
   // push header
