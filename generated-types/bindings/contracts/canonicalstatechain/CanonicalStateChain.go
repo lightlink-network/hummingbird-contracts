@@ -31,20 +31,20 @@ var (
 
 // CanonicalStateChainHeader is an auto generated low-level Go binding around an user-defined struct.
 type CanonicalStateChainHeader struct {
-	Epoch            uint64
-	L2Height         uint64
-	PrevHash         [32]byte
-	TxRoot           [32]byte
-	BlockRoot        [32]byte
-	StateRoot        [32]byte
-	CelestiaHeight   uint64
-	CelestiaDataRoot [32]byte
-	CelestiaTxHash   [32]byte
+	Epoch              uint64
+	L2Height           uint64
+	PrevHash           [32]byte
+	TxRoot             [32]byte
+	BlockRoot          [32]byte
+	StateRoot          [32]byte
+	CelestiaHeight     uint64
+	CelestiaShareStart uint64
+	CelestiaShareLen   uint64
 }
 
 // CanonicalStateChainMetaData contains all meta data concerning the CanonicalStateChain contract.
 var CanonicalStateChainMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_publisher\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaDataRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaTxHash\",\"type\":\"bytes32\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"BlockAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"challenge\",\"type\":\"address\"}],\"name\":\"ChallengeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"publisher\",\"type\":\"address\"}],\"name\":\"PublisherChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"RolledBack\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chainHead\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challenge\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getBlock\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaDataRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaTxHash\",\"type\":\"bytes32\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getHead\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaDataRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaTxHash\",\"type\":\"bytes32\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"headerMetadata\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"timestamp\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"publisher\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"headers\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaDataRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaTxHash\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"publisher\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaDataRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"celestiaTxHash\",\"type\":\"bytes32\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"name\":\"pushBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockNumber\",\"type\":\"uint256\"}],\"name\":\"rollback\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_challenge\",\"type\":\"address\"}],\"name\":\"setChallengeContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_publisher\",\"type\":\"address\"}],\"name\":\"setPublisher\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_publisher\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareStart\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareLen\",\"type\":\"uint64\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"BlockAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"challenge\",\"type\":\"address\"}],\"name\":\"ChallengeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"publisher\",\"type\":\"address\"}],\"name\":\"PublisherChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"RolledBack\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chainHead\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challenge\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getBlock\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareStart\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareLen\",\"type\":\"uint64\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getHead\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareStart\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareLen\",\"type\":\"uint64\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"headerMetadata\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"timestamp\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"publisher\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"headers\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareStart\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareLen\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"publisher\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"blockRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"celestiaHeight\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareStart\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"celestiaShareLen\",\"type\":\"uint64\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"name\":\"pushBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockNumber\",\"type\":\"uint256\"}],\"name\":\"rollback\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_challenge\",\"type\":\"address\"}],\"name\":\"setChallengeContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_publisher\",\"type\":\"address\"}],\"name\":\"setPublisher\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
 // CanonicalStateChainABI is the input ABI used to generate the binding from.
@@ -288,7 +288,7 @@ func (_CanonicalStateChain *CanonicalStateChainCallerSession) Challenge() (commo
 
 // GetBlock is a free data retrieval call binding the contract method 0x04c07569.
 //
-// Solidity: function getBlock(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,bytes32,bytes32))
+// Solidity: function getBlock(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,uint64,uint64))
 func (_CanonicalStateChain *CanonicalStateChainCaller) GetBlock(opts *bind.CallOpts, _index *big.Int) (CanonicalStateChainHeader, error) {
 	var out []interface{}
 	err := _CanonicalStateChain.contract.Call(opts, &out, "getBlock", _index)
@@ -305,21 +305,21 @@ func (_CanonicalStateChain *CanonicalStateChainCaller) GetBlock(opts *bind.CallO
 
 // GetBlock is a free data retrieval call binding the contract method 0x04c07569.
 //
-// Solidity: function getBlock(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,bytes32,bytes32))
+// Solidity: function getBlock(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,uint64,uint64))
 func (_CanonicalStateChain *CanonicalStateChainSession) GetBlock(_index *big.Int) (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetBlock(&_CanonicalStateChain.CallOpts, _index)
 }
 
 // GetBlock is a free data retrieval call binding the contract method 0x04c07569.
 //
-// Solidity: function getBlock(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,bytes32,bytes32))
+// Solidity: function getBlock(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,uint64,uint64))
 func (_CanonicalStateChain *CanonicalStateChainCallerSession) GetBlock(_index *big.Int) (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetBlock(&_CanonicalStateChain.CallOpts, _index)
 }
 
 // GetHead is a free data retrieval call binding the contract method 0xdc281aff.
 //
-// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,bytes32,bytes32))
+// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,uint64,uint64))
 func (_CanonicalStateChain *CanonicalStateChainCaller) GetHead(opts *bind.CallOpts) (CanonicalStateChainHeader, error) {
 	var out []interface{}
 	err := _CanonicalStateChain.contract.Call(opts, &out, "getHead")
@@ -336,14 +336,14 @@ func (_CanonicalStateChain *CanonicalStateChainCaller) GetHead(opts *bind.CallOp
 
 // GetHead is a free data retrieval call binding the contract method 0xdc281aff.
 //
-// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,bytes32,bytes32))
+// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,uint64,uint64))
 func (_CanonicalStateChain *CanonicalStateChainSession) GetHead() (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetHead(&_CanonicalStateChain.CallOpts)
 }
 
 // GetHead is a free data retrieval call binding the contract method 0xdc281aff.
 //
-// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,bytes32,bytes32))
+// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,uint64,uint64))
 func (_CanonicalStateChain *CanonicalStateChainCallerSession) GetHead() (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetHead(&_CanonicalStateChain.CallOpts)
 }
@@ -395,31 +395,31 @@ func (_CanonicalStateChain *CanonicalStateChainCallerSession) HeaderMetadata(arg
 
 // Headers is a free data retrieval call binding the contract method 0x9e7f2700.
 //
-// Solidity: function headers(bytes32 ) view returns(uint64 epoch, uint64 l2Height, bytes32 prevHash, bytes32 txRoot, bytes32 blockRoot, bytes32 stateRoot, uint64 celestiaHeight, bytes32 celestiaDataRoot, bytes32 celestiaTxHash)
+// Solidity: function headers(bytes32 ) view returns(uint64 epoch, uint64 l2Height, bytes32 prevHash, bytes32 txRoot, bytes32 blockRoot, bytes32 stateRoot, uint64 celestiaHeight, uint64 celestiaShareStart, uint64 celestiaShareLen)
 func (_CanonicalStateChain *CanonicalStateChainCaller) Headers(opts *bind.CallOpts, arg0 [32]byte) (struct {
-	Epoch            uint64
-	L2Height         uint64
-	PrevHash         [32]byte
-	TxRoot           [32]byte
-	BlockRoot        [32]byte
-	StateRoot        [32]byte
-	CelestiaHeight   uint64
-	CelestiaDataRoot [32]byte
-	CelestiaTxHash   [32]byte
+	Epoch              uint64
+	L2Height           uint64
+	PrevHash           [32]byte
+	TxRoot             [32]byte
+	BlockRoot          [32]byte
+	StateRoot          [32]byte
+	CelestiaHeight     uint64
+	CelestiaShareStart uint64
+	CelestiaShareLen   uint64
 }, error) {
 	var out []interface{}
 	err := _CanonicalStateChain.contract.Call(opts, &out, "headers", arg0)
 
 	outstruct := new(struct {
-		Epoch            uint64
-		L2Height         uint64
-		PrevHash         [32]byte
-		TxRoot           [32]byte
-		BlockRoot        [32]byte
-		StateRoot        [32]byte
-		CelestiaHeight   uint64
-		CelestiaDataRoot [32]byte
-		CelestiaTxHash   [32]byte
+		Epoch              uint64
+		L2Height           uint64
+		PrevHash           [32]byte
+		TxRoot             [32]byte
+		BlockRoot          [32]byte
+		StateRoot          [32]byte
+		CelestiaHeight     uint64
+		CelestiaShareStart uint64
+		CelestiaShareLen   uint64
 	})
 	if err != nil {
 		return *outstruct, err
@@ -432,8 +432,8 @@ func (_CanonicalStateChain *CanonicalStateChainCaller) Headers(opts *bind.CallOp
 	outstruct.BlockRoot = *abi.ConvertType(out[4], new([32]byte)).(*[32]byte)
 	outstruct.StateRoot = *abi.ConvertType(out[5], new([32]byte)).(*[32]byte)
 	outstruct.CelestiaHeight = *abi.ConvertType(out[6], new(uint64)).(*uint64)
-	outstruct.CelestiaDataRoot = *abi.ConvertType(out[7], new([32]byte)).(*[32]byte)
-	outstruct.CelestiaTxHash = *abi.ConvertType(out[8], new([32]byte)).(*[32]byte)
+	outstruct.CelestiaShareStart = *abi.ConvertType(out[7], new(uint64)).(*uint64)
+	outstruct.CelestiaShareLen = *abi.ConvertType(out[8], new(uint64)).(*uint64)
 
 	return *outstruct, err
 
@@ -441,34 +441,34 @@ func (_CanonicalStateChain *CanonicalStateChainCaller) Headers(opts *bind.CallOp
 
 // Headers is a free data retrieval call binding the contract method 0x9e7f2700.
 //
-// Solidity: function headers(bytes32 ) view returns(uint64 epoch, uint64 l2Height, bytes32 prevHash, bytes32 txRoot, bytes32 blockRoot, bytes32 stateRoot, uint64 celestiaHeight, bytes32 celestiaDataRoot, bytes32 celestiaTxHash)
+// Solidity: function headers(bytes32 ) view returns(uint64 epoch, uint64 l2Height, bytes32 prevHash, bytes32 txRoot, bytes32 blockRoot, bytes32 stateRoot, uint64 celestiaHeight, uint64 celestiaShareStart, uint64 celestiaShareLen)
 func (_CanonicalStateChain *CanonicalStateChainSession) Headers(arg0 [32]byte) (struct {
-	Epoch            uint64
-	L2Height         uint64
-	PrevHash         [32]byte
-	TxRoot           [32]byte
-	BlockRoot        [32]byte
-	StateRoot        [32]byte
-	CelestiaHeight   uint64
-	CelestiaDataRoot [32]byte
-	CelestiaTxHash   [32]byte
+	Epoch              uint64
+	L2Height           uint64
+	PrevHash           [32]byte
+	TxRoot             [32]byte
+	BlockRoot          [32]byte
+	StateRoot          [32]byte
+	CelestiaHeight     uint64
+	CelestiaShareStart uint64
+	CelestiaShareLen   uint64
 }, error) {
 	return _CanonicalStateChain.Contract.Headers(&_CanonicalStateChain.CallOpts, arg0)
 }
 
 // Headers is a free data retrieval call binding the contract method 0x9e7f2700.
 //
-// Solidity: function headers(bytes32 ) view returns(uint64 epoch, uint64 l2Height, bytes32 prevHash, bytes32 txRoot, bytes32 blockRoot, bytes32 stateRoot, uint64 celestiaHeight, bytes32 celestiaDataRoot, bytes32 celestiaTxHash)
+// Solidity: function headers(bytes32 ) view returns(uint64 epoch, uint64 l2Height, bytes32 prevHash, bytes32 txRoot, bytes32 blockRoot, bytes32 stateRoot, uint64 celestiaHeight, uint64 celestiaShareStart, uint64 celestiaShareLen)
 func (_CanonicalStateChain *CanonicalStateChainCallerSession) Headers(arg0 [32]byte) (struct {
-	Epoch            uint64
-	L2Height         uint64
-	PrevHash         [32]byte
-	TxRoot           [32]byte
-	BlockRoot        [32]byte
-	StateRoot        [32]byte
-	CelestiaHeight   uint64
-	CelestiaDataRoot [32]byte
-	CelestiaTxHash   [32]byte
+	Epoch              uint64
+	L2Height           uint64
+	PrevHash           [32]byte
+	TxRoot             [32]byte
+	BlockRoot          [32]byte
+	StateRoot          [32]byte
+	CelestiaHeight     uint64
+	CelestiaShareStart uint64
+	CelestiaShareLen   uint64
 }, error) {
 	return _CanonicalStateChain.Contract.Headers(&_CanonicalStateChain.CallOpts, arg0)
 }
@@ -535,23 +535,23 @@ func (_CanonicalStateChain *CanonicalStateChainCallerSession) Publisher() (commo
 	return _CanonicalStateChain.Contract.Publisher(&_CanonicalStateChain.CallOpts)
 }
 
-// PushBlock is a paid mutator transaction binding the contract method 0x012ff91e.
+// PushBlock is a paid mutator transaction binding the contract method 0xad0516dc.
 //
-// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,bytes32,bytes32) _header) returns()
+// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,uint64,uint64) _header) returns()
 func (_CanonicalStateChain *CanonicalStateChainTransactor) PushBlock(opts *bind.TransactOpts, _header CanonicalStateChainHeader) (*types.Transaction, error) {
 	return _CanonicalStateChain.contract.Transact(opts, "pushBlock", _header)
 }
 
-// PushBlock is a paid mutator transaction binding the contract method 0x012ff91e.
+// PushBlock is a paid mutator transaction binding the contract method 0xad0516dc.
 //
-// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,bytes32,bytes32) _header) returns()
+// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,uint64,uint64) _header) returns()
 func (_CanonicalStateChain *CanonicalStateChainSession) PushBlock(_header CanonicalStateChainHeader) (*types.Transaction, error) {
 	return _CanonicalStateChain.Contract.PushBlock(&_CanonicalStateChain.TransactOpts, _header)
 }
 
-// PushBlock is a paid mutator transaction binding the contract method 0x012ff91e.
+// PushBlock is a paid mutator transaction binding the contract method 0xad0516dc.
 //
-// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,bytes32,bytes32) _header) returns()
+// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,bytes32,bytes32,uint64,uint64,uint64) _header) returns()
 func (_CanonicalStateChain *CanonicalStateChainTransactorSession) PushBlock(_header CanonicalStateChainHeader) (*types.Transaction, error) {
 	return _CanonicalStateChain.Contract.PushBlock(&_CanonicalStateChain.TransactOpts, _header)
 }
