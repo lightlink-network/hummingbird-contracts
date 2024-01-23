@@ -9,6 +9,7 @@ export interface Header {
   stateRoot: string;
   celestiaHeight: bigint;
   celestiaDataRoot: string;
+  celestiaTxHash: string;
 }
 
 export const packHeader = (h: Header) =>
@@ -22,6 +23,7 @@ export const packHeader = (h: Header) =>
       "bytes32",
       "uint256",
       "bytes32",
+      "bytes32",
     ],
     [
       h.epoch,
@@ -32,6 +34,7 @@ export const packHeader = (h: Header) =>
       h.stateRoot,
       h.celestiaHeight,
       h.celestiaDataRoot,
+      h.celestiaTxHash
     ]
   );
 

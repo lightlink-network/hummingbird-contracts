@@ -2,6 +2,7 @@ import { config as cfg } from 'dotenv'
 import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
+import "@solarity/hardhat-gobind"
 
 cfg()
 
@@ -40,6 +41,14 @@ const config: HardhatUserConfig = {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
       sepolia: process.env.ETHERSCAN_API_KEY || '',
     },
+  },
+  gobind: {
+    outdir: "./generated-types/bindings",
+    deployable: false,
+    runOnCompile: false,
+    verbose: false,
+    onlyFiles: ["contracts/CanonicalStateChain.sol", "contracts/challenge/Challenge.sol"],
+    skipFiles: ["contracts/interfaces", "@openzeppelin", "@solarity"],
   },
 };
 

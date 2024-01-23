@@ -2,6 +2,16 @@
 
 This repo contains smart contracts for the Hummingbird project. Work in progress.
 
+> Note: Requires **Node version 18**. If you have nvm installed, run `nvm use` to switch to the correct version.
+
+## Usage
+
+To update go bindings run:
+
+```bash
+npx hardhat gobind
+```
+
 ## Overview
 
 ![Overview](image.png)
