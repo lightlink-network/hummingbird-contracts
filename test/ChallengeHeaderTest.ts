@@ -2,8 +2,8 @@ import { ethers } from "hardhat";
 import { expect } from "chai";
 import { Contract } from "ethers";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { setupCanonicalStateChain } from "./lib/chain";
-import { Header } from "./lib/header";
+import { makeNextBlock, setupCanonicalStateChain } from "./lib/chain";
+import { Header, hashHeader } from "./lib/header";
 
 describe("ChallengeHeader", function () {
   let owner: HardhatEthersSigner;
@@ -78,7 +78,7 @@ describe("ChallengeHeader", function () {
       ).to.be.revertedWith("block not in the chain yet");
     });
 
-    it("cannot invalidate a valid header", async function () {
+    it("should not invalidate a valid header", async function () {
       const validHeader: Header = {
         epoch: BigInt(1),
         l2Height: genesisHeader.l2Height + BigInt(1),
@@ -104,7 +104,7 @@ describe("ChallengeHeader", function () {
       ).to.be.revertedWith("header is valid");
     });
 
-    it("invalid header with incorrect L2 height", async function () {
+    it("should invalidate header with incorrect L2 height", async function () {
       const invalidHeader: Header = {
         epoch: BigInt(1),
         l2Height: genesisHeader.l2Height - BigInt(1),
@@ -127,6 +127,137 @@ describe("ChallengeHeader", function () {
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
           .send(1)
+      ).to.emit(challenge, "InvalidHeader");
+    });
+
+    it("should invalidate header even after a newer block", async function () {
+      const invalidHeader: Header = {
+        epoch: BigInt(1),
+        l2Height: genesisHeader.l2Height - BigInt(1),
+        prevHash: genesisHash,
+        txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaHeight: BigInt(1),
+        celestiaShareStart: BigInt(1),
+        celestiaShareLen: BigInt(1),
+      };
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(invalidHeader);
+
+      const [validHeader] = await makeNextBlock(publisher, canonicalStateChain);
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(validHeader);
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(2)
+      ).to.be.revertedWith("header is valid");
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(1)
+      ).to.emit(challenge, "InvalidHeader");
+
+      const headIndex = await canonicalStateChain
+        .connect(publisher)
+        .getFunction("chainHead")
+        .call([]);
+
+      expect(headIndex).to.equal(0);
+    });
+
+    it("should invalidate 10th block, add new then invalidate 11th", async function () {
+      // 1. push 9 blocks.
+      for (let i = 0; i < 9; i++) {
+        const [header] = await makeNextBlock(publisher, canonicalStateChain);
+
+        await canonicalStateChain
+          .connect(publisher)
+          .getFunction("pushBlock")
+          .send(header);
+      }
+
+      // 2. push invalid header as 10th block
+      const [invalidHeader] = await makeNextBlock(
+        publisher,
+        canonicalStateChain
+      );
+      invalidHeader.l2Height = BigInt(1);
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(invalidHeader);
+
+      // 3. should not be able to invalidate 9th block
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(9)
+      ).to.be.revertedWith("header is valid");
+
+      // 10. but should be able to invalidate 10th block
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(10)
+      ).to.emit(challenge, "InvalidHeader");
+
+      // 11. check the chain actually rolled back to 9th block
+      const headIndex = await canonicalStateChain
+        .connect(publisher)
+        .getFunction("chainHead")
+        .call([]);
+
+      expect(headIndex).to.equal(9);
+
+      // 12. add a new block back in as 10th block
+      const [validBlock] = await makeNextBlock(publisher, canonicalStateChain);
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(validBlock);
+
+      // 13. should not be able to invalidate 10th block
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(10)
+      ).to.be.revertedWith("header is valid");
+
+      // 14. add the 11th invalid block
+      const [invalidBlock] = await makeNextBlock(
+        publisher,
+        canonicalStateChain
+      );
+      invalidBlock.l2Height = BigInt(1);
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(invalidBlock);
+
+      // 15. should invalidate 11th block
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(11)
       ).to.emit(challenge, "InvalidHeader");
     });
   });
