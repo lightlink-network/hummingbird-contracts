@@ -19,22 +19,22 @@ describe("CanonicalStateChain", function () {
     blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     celestiaHeight: 0,
-    celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    celestiaShareStart: 0,
+    celestiaShareLen: 0,
   };
 
   let genesisHash = ethers.keccak256(
     ethers.AbiCoder.defaultAbiCoder().encode(
       [
-        "uint256",
-        "uint256",
-        "bytes32",
-        "bytes32",
-        "bytes32",
-        "bytes32",
-        "uint256",
-        "bytes32",
-        "bytes32",
+        "uint256", // epoch
+        "uint256", // l2Height
+        "bytes32", // prevHash
+        "bytes32", // txRoot
+        "bytes32", // blockRoot
+        "bytes32", // stateRoot
+        "uint256", // celestiaHeight
+        "uint256", // celestiaShareStart
+        "uint256", // celestiaShareLen
       ],
       [
         genesisHeader.epoch,
@@ -44,8 +44,8 @@ describe("CanonicalStateChain", function () {
         genesisHeader.blockRoot,
         genesisHeader.stateRoot,
         genesisHeader.celestiaHeight,
-        genesisHeader.celestiaDataRoot,
-        genesisHeader.celestiaTxHash,
+        genesisHeader.celestiaShareStart,
+        genesisHeader.celestiaShareLen,
       ]
     )
   );
@@ -84,8 +84,8 @@ describe("CanonicalStateChain", function () {
         blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaHeight: 1,
-        celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaShareStart: 1,
+        celestiaShareLen: 1,
       };
 
       await expect(
@@ -105,8 +105,8 @@ describe("CanonicalStateChain", function () {
         blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaHeight: 1,
-        celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaShareStart: 1,
+        celestiaShareLen: 1,
       };
 
       await expect(
@@ -176,8 +176,8 @@ describe("CanonicalStateChain", function () {
           blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
           stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
           celestiaHeight: 1,
-          celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-          celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+          celestiaShareStart: 1,
+          celestiaShareLen: 1,
         });
 
       await expect(

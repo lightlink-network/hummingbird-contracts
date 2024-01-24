@@ -112,7 +112,10 @@ describe("ChallengeDataAvailability", function () {
     // });
 
     it("should allow challenge (if challenge fee is paid)", async function () {
-      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+      const [hash, header] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain
+      );
 
       await challenge
         .connect(challengeOwner)
@@ -150,14 +153,7 @@ describe("ChallengeDataAvailability", function () {
 
   describe("defendDataRootInclusion", function () {
     it("should not allow defending a non-existent challenge", async function () {
-      const proof: ChallengeDAProof = {
-        rootNonce: BigInt(500),
-        proof: {
-          sideNodes: [],
-          key: BigInt(0),
-          numLeaves: BigInt(0),
-        },
-      };
+      const proof = { ...EXAMPLE_PROOF };
 
       const hash = ethers.keccak256(ethers.toUtf8Bytes("None existent block"));
 
@@ -170,7 +166,10 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should not allow defending a challenge with incorrect proof", async function () {
-      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+      const [hash, header] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain
+      );
 
       await challenge
         .connect(challengeOwner)
@@ -180,14 +179,8 @@ describe("ChallengeDataAvailability", function () {
       // set mock daoracle to return false result
       await mockDaOracle.getFunction("setResult").send(false);
 
-      const proof: ChallengeDAProof = {
-        rootNonce: BigInt(500),
-        proof: {
-          sideNodes: [],
-          key: BigInt(0),
-          numLeaves: BigInt(0),
-        },
-      };
+      const proof = { ...EXAMPLE_PROOF };
+      proof.dataRootTuple.height = header.celestiaHeight;
 
       await expect(
         challenge
@@ -198,21 +191,18 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should be able to defend a challenge", async function () {
-      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+      const [hash, header] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain
+      );
 
       await challenge
         .connect(challengeOwner)
         .getFunction("challengeDataRootInclusion")
         .send(1, { value: challengeFee });
 
-      const proof: ChallengeDAProof = {
-        rootNonce: BigInt(500),
-        proof: {
-          sideNodes: [],
-          key: BigInt(0),
-          numLeaves: BigInt(0),
-        },
-      };
+      const proof = { ...EXAMPLE_PROOF };
+      proof.dataRootTuple.height = header.celestiaHeight;
 
       await challenge
         .connect(publisher)
@@ -224,21 +214,18 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should not allow defending a challenge twice", async function () {
-      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+      const [hash, header] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain
+      );
 
       await challenge
         .connect(challengeOwner)
         .getFunction("challengeDataRootInclusion")
         .send(1, { value: challengeFee });
 
-      const proof: ChallengeDAProof = {
-        rootNonce: BigInt(500),
-        proof: {
-          sideNodes: [],
-          key: BigInt(0),
-          numLeaves: BigInt(0),
-        },
-      };
+      const proof = { ...EXAMPLE_PROOF };
+      proof.dataRootTuple.height = header.celestiaHeight;
 
       await challenge
         .connect(publisher)
@@ -267,7 +254,13 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should not allow settling a challenge that is already defended", async function () {
-      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+      const [hash, header] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain
+      );
+
+      const proof = { ...EXAMPLE_PROOF };
+      proof.dataRootTuple.height = header.celestiaHeight;
 
       await challenge
         .connect(challengeOwner)
@@ -277,14 +270,7 @@ describe("ChallengeDataAvailability", function () {
       await challenge
         .connect(publisher)
         .getFunction("defendDataRootInclusion")
-        .send(hash, {
-          rootNonce: BigInt(500),
-          proof: {
-            sideNodes: [],
-            key: BigInt(0),
-            numLeaves: BigInt(0),
-          },
-        });
+        .send(hash, proof);
 
       await expect(
         challenge
@@ -295,7 +281,10 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should not settle challenge if challenge period is not over", async function () {
-      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+      const [hash, header] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain
+      );
 
       await challenge
         .connect(challengeOwner)
@@ -311,7 +300,10 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should settle challenge if challenge period is over", async function () {
-      const hash = await pushRandomHeader(publisher, canonicalStateChain);
+      const [hash, header] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain
+      );
 
       await challenge
         .connect(challengeOwner)
@@ -332,3 +324,16 @@ describe("ChallengeDataAvailability", function () {
     });
   });
 });
+
+const EXAMPLE_PROOF: ChallengeDAProof = {
+  rootNonce: BigInt(500),
+  dataRootTuple: {
+    height: BigInt(1),
+    dataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+  },
+  proof: {
+    sideNodes: [],
+    key: BigInt(0),
+    numLeaves: BigInt(0),
+  },
+};

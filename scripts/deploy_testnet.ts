@@ -20,8 +20,8 @@ const main = async () => {
     stateRoot:
       "0x491cc7d79299f9569e4bfddef640ade68091ab486d68a08ed1477c678db34103",
     celestiaHeight: 0,
-    celestiaDataRoot:
-      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    celestiaShareStart: 0,
+    celestiaShareLen: 0,
   };
 
   // Deploy CanonicalStateChain contract
@@ -47,22 +47,51 @@ const main = async () => {
   await mockDAOracle.waitForDeployment();
   console.log(`→ MockDAOracle deployed to ${await mockDAOracle.getAddress()}`);
 
-  // Deploying challenge/Challenge.sol contract
+  // Deploy Challenge contract as a proxy
   console.log("Deploying Challenge...");
-  const challenge = await ethers.getContractFactory("Challenge");
-  const challengeContract = await challenge.deploy(
-    ethers.ZeroAddress, // treasury
-    await canonicalStateChain.getAddress(), // chain
-    await mockDAOracle.getAddress(), // daOracle
-    ethers.ZeroAddress // mips
+  const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
+  const challengeFactory: any = await ethers.getContractFactory("Challenge");
+  const challengeImplementation = await challengeFactory.deploy();
+  await challengeImplementation.waitForDeployment();
+  const challengeImplementationAddr =
+    await challengeImplementation.getAddress();
+
+  const proxy = await proxyFactory.deploy(
+    challengeImplementationAddr,
+    challengeImplementation.interface.encodeFunctionData("initialize", [
+      ethers.ZeroAddress,
+      await canonicalStateChain.getAddress(),
+      await mockDAOracle.getAddress(),
+      ethers.ZeroAddress,
+    ])
   );
-  await challengeContract.waitForDeployment();
+  await proxy.waitForDeployment();
+  const challenge = challengeFactory.attach(await proxy.getAddress());
+  const challengeContractAddr = await challenge.getAddress();
+  console.log(`→ Challenge proxy deployed to ${challengeContractAddr}`);
   console.log(
-    `→ Challenge deployed to ${await challengeContract.getAddress()}`
+    `→ Challenge implementation deployed to ${challengeImplementationAddr}`
   );
 
+  ///
+  /// Set contract setters
+  ///
+
+  // set Challenge.setDefender() to publisherAddr
+  await challenge.setDefender(publisherAddr);
+  console.log(`→ → Challenge.setDefender() set to ${publisherAddr}`);
+
+  // set CanonicalStateChain.challengeContract() to challengeContractAddr
+  await canonicalStateChain.setChallengeContract(challengeContractAddr);
+  console.log(
+    `→ → CanonicalStateChain.challengeContract() set to ${challengeContractAddr}` +
+      "\n"
+  );
+
+  console.log("All Contracts deployed successfully! \n");
+
   // setup challenge contract
-  await challengeContract.setDefender(publisherAddr);
+  await challenge.setDefender(publisherAddr);
   console.log(`– Set defender to ${publisherAddr}`);
 };
 

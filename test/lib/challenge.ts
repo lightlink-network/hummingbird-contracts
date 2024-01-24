@@ -14,7 +14,22 @@
 
 interface ChallengeDAProof {
   rootNonce: bigint;
+  dataRootTuple: DataRootTuple;
   proof: BinaryMerkleProof;
+}
+
+// struct DataRootTuple {
+//   // Celestia block height the data root was included in.
+//   // Genesis block is height = 0.
+//   // First queryable block is height = 1.
+//   uint256 height;
+//   // Data root.
+//   bytes32 dataRoot;
+// }
+
+interface DataRootTuple {
+  height: bigint;
+  dataRoot: string;
 }
 
 interface BinaryMerkleProof {

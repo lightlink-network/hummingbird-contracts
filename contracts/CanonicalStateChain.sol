@@ -17,10 +17,12 @@ contract CanonicalStateChain is Ownable {
         bytes32 txRoot; // The root of a merkle tree containing all the transactions in the Bundle.
         bytes32 blockRoot; // The root of a merkle tree containing all the blocks in the Bundle.
         bytes32 stateRoot; // The Stateroot after applying all the blocks in the Bundle.
-        // Pointer to the blocks contents on celestia.
+
+        // Pointer to the blocks contents on celestia. 
+        // See `Span` from https://docs.celestia.org/developers/blobstream-offchain#defining-a-chain 
         uint64 celestiaHeight;
-        bytes32 celestiaDataRoot;
-        bytes32 celestiaTxHash;
+        uint64 celestiaShareStart;
+        uint64 celestiaShareLen;
     }
 
     struct HeaderMetadata {

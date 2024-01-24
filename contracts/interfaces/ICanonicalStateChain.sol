@@ -13,8 +13,8 @@ interface ICanonicalStateChain {
         bytes32 stateRoot; // The Stateroot after applying all the blocks in the Bundle.
         // Pointer to the blocks contents on celestia.
         uint64 celestiaHeight;
-        bytes32 celestiaDataRoot;
-        bytes32 celestiaTxHash;
+        uint64 celestiaShareStart;
+        uint64 celestiaShareLen;
     }
 
     struct HeaderMetadata {

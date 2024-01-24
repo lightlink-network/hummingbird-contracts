@@ -15,8 +15,8 @@ export const setupCanonicalStateChain = async (
     blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     celestiaHeight: BigInt(0),
-    celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    celestiaShareStart: BigInt(0),
+    celestiaShareLen: BigInt(0),
   };
 
   let genesisHash = hashHeader(genesisHeader);
@@ -36,11 +36,11 @@ export const setupCanonicalStateChain = async (
 export const pushRandomHeader = async (
   signer: HardhatEthersSigner,
   canonicalStateChain: Contract
-) => {
+): Promise<[string, Header]> => {
   const head: Header = await canonicalStateChain.getHead();
   const headHash = hashHeader(head);
 
-  let header = {
+  let header: Header = {
     epoch: head.epoch + BigInt(1),
     l2Height: head.l2Height + BigInt(5),
     prevHash: headHash,
@@ -48,8 +48,8 @@ export const pushRandomHeader = async (
     blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     celestiaHeight: head.celestiaHeight + BigInt(5),
-    celestiaDataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    celestiaTxHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    celestiaShareStart: head.celestiaShareStart + BigInt(5),
+    celestiaShareLen: head.celestiaShareLen + BigInt(5),
   };
 
   // push header
@@ -59,5 +59,5 @@ export const pushRandomHeader = async (
     .getFunction("pushBlock")
     .send(header);
 
-  return hashHeader(header);
+  return [hashHeader(header), header];
 };
