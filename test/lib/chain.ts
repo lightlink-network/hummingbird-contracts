@@ -61,3 +61,25 @@ export const pushRandomHeader = async (
 
   return [hashHeader(header), header];
 };
+
+export const makeNextBlock = async (
+  signer: HardhatEthersSigner,
+  canonicalStateChain: Contract
+): Promise<[Header, string]> => {
+  const head: Header = await canonicalStateChain.getHead();
+  const headHash = hashHeader(head);
+
+  let header: Header = {
+    epoch: head.epoch + BigInt(1),
+    l2Height: head.l2Height + BigInt(1),
+    prevHash: headHash,
+    txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    celestiaHeight: head.celestiaHeight + BigInt(1),
+    celestiaShareStart: head.celestiaShareStart + BigInt(1),
+    celestiaShareLen: head.celestiaShareLen + BigInt(1),
+  };
+
+  return [header, hashHeader(header)];
+};
