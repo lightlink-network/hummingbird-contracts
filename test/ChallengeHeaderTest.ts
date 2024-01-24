@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { Contract } from "ethers";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { setupCanonicalStateChain } from "./lib/chain";
-import { Header } from "./lib/header";
+import { Header, hashHeader } from "./lib/header";
 
 describe("ChallengeHeader", function () {
   let owner: HardhatEthersSigner;
@@ -128,6 +128,63 @@ describe("ChallengeHeader", function () {
           .getFunction("invalidateHeader")
           .send(1)
       ).to.emit(challenge, "InvalidHeader");
+    });
+
+    it("invalidate header even after a newer block", async function () {
+      const invalidHeader: Header = {
+        epoch: BigInt(1),
+        l2Height: genesisHeader.l2Height - BigInt(1),
+        prevHash: genesisHash,
+        txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaHeight: BigInt(1),
+        celestiaShareStart: BigInt(1),
+        celestiaShareLen: BigInt(1),
+      };
+
+      const validHeader: Header = {
+        epoch: BigInt(5),
+        l2Height: invalidHeader.l2Height + BigInt(1),
+        prevHash: hashHeader(invalidHeader),
+        txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaHeight: BigInt(5),
+        celestiaShareStart: BigInt(1),
+        celestiaShareLen: BigInt(1),
+      };
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(invalidHeader);
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(validHeader);
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(2)
+      ).to.be.revertedWith("header is valid");
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(1)
+      ).to.emit(challenge, "InvalidHeader");
+
+      const headIndex = await canonicalStateChain
+        .connect(publisher)
+        .getFunction("chainHead")
+        .call([]);
+
+      expect(headIndex).to.equal(0);
     });
   });
 });
