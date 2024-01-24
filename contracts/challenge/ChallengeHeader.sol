@@ -57,7 +57,7 @@ abstract contract ChallengeHeader is ChallengeBase {
         ICanonicalStateChain.Header memory header = chain.headers(_hash);
 
         // check header validity.
-        require(!_isHeaderValid(header, _hash), "header is valid");
+        require(!_isHeaderValid(header, _hash, _blockIndex), "header is valid");
 
         // rollback the chain.
         chain.rollback(_blockIndex - 1);
@@ -65,7 +65,8 @@ abstract contract ChallengeHeader is ChallengeBase {
 
     function _isHeaderValid(
         ICanonicalStateChain.Header memory _header,
-        bytes32 _hash
+        bytes32 _hash,
+        uint256 _blockIndex
     ) internal returns (bool) {
         // check that the blocks epoch is greater than the previous epoch.
         if (_header.epoch <= chain.headers(_header.prevHash).epoch) {
@@ -88,7 +89,7 @@ abstract contract ChallengeHeader is ChallengeBase {
         }
 
         // check that the prevHash is the previous block hash.
-        if (_header.prevHash != chain.chain(chain.chainHead() - 1)) {
+        if (_header.prevHash != chain.chain(_blockIndex - 1)) {
             emit InvalidHeader(
                 _header.epoch,
                 _hash,
