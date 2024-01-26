@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "./lib/Lib_RLPReader.sol";
+import "./interfaces/IRLPReader.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 import "./interfaces/ICanonicalStateChain.sol";
@@ -9,6 +9,7 @@ contract ChainOracle {
 
     ICanonicalStateChain public canonicalStateChain;
     IDAOracle public daOracle;
+    IRLPReader public rlpReader;
 
     struct ShareRange {
         uint256 start;
@@ -37,9 +38,10 @@ contract ChainOracle {
     mapping(bytes32 => bytes[]) public shares;
     mapping(bytes32 => L2Header) public headers;
 
-    constructor(address _canonicalStateChain, address _daOracle) {
-      canonicalStateChain = ICanonicalStateChain(_canonicalStateChain);
-      daOracle = IDAOracle(_daOracle);
+    constructor(address _canonicalStateChain, address _daOracle, address _rlpReader) {
+        canonicalStateChain = ICanonicalStateChain(_canonicalStateChain);
+        daOracle = IDAOracle(_daOracle);
+        rlpReader = IRLPReader(_rlpReader);
     }
     
     // provideShares loads some shares that were uploaded to the Data Availability layer. It verifies the shares
@@ -131,31 +133,31 @@ contract ChainOracle {
     // decodeRLPHHeader decodes an RLP header into the Header struct.
     function decodeRLPHeader(
         bytes memory _data
-    ) public pure returns (L2Header memory) {
+    ) public view returns (L2Header memory) {
         // 1. Decode the RLP header.
-        Lib_RLPReader.RLPItem[] memory decodedHeader = Lib_RLPReader.readList(
-            Lib_RLPReader.toRLPItem(_data)
+        RLPItem[] memory decodedHeader = rlpReader.readList(
+            rlpReader.toRLPItem(_data)
         );
 
         // 2. Create a header struct.
         L2Header memory header;
 
         // 3. Decode the header.
-        header.parentHash = Lib_RLPReader.readBytes32(decodedHeader[0]);
-        header.uncleHash = Lib_RLPReader.readBytes32(decodedHeader[1]);
-        header.beneficiary = Lib_RLPReader.readAddress(decodedHeader[2]);
-        header.stateRoot = Lib_RLPReader.readBytes32(decodedHeader[3]);
-        header.transactionsRoot = Lib_RLPReader.readBytes32(decodedHeader[4]);
-        header.receiptsRoot = Lib_RLPReader.readBytes32(decodedHeader[5]);
-        header.logsBloom = Lib_RLPReader.readBytes32(decodedHeader[6]);
-        header.difficulty = Lib_RLPReader.readUint256(decodedHeader[7]);
-        header.number = Lib_RLPReader.readUint256(decodedHeader[8]);
-        header.gasLimit = Lib_RLPReader.readUint256(decodedHeader[9]);
-        header.gasUsed = Lib_RLPReader.readUint256(decodedHeader[10]);
-        header.timestamp = Lib_RLPReader.readUint256(decodedHeader[11]);
-        header.extraData = Lib_RLPReader.readBytes32(decodedHeader[12]);
-        header.mixHash = Lib_RLPReader.readBytes32(decodedHeader[13]);
-        header.nonce = Lib_RLPReader.readUint256(decodedHeader[14]);
+        header.parentHash = rlpReader.readBytes32(decodedHeader[0]);
+        header.uncleHash = rlpReader.readBytes32(decodedHeader[1]);
+        header.beneficiary = rlpReader.readAddress(decodedHeader[2]);
+        header.stateRoot = rlpReader.readBytes32(decodedHeader[3]);
+        header.transactionsRoot = rlpReader.readBytes32(decodedHeader[4]);
+        header.receiptsRoot = rlpReader.readBytes32(decodedHeader[5]);
+        header.logsBloom = rlpReader.readBytes32(decodedHeader[6]);
+        header.difficulty = rlpReader.readUint256(decodedHeader[7]);
+        header.number = rlpReader.readUint256(decodedHeader[8]);
+        header.gasLimit = rlpReader.readUint256(decodedHeader[9]);
+        header.gasUsed = rlpReader.readUint256(decodedHeader[10]);
+        header.timestamp = rlpReader.readUint256(decodedHeader[11]);
+        header.extraData = rlpReader.readBytes32(decodedHeader[12]);
+        header.mixHash = rlpReader.readBytes32(decodedHeader[13]);
+        header.nonce = rlpReader.readUint256(decodedHeader[14]);
 
         return header;
     }

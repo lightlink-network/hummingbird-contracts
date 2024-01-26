@@ -48,12 +48,18 @@ const main = async () => {
   console.log(`→ MockDAOracle deployed to ${await mockDAOracle.getAddress()}`);
 
   // 3. ChainLoader
+  // Deploy required RLPReader lib
+  console.log("Deploying RLPReader...");
+  const RLPReader = await ethers.getContractFactory("RLPReader");
+  const rlpReader = await RLPReader.deploy();
+  await rlpReader.waitForDeployment();
   // Deploying ChainLoader contract
   console.log("Deploying ChainLoader...");
   const ChainOracle = await ethers.getContractFactory("ChainOracle");
   const chainOracle = await ChainOracle.deploy(
     await canonicalStateChain.getAddress(),
-    await mockDAOracle.getAddress()
+    await mockDAOracle.getAddress(),
+    await rlpReader.getAddress()
   );
   await chainOracle.waitForDeployment();
   console.log(`→ ChainOracle deployed to ${await chainOracle.getAddress()}`);
