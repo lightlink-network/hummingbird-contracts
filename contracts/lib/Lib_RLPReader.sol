@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity >0.5.0 <0.8.0;
 
 /**
  * @title Lib_RLPReader
@@ -23,7 +23,7 @@ library Lib_RLPReader {
         LIST_ITEM
     }
 
-    
+
     /***********
      * Structs *
      ***********/
@@ -32,12 +32,12 @@ library Lib_RLPReader {
         uint256 length;
         uint256 ptr;
     }
-    
+
 
     /**********************
      * Internal Functions *
      **********************/
-    
+
     /**
      * Converts bytes to a reference to memory position and length.
      * @param _in Input bytes to convert.
@@ -403,7 +403,7 @@ library Lib_RLPReader {
             "Invalid RLP address value."
         );
 
-        return address(bytes20(bytes32(readUint256(_in))));
+        return address(readUint256(_in));
     }
 
     /**
@@ -457,7 +457,7 @@ library Lib_RLPReader {
     function _decodeLength(
         RLPItem memory _in
     )
-        private
+        internal
         pure
         returns (
             uint256,
@@ -484,7 +484,7 @@ library Lib_RLPReader {
             // Short string.
 
             uint256 strLen = prefix - 0x80;
-            
+
             require(
                 _in.length > strLen,
                 "Invalid RLP short string."
@@ -564,7 +564,7 @@ library Lib_RLPReader {
         uint256 _offset,
         uint256 _length
     )
-        private
+        internal
         pure
         returns (
             bytes memory

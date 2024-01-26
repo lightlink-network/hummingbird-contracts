@@ -5,6 +5,9 @@ import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 import "./interfaces/ICanonicalStateChain.sol";
 
+// hardhat console
+import "hardhat/console.sol";
+
 contract ChainOracle {
 
     ICanonicalStateChain public canonicalStateChain;
@@ -92,38 +95,24 @@ contract ChainOracle {
         return headerHash;
     }
 
-    function ShareKey(bytes32 _rblock, bytes[] memory _shareData) public pure  returns (bytes32) {
+    function ShareKey(bytes32 _rblock, bytes[] memory _shareData) public pure returns (bytes32) {
       return keccak256(abi.encode(_rblock, _shareData));
     }
 
     // extractData extracts the data from the shares using the range.
     // TODO: Move to a library
-    function extractData(
-        bytes[] memory _shareData,
-        ShareRange[] memory _shareRanges
-    ) public pure returns (bytes memory) {
-        // 0. Calculate the total length of the data.
-        uint totalLength = 0;
-        for (uint i = 0; i < _shareRanges.length; i++) {
-            totalLength += _shareRanges[i].end - _shareRanges[i].start;
-        }
+      function extractData(bytes[] memory raw, ShareRange[] memory ranges) public pure returns (bytes memory) {
+        bytes memory data;
 
-        // 1. Create a buffer to store the data.
-        bytes memory data = new bytes(totalLength);
+        for (uint i = 0; i < ranges.length; i++) {
+            ShareRange memory r = ranges[i];
 
-        // 2. Loop over the shares.
-        for (uint i = 0; i < _shareRanges.length; i++) {
-            // 3. Get the share data.
-            bytes memory share = _shareData[i];
+            // Ensure that the range is valid for the corresponding raw data
+            require(r.end <= raw[i].length, "Invalid range");
 
-            // 4. Loop over the range.
-            for (
-                uint j = _shareRanges[i].start;
-                j <= _shareRanges[i].end;
-                j++
-            ) {
-                // 5. Copy the data from the share to the buffer.
-                data[j] = share[j];
+            // Concatenating the specified range of bytes
+            for (uint j = r.start; j < r.end; j++) {
+                data = abi.encodePacked(data, raw[i][j]);
             }
         }
 
@@ -138,6 +127,8 @@ contract ChainOracle {
         RLPItem[] memory decodedHeader = rlpReader.readList(
             rlpReader.toRLPItem(_data)
         );
+
+        require(decodedHeader.length == 15, "invalid header length");
 
         // 2. Create a header struct.
         L2Header memory header;
