@@ -128,7 +128,7 @@ contract ChainOracle {
             rlpReader.toRLPItem(_data)
         );
 
-        require(decodedHeader.length == 15, "invalid header length");
+        require(decodedHeader.length >= 15, "invalid header length");
 
         // 2. Create a header struct.
         L2Header memory header;
