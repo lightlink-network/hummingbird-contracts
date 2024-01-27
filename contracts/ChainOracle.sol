@@ -123,56 +123,46 @@ contract ChainOracle {
     function decodeRLPHeader(
         bytes memory _data
     ) public view returns (L2Header memory) {
-        // 1. Decode the RLP header.
-        RLPItem[] memory decodedHeader = rlpReader.readList(
-            rlpReader.toRLPItem(_data)
-        );
-
-        require(decodedHeader.length >= 15, "invalid header length");
-
-        // 2. Create a header struct.
-        L2Header memory header;
-
-        // 3. Decode the header.
-        header.parentHash = rlpReader.readBytes32(decodedHeader[0]);
-        header.uncleHash = rlpReader.readBytes32(decodedHeader[1]);
-        header.beneficiary = rlpReader.readAddress(decodedHeader[2]);
-        header.stateRoot = rlpReader.readBytes32(decodedHeader[3]);
-        header.transactionsRoot = rlpReader.readBytes32(decodedHeader[4]);
-        header.receiptsRoot = rlpReader.readBytes32(decodedHeader[5]);
-        header.logsBloom = rlpReader.readBytes32(decodedHeader[6]);
-        header.difficulty = rlpReader.readUint256(decodedHeader[7]);
-        header.number = rlpReader.readUint256(decodedHeader[8]);
-        header.gasLimit = rlpReader.readUint256(decodedHeader[9]);
-        header.gasUsed = rlpReader.readUint256(decodedHeader[10]);
-        header.timestamp = rlpReader.readUint256(decodedHeader[11]);
-        header.extraData = rlpReader.readBytes32(decodedHeader[12]);
-        header.mixHash = rlpReader.readBytes32(decodedHeader[13]);
-        header.nonce = rlpReader.readUint256(decodedHeader[14]);
-
+        (bytes32 parentHash, bytes32 sha3Uncles, address coinbase, bytes32 stateRoot, bytes32 transactionsRoot, bytes32 receiptsRoot, uint difficulty, uint number, uint gasLimit, uint gasUsed, uint timestamp, uint nonce) = rlpReader.toBlockHeader(_data);
+        L2Header memory header = L2Header({
+            parentHash: parentHash,
+            uncleHash: sha3Uncles,
+            beneficiary: coinbase,
+            stateRoot: stateRoot,
+            transactionsRoot: transactionsRoot,
+            receiptsRoot: receiptsRoot,
+            logsBloom: bytes32(0),
+            difficulty: difficulty,
+            number: number,
+            gasLimit: gasLimit,
+            gasUsed: gasUsed,
+            timestamp: timestamp,
+            extraData: bytes32(0),
+            mixHash: bytes32(0),
+            nonce: nonce
+        });
         return header;
     }
 
+    // HashHeader hashes an Ethereum header in the same way that it is hashed on Ethereum.
     function hashHeader(L2Header memory _header) public pure returns (bytes32) {
-        return keccak256(
-            abi.encode(
-                _header.parentHash,
-                _header.uncleHash,
-                _header.beneficiary,
-                _header.stateRoot,
-                _header.transactionsRoot,
-                _header.receiptsRoot,
-                _header.logsBloom,
-                _header.difficulty,
-                _header.number,
-                _header.gasLimit,
-                _header.gasUsed,
-                _header.timestamp,
-                _header.extraData,
-                _header.mixHash,
-                _header.nonce
-            )
-        );
+        return keccak256(abi.encodePacked(
+            _header.parentHash,
+            _header.uncleHash,
+            _header.beneficiary,
+            _header.stateRoot,
+            _header.transactionsRoot,
+            _header.receiptsRoot,
+            _header.logsBloom,
+            _header.difficulty,
+            _header.number,
+            _header.gasLimit,
+            _header.gasUsed,
+            _header.timestamp,
+            _header.extraData,
+            _header.mixHash,
+            _header.nonce
+        ));
     }
 
 }
