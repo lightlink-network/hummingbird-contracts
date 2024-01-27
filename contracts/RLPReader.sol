@@ -1,35 +1,205 @@
-pragma solidity 0.7.6;
-pragma abicoder v2;
+// SPDX-License-Identifier: Apache-2.0
+
+pragma solidity >=0.5.10 <0.9.0;
 
 import "./lib/Lib_RLPReader.sol";
 
 contract RLPReader {
-  function toRLPItem(bytes memory _data) external pure returns (Lib_RLPReader.RLPItem memory) {
-    return Lib_RLPReader.toRlpItem(_data);
-  }
+    using Lib_RLPReader for bytes;
+    using Lib_RLPReader for uint;
+    using Lib_RLPReader for Lib_RLPReader.RLPItem;
+    using Lib_RLPReader for Lib_RLPReader.Iterator;
 
-  function toRLPList(Lib_RLPReader.RLPItem memory _item) external pure returns (Lib_RLPReader.RLPItem[] memory) {
-    return Lib_RLPReader.toList(_item);
-  }
-  
-  function readBytes32(Lib_RLPReader.RLPItem memory _item) external pure returns (bytes32) {
-    return bytesToBytes32(Lib_RLPReader.toRlpBytes(_item));
-  }
-
-  function readAddress(Lib_RLPReader.RLPItem memory _item) external pure returns (address) {
-    return Lib_RLPReader.toAddress(_item);
-  }
-
-  function readUint256(Lib_RLPReader.RLPItem memory _item) external pure returns (uint256) {
-    return Lib_RLPReader.toUint(_item);
-  }
-
-  function bytesToBytes32(bytes memory source) internal pure returns (bytes32 result) {
-    // Copy the bytes data into the bytes32 variable
-    assembly {
-        result := mload(add(source, 32))
+    function isList(bytes memory item) public pure returns (bool) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.isList();
     }
 
-    return result;
-  }
+    function itemLength(bytes memory item) public pure returns (uint) {
+        uint memPtr;
+        assembly {
+            memPtr := add(item, 0x20)
+        }
+
+        return _itemLength(memPtr);
+    }
+
+    function rlpLen(bytes memory item) public pure returns (uint) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.rlpLen();
+    }
+
+    function payloadLocation(bytes memory item) public pure returns (
+        uint payloadMemPtr,
+        uint payloadLen,
+        uint itemMemPtr
+    ) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        (uint memPtr, uint len) = rlpItem.payloadLocation();
+        return (memPtr, len, rlpItem.memPtr);
+    }
+
+    function numItems(bytes memory item) public pure returns (uint) {
+        Lib_RLPReader.RLPItem[] memory rlpItem = item.toRlpItem().toList();
+        return rlpItem.length;
+    }
+
+    function rlpBytesKeccak256(bytes memory item) public pure returns (bytes32) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.rlpBytesKeccak256();
+    }
+
+    function payloadKeccak256(bytes memory item) public pure returns (bytes32) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.payloadKeccak256();
+    }
+
+    function toRlpBytes(bytes memory item) public pure returns (bytes memory) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.toRlpBytes();
+    }
+
+    function toBytes(bytes memory item) public pure returns (bytes memory) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.toBytes();
+    }
+
+    function toUint(bytes memory item) public pure returns (uint) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.toUint();
+    }
+
+    function toUintStrict(bytes memory item) public pure returns (uint) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.toUintStrict();
+    }
+
+    function toAddress(bytes memory item) public pure returns (address) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.toAddress();
+    }
+
+    function toBoolean(bytes memory item) public pure returns (bool) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return rlpItem.toBoolean();
+    }
+
+    function bytesToString(bytes memory item) public pure returns (string memory) {
+        Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
+        return string(rlpItem.toBytes());
+    }
+
+    function toIterator(bytes memory item) public pure {
+        // we just care that this does not revert
+        item.toRlpItem().iterator();
+    }
+
+    // expects [["somestring"]]
+    function nestedIteration(bytes memory item) public pure returns (string memory) {
+        Lib_RLPReader.Iterator memory iter = item.toRlpItem().iterator();
+        Lib_RLPReader.Iterator memory subIter = iter.next().iterator();
+        string memory result = string(subIter.next().toBytes());
+
+        require(!iter.hasNext());
+        require(!subIter.hasNext());
+
+        return result;
+    }
+
+    function toBlockHeader(bytes memory rlpHeader) public pure returns (
+        bytes32 parentHash, bytes32 sha3Uncles, address coinbase, bytes32 stateRoot, bytes32 transactionsRoot, bytes32 receiptsRoot,
+        uint difficulty, uint number, uint gasLimit, uint gasUsed, uint timestamp, uint nonce) {
+
+        Lib_RLPReader.Iterator memory it = rlpHeader.toRlpItem().iterator();
+        uint idx;
+        while(it.hasNext()) {
+            if ( idx == 0 )      parentHash       = bytes32(it.next().toUint());
+            else if ( idx == 1 ) sha3Uncles       = bytes32(it.next().toUint());
+            else if ( idx == 2 ) coinbase         = it.next().toAddress();
+            else if ( idx == 3 ) stateRoot        = bytes32(it.next().toUint());
+            else if ( idx == 4 ) transactionsRoot = bytes32(it.next().toUint());
+            else if ( idx == 5 ) receiptsRoot     = bytes32(it.next().toUint());
+            else if ( idx == 7 ) difficulty       = it.next().toUint();
+            else if ( idx == 8 ) number           = it.next().toUint();
+            else if ( idx == 9 ) gasLimit         = it.next().toUint();
+            else if ( idx == 10 ) gasUsed         = it.next().toUint();
+            else if ( idx == 11 ) timestamp       = it.next().toUint();
+            else if ( idx == 14 ) nonce           = it.next().toUint();
+            else it.next();
+
+            idx++;
+        }
+    }
+
+    /* custom destructuring */
+
+    function customDestructure(bytes memory item) public pure returns (address, bool, uint) {
+        // first three elements follow the return types in order. Ignore the rest
+        Lib_RLPReader.RLPItem[] memory items = item.toRlpItem().toList();
+        return (items[0].toAddress(), items[1].toBoolean(), items[2].toUint());
+    }
+
+    function customNestedDestructure(bytes memory item) public pure returns (address, uint) {
+        Lib_RLPReader.RLPItem[] memory items = item.toRlpItem().toList();
+        items = items[0].toList();
+        return (items[0].toAddress(), items[1].toUint());
+    }
+
+    // expects [[bytes, bytes]]
+    function customNestedDestructureKeccak(bytes memory item) public pure returns (bytes32, bytes32) {
+        Lib_RLPReader.RLPItem[] memory items = item.toRlpItem().toList();
+        items = items[0].toList();
+        return (items[0].payloadKeccak256(), items[1].payloadKeccak256());
+    }
+
+    function customNestedToRlpBytes(bytes memory item) public pure returns (bytes memory) {
+        Lib_RLPReader.RLPItem[] memory items = item.toRlpItem().toList();
+        return items[0].toRlpBytes();
+    }
+
+    /* Copied verbatim from the reader contract due to scope */
+    uint8 constant STRING_SHORT_START = 0x80;
+    uint8 constant STRING_LONG_START  = 0xb8;
+    uint8 constant LIST_SHORT_START   = 0xc0;
+    uint8 constant LIST_LONG_START    = 0xf8;
+    function _itemLength(uint memPtr) private pure returns (uint) {
+       uint itemLen;
+       uint byte0;
+       assembly {
+           byte0 := byte(0, mload(memPtr))
+       }
+
+       if (byte0 < STRING_SHORT_START)
+           itemLen = 1;
+
+       else if (byte0 < STRING_LONG_START)
+           itemLen = byte0 - STRING_SHORT_START + 1;
+
+       else if (byte0 < LIST_SHORT_START) {
+           assembly {
+               let byteLen := sub(byte0, 0xb7) // # of bytes the actual length is
+               memPtr := add(memPtr, 1) // skip over the first byte
+
+               /* 32 byte word size */
+               let dataLen := div(mload(memPtr), exp(256, sub(32, byteLen))) // right shifting to get the len
+               itemLen := add(dataLen, add(byteLen, 1))
+           }
+       }
+
+       else if (byte0 < LIST_LONG_START) {
+           itemLen = byte0 - LIST_SHORT_START + 1;
+       }
+
+       else {
+           assembly {
+               let byteLen := sub(byte0, 0xf7)
+               memPtr := add(memPtr, 1)
+
+               let dataLen := div(mload(memPtr), exp(256, sub(32, byteLen))) // right shifting to the correct length
+               itemLen := add(dataLen, add(byteLen, 1))
+           }
+       }
+
+       return itemLen;
+    }
 }
