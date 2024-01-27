@@ -60,5 +60,33 @@ describe("ChainOracle", function () {
 
     const header = await chainOracle.decodeRLPHeader(TestRLPHeader);
     expect(header).to.not.be.undefined;
+    expect(header[0]).to.be.equal(
+      // parentHash
+      "0xce095cb5cd4725f71278ce79cb4589e5a87147fcc148fdf587292a540ee15acc"
+    );
+    expect(header[1]).to.be.equal(
+      // uncleHash
+      "0x0000000000000000000000000000000000000000000000000000000000000000"
+    );
+    expect(header[2]).to.be.equal(
+      // coinbase
+      "0xdFaD157B8D4e58c26Bf9b947f8e75b5AdbC7822B"
+    );
+    expect(header[3]).to.be.equal(
+      // stateRoot
+      "0x3903de7f5290e9ef5974c2789c47778c69bff45299b10c2c2046774a6baec48f"
+    );
+    expect(header[4]).to.be.equal(
+      // transactionsRoot
+      "0x0000000000000000000000000000000000000000000000000000000000000000"
+    );
+    expect(header[7]).to.be.equal(
+      // difficulty
+      500n
+    );
+    expect(header[8]).to.be.equal(
+      // timestamp
+      62207261n
+    );
   });
 });
