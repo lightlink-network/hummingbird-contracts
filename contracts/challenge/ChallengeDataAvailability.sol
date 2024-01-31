@@ -50,6 +50,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         payable
         mustBeCanonical(_blockIndex)
         mustBeWithinChallengeWindow(_blockIndex)
+        requireChallengeFee
         returns (uint256)
     {
         bytes32 h = chain.chain(_blockIndex);
