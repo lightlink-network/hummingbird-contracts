@@ -47,6 +47,23 @@ const main = async () => {
   await mockDAOracle.waitForDeployment();
   console.log(`→ MockDAOracle deployed to ${await mockDAOracle.getAddress()}`);
 
+  // 3. ChainLoader
+  // Deploy required RLPReader lib
+  console.log("Deploying RLPReader...");
+  const RLPReader = await ethers.getContractFactory("RLPReader");
+  const rlpReader = await RLPReader.deploy();
+  await rlpReader.waitForDeployment();
+  // Deploying ChainLoader contract
+  console.log("Deploying ChainLoader...");
+  const ChainOracle = await ethers.getContractFactory("ChainOracle");
+  const chainOracle = await ChainOracle.deploy(
+    await canonicalStateChain.getAddress(),
+    await mockDAOracle.getAddress(),
+    await rlpReader.getAddress()
+  );
+  await chainOracle.waitForDeployment();
+  console.log(`→ ChainOracle deployed to ${await chainOracle.getAddress()}`);
+
   // Deploy Challenge contract as a proxy
   console.log("Deploying Challenge...");
   const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
@@ -93,6 +110,19 @@ const main = async () => {
   // setup challenge contract
   await challenge.setDefender(publisherAddr);
   console.log(`– Set defender to ${publisherAddr}`);
+
+  console.log(
+    JSON.stringify(
+      {
+        canonicalStateChain: await canonicalStateChain.getAddress(),
+        daOracle: await mockDAOracle.getAddress(),
+        challenge: await challenge.getAddress(),
+        chainOracle: await chainOracle.getAddress(),
+      },
+      null,
+      2
+    )
+  );
 };
 
 main()
