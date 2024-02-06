@@ -2,6 +2,7 @@ import { ethers } from "hardhat";
 import { expect } from "chai";
 import { Contract } from "ethers";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
+import { setupCanonicalStateChain } from "./lib/chain";
 
 describe("CanonicalStateChain", function () {
   let CanonicalStateChain: any;
@@ -9,59 +10,17 @@ describe("CanonicalStateChain", function () {
   let owner: HardhatEthersSigner,
     publisher: HardhatEthersSigner,
     otherAccount: HardhatEthersSigner,
-    challengeContract: HardhatEthersSigner;
-
-  let genesisHeader = {
-    epoch: 0,
-    l2Height: 0,
-    prevHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    celestiaHeight: 0,
-    celestiaShareStart: 0,
-    celestiaShareLen: 0,
-  };
-
-  let genesisHash = ethers.keccak256(
-    ethers.AbiCoder.defaultAbiCoder().encode(
-      [
-        "uint256", // epoch
-        "uint256", // l2Height
-        "bytes32", // prevHash
-        "bytes32", // txRoot
-        "bytes32", // blockRoot
-        "bytes32", // stateRoot
-        "uint256", // celestiaHeight
-        "uint256", // celestiaShareStart
-        "uint256", // celestiaShareLen
-      ],
-      [
-        genesisHeader.epoch,
-        genesisHeader.l2Height,
-        genesisHeader.prevHash,
-        genesisHeader.txRoot,
-        genesisHeader.blockRoot,
-        genesisHeader.stateRoot,
-        genesisHeader.celestiaHeight,
-        genesisHeader.celestiaShareStart,
-        genesisHeader.celestiaShareLen,
-      ]
-    )
-  );
+    challengeContract: HardhatEthersSigner,
+    _chain: any;
 
   beforeEach(async function () {
     [owner, publisher, otherAccount, challengeContract] =
       await ethers.getSigners();
 
-    CanonicalStateChain = await ethers.getContractFactory(
-      "CanonicalStateChain"
-    );
+    _chain = await setupCanonicalStateChain(owner, publisher.address)
+    canonicalStateChain = _chain.canonicalStateChain as any;
 
-    canonicalStateChain = await CanonicalStateChain.deploy(
-      publisher.address,
-      genesisHeader
-    );
+    canonicalStateChain = _chain.canonicalStateChain as any;
   });
 
   describe("Deployment", function () {
@@ -70,7 +29,7 @@ describe("CanonicalStateChain", function () {
     });
 
     it("Should have the correct genesis hash", async function () {
-      expect(await canonicalStateChain.chain(0)).to.equal(genesisHash);
+      expect(await canonicalStateChain.chain(0)).to.equal(_chain.genesisHash);
     });
   });
 
@@ -79,7 +38,7 @@ describe("CanonicalStateChain", function () {
       const header = {
         epoch: 1,
         l2Height: 1,
-        prevHash: genesisHash,
+        prevHash: _chain.genesisHash,
         txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
@@ -100,7 +59,7 @@ describe("CanonicalStateChain", function () {
       const header = {
         epoch: 1,
         l2Height: 1,
-        prevHash: genesisHash,
+        prevHash: _chain.genesisHash,
         txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
@@ -171,7 +130,7 @@ describe("CanonicalStateChain", function () {
         .send({
           epoch: 1,
           l2Height: 1,
-          prevHash: genesisHash,
+          prevHash: _chain.genesisHash,
           txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
           blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
           stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
