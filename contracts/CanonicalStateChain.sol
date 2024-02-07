@@ -1,15 +1,20 @@
 // SPDX-License-Identifier: UNLICENSED
 // LightLink Hummingbird v0.0.1
 
+// TODO: use single version
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+// UUPS
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
+// TODO: remove this in production
 import "hardhat/console.sol";
 
 // CanonicalStateChain is placeholder contract that stores the canonical state of a
 // rollup chain.
 
-contract CanonicalStateChain is Ownable {
+contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
     struct Header {
         uint64 epoch; // Epoch refers to a block number on the Ethereum blockchain.
         uint64 l2Height; // L2Height is the index of the Last L2 Block in this bundle.
@@ -50,7 +55,10 @@ contract CanonicalStateChain is Ownable {
     mapping(bytes32 => HeaderMetadata) public headerMetadata; // block hash => metadata
     mapping(uint256 => bytes32) public chain; // block number => block hash
 
-    constructor(address _publisher, Header memory _header) Ownable(msg.sender) {
+    function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    function initialize(address _publisher, Header memory _header) public initializer {
+        __Ownable_init(msg.sender);
         publisher = _publisher;
 
         // Add the genesis block.
@@ -130,4 +138,6 @@ contract CanonicalStateChain is Ownable {
         challenge = _challenge;
         emit ChallengeChanged(_challenge);
     }
+
+    uint256[50] private __gap;
 }

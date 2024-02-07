@@ -21,14 +21,24 @@ export const setupCanonicalStateChain = async (
 
   let genesisHash = hashHeader(genesisHeader);
 
-  const CanonicalStateChain = await ethers.getContractFactory(
+  const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
+  const canonicalStateChainFactory = await ethers.getContractFactory(
     "CanonicalStateChain"
   );
+  const canonicalStateChainImplementation =
+    await canonicalStateChainFactory.deploy();
 
-  const canonicalStateChain = await CanonicalStateChain.deploy(
-    publisher,
-    genesisHeader
+  const proxy = await proxyFactory.deploy(
+    await canonicalStateChainImplementation.getAddress(),
+    canonicalStateChainImplementation.interface.encodeFunctionData(
+      "initialize",
+      [publisher, genesisHeader]
+    )
   );
+
+  const canonicalStateChain = canonicalStateChainFactory.attach(
+    await proxy.getAddress()
+  ) as any;
 
   return { canonicalStateChain, genesisHash, genesisHeader };
 };

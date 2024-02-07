@@ -7,7 +7,7 @@ import { Header, hashHeader } from "./lib/header";
 import { ChainOracle } from "../typechain-types";
 
 describe("ChainOracle", function () {
-  let chainOracle: ChainOracle;
+  let chainOracle: Contract;
   let owner: HardhatEthersSigner;
   let publisher: HardhatEthersSigner;
 
@@ -22,18 +22,20 @@ describe("ChainOracle", function () {
     const RLPReaderFactory = await ethers.getContractFactory("RLPReader");
     const rlpReader = await RLPReaderFactory.deploy();
 
-    const ChainOracleFactory = await ethers.getContractFactory("ChainOracle");
-    const chainOracleDeployed = await ChainOracleFactory.deploy(
-      await canonicalStateChain.getAddress(),
-      await mockDaOracle.getAddress(),
-      await rlpReader.getAddress()
+    const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
+    const chainOracleFactory = await ethers.getContractFactory("ChainOracle");
+    const chainOracleImplementation = await chainOracleFactory.deploy();
+
+    const proxy = await proxyFactory.deploy(
+      await chainOracleImplementation.getAddress(),
+      chainOracleImplementation.interface.encodeFunctionData("initialize", [
+        await canonicalStateChain.getAddress(),
+        await mockDaOracle.getAddress(),
+        await rlpReader.getAddress(),
+      ])
     );
 
-    chainOracle = new ethers.Contract(
-      await chainOracleDeployed.getAddress(),
-      chainOracleDeployed.interface,
-      owner
-    ) as any;
+    chainOracle = chainOracleFactory.attach(await proxy.getAddress()) as any;
   });
 
   it("should be able to extract data from the share", async function () {

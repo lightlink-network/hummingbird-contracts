@@ -1,14 +1,19 @@
+// TODO: use single version
 pragma solidity ^0.8.0;
 
+// UUPS
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/IRLPReader.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 import "./interfaces/ICanonicalStateChain.sol";
 
+// TODO: remove this in production
 // hardhat console
 import "hardhat/console.sol";
 
-contract ChainOracle {
+contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
 
     ICanonicalStateChain public canonicalStateChain;
     IDAOracle public daOracle;
@@ -41,7 +46,10 @@ contract ChainOracle {
     mapping(bytes32 => bytes[]) public shares;
     mapping(bytes32 => L2Header) public headers;
 
-    constructor(address _canonicalStateChain, address _daOracle, address _rlpReader) {
+    function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    function initialize(address _canonicalStateChain, address _daOracle, address _rlpReader) public initializer {
+        __Ownable_init(msg.sender);
         canonicalStateChain = ICanonicalStateChain(_canonicalStateChain);
         daOracle = IDAOracle(_daOracle);
         rlpReader = IRLPReader(_rlpReader);
@@ -165,4 +173,5 @@ contract ChainOracle {
         ));
     }
 
+    uint256[50] private __gap;
 }
