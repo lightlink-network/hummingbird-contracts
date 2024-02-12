@@ -8,6 +8,7 @@ import "./interfaces/IRLPReader.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 import "./interfaces/ICanonicalStateChain.sol";
+import "./lib/Lib_RLPEncode.sol";
 
 // TODO: remove this in production
 // hardhat console
@@ -32,13 +33,13 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         bytes32 stateRoot;
         bytes32 transactionsRoot;
         bytes32 receiptsRoot;
-        bytes32 logsBloom;
+        bytes logsBloom;
         uint256 difficulty;
         uint256 number;
         uint256 gasLimit;
         uint256 gasUsed;
         uint256 timestamp;
-        bytes32 extraData;
+        bytes extraData;
         bytes32 mixHash;
         uint256 nonce;
     }
@@ -139,13 +140,13 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             stateRoot: stateRoot,
             transactionsRoot: transactionsRoot,
             receiptsRoot: receiptsRoot,
-            logsBloom: bytes32(0),
+            logsBloom:  bytes(abi.encodePacked(bytes32(0), bytes32(0), bytes32(0), bytes32(0), bytes32(0), bytes32(0), bytes32(0), bytes32(0))),
             difficulty: difficulty,
             number: number,
             gasLimit: gasLimit,
             gasUsed: gasUsed,
             timestamp: timestamp,
-            extraData: bytes32(0),
+            extraData: bytes(""),
             mixHash: bytes32(0),
             nonce: nonce
         });
@@ -154,23 +155,23 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
 
     // HashHeader hashes an Ethereum header in the same way that it is hashed on Ethereum.
     function hashHeader(L2Header memory _header) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(
-            _header.parentHash,
-            _header.uncleHash,
-            _header.beneficiary,
-            _header.stateRoot,
-            _header.transactionsRoot,
-            _header.receiptsRoot,
-            _header.logsBloom,
-            _header.difficulty,
-            _header.number,
-            _header.gasLimit,
-            _header.gasUsed,
-            _header.timestamp,
-            _header.extraData,
-            _header.mixHash,
-            _header.nonce
-        ));
+        bytes[] memory list = new bytes[](15);
+        list[0] = RLPEncode.encodeBytes(abi.encodePacked(_header.parentHash));
+        list[1] = RLPEncode.encodeBytes(abi.encodePacked(_header.uncleHash));
+        list[2] = RLPEncode.encodeAddress(_header.beneficiary);
+        list[3] = RLPEncode.encodeBytes(abi.encodePacked(_header.stateRoot));
+        list[4] = RLPEncode.encodeBytes(abi.encodePacked(_header.transactionsRoot));
+        list[5] = RLPEncode.encodeBytes(abi.encodePacked(_header.receiptsRoot));
+        list[6] = RLPEncode.encodeBytes(_header.logsBloom);
+        list[7] = RLPEncode.encodeUint(_header.difficulty);
+        list[8] = RLPEncode.encodeUint(_header.number);
+        list[9] = RLPEncode.encodeUint(_header.gasLimit);
+        list[10] = RLPEncode.encodeUint(_header.gasUsed);
+        list[11] = RLPEncode.encodeUint(_header.timestamp);
+        list[12] = RLPEncode.encodeBytes(_header.extraData);
+        list[13] = RLPEncode.encodeBytes(abi.encodePacked(_header.mixHash));
+        list[14] = RLPEncode.encodeUint(_header.nonce);
+        return keccak256(RLPEncode.encodeList(list));
     }
 
     uint256[50] private __gap;
