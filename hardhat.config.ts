@@ -73,6 +73,7 @@ const config: HardhatUserConfig = {
     onlyFiles: [
       "contracts/CanonicalStateChain.sol",
       "contracts/challenge/Challenge.sol",
+      "contracts/ChainOracle.sol",
     ],
     skipFiles: ["contracts/interfaces", "@openzeppelin", "@solarity"],
   },
