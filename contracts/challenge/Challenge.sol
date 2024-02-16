@@ -5,14 +5,9 @@ pragma solidity ^0.8.0;
 
 import "./ChallengeHeader.sol";
 import "./ChallengeDataAvailability.sol";
-import "./ChallengeExecution.sol";
 
 // no constructor
-contract Challenge is
-    ChallengeHeader,
-    ChallengeDataAvailability,
-    ChallengeExecution
-{
+contract Challenge is ChallengeHeader, ChallengeDataAvailability {
     function initialize(
         address _treasury,
         address _chain,
