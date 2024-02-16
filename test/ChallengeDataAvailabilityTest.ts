@@ -18,7 +18,7 @@ describe("ChallengeDataAvailability", function () {
   let publisher: HardhatEthersSigner;
   let otherAccount: HardhatEthersSigner;
   let challengeOwner: HardhatEthersSigner;
-  let challengeFee = ethers.parseEther("0"); // challenge fee is 0 for challengeDataAvailability
+  let challengeFee = ethers.parseEther("1");
 
   let genesisHeader: Header;
   let genesisHash: string;
@@ -211,6 +211,10 @@ describe("ChallengeDataAvailability", function () {
       const proof = { ...EXAMPLE_PROOF };
       proof.dataRootTuple.height = header.celestiaHeight;
 
+      const prebalance = await challengeOwner.provider.getBalance(
+        publisher.address
+      );
+
       await challenge
         .connect(publisher)
         .getFunction("defendDataRootInclusion")
@@ -220,6 +224,12 @@ describe("ChallengeDataAvailability", function () {
       expect(c.status, "expect: daChallenges(hash).status = 3").to.equal(
         STATUS_DEFENDER_WON
       );
+
+      const postbalance = await challengeOwner.provider.getBalance(
+        publisher.address
+      );
+
+      expect(postbalance).to.be.greaterThan(prebalance);
     });
 
     it("should not allow defending a challenge twice", async function () {
@@ -319,6 +329,10 @@ describe("ChallengeDataAvailability", function () {
         .getFunction("challengeDataRootInclusion")
         .send(1, { value: challengeFee });
 
+      const prebalance = await challengeOwner.provider.getBalance(
+        challengeOwner.address
+      );
+
       // increase time by 49 hours
       await ethers.provider.send("evm_increaseTime", [49 * 60 * 60]);
       await ethers.provider.send("evm_mine");
@@ -332,6 +346,11 @@ describe("ChallengeDataAvailability", function () {
       expect(c.status, "expect: daChallenges(hash).status = 2").to.equal(
         STATUS_CHALLENGER_WON
       );
+
+      const postbalance = await challengeOwner.provider.getBalance(
+        challengeOwner.address
+      );
+      expect(postbalance).to.be.greaterThan(prebalance);
     });
   });
 });
