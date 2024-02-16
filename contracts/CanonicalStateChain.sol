@@ -8,9 +8,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-// TODO: remove this in production
-import "hardhat/console.sol";
-
 // CanonicalStateChain is placeholder contract that stores the canonical state of a
 // rollup chain.
 
@@ -22,9 +19,8 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         bytes32 txRoot; // The root of a merkle tree containing all the transactions in the Bundle.
         bytes32 blockRoot; // The root of a merkle tree containing all the blocks in the Bundle.
         bytes32 stateRoot; // The Stateroot after applying all the blocks in the Bundle.
-
-        // Pointer to the blocks contents on celestia. 
-        // See `Span` from https://docs.celestia.org/developers/blobstream-offchain#defining-a-chain 
+        // Pointer to the blocks contents on celestia.
+        // See `Span` from https://docs.celestia.org/developers/blobstream-offchain#defining-a-chain
         uint64 celestiaHeight;
         uint64 celestiaShareStart;
         uint64 celestiaShareLen;
@@ -57,7 +53,10 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
-    function initialize(address _publisher, Header memory _header) public initializer {
+    function initialize(
+        address _publisher,
+        Header memory _header
+    ) public initializer {
         __Ownable_init(msg.sender);
         publisher = _publisher;
 
