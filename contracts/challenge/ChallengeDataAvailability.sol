@@ -6,15 +6,10 @@ pragma solidity ^0.8.0;
 import "./ChallengeBase.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 
-
-// TODO: settle on expiry if no one responds
-
-// no constructor
 abstract contract ChallengeDataAvailability is ChallengeBase {
     enum ChallengeDAStatus {
         None,
         ChallengerInitiated,
-        DefenderResponded,
         ChallengerWon,
         DefenderWon
     }
@@ -94,7 +89,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             chain.chain(challenge.blockIndex)
         );
 
-        require (
+        require(
             header.celestiaHeight == _proof.dataRootTuple.height,
             "invalid celestia height"
         );
