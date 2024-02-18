@@ -73,6 +73,13 @@ interface IChainOracle {
         bytes[] memory _shareData
     ) external pure returns (bytes32);
 
-    // It's up to you whether you want to include `extractData`, `decodeRLPHeader`, etc.
-    // in the interface or keep them as internal functions within the contract.
+    function shares(bytes32 _key) external view returns (bytes[] memory);
+
+    function headers(
+        bytes32 _headerHash
+    ) external view returns (L2Header memory);
+
+    function transactions(
+        bytes32 _txHash
+    ) external view returns (DepositTx memory);
 }
