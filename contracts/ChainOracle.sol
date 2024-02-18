@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: UNLICENSED
+// LightLink Hummingbird v0.0.3
 // TODO: use single version
 pragma solidity ^0.8.0;
 
@@ -15,7 +17,6 @@ import "./lib/Lib_RLPEncode.sol";
 import "hardhat/console.sol";
 
 contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
-
     ICanonicalStateChain public canonicalStateChain;
     IDAOracle public daOracle;
     IRLPReader public rlpReader;
@@ -25,7 +26,7 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         uint256 end;
     }
 
-   // L2 Header
+    // L2 Header
     struct L2Header {
         bytes32 parentHash;
         bytes32 uncleHash;
@@ -49,13 +50,17 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
-    function initialize(address _canonicalStateChain, address _daOracle, address _rlpReader) public initializer {
+    function initialize(
+        address _canonicalStateChain,
+        address _daOracle,
+        address _rlpReader
+    ) public initializer {
         __Ownable_init(msg.sender);
         canonicalStateChain = ICanonicalStateChain(_canonicalStateChain);
         daOracle = IDAOracle(_daOracle);
         rlpReader = IRLPReader(_rlpReader);
     }
-    
+
     // provideShares loads some shares that were uploaded to the Data Availability layer. It verifies the shares
     // are included in a given rblock (bundle) and stores them in the contract.
     // @param _rblock The rblock (bundle) that the shares are related to.
@@ -69,8 +74,11 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             _rblock
         );
         require(rHead.epoch > 0, "rblock not found");
-        require(rHead.celestiaHeight == _proof.attestationProof.tuple.height, "rblock height mismatch");
-        
+        require(
+            rHead.celestiaHeight == _proof.attestationProof.tuple.height,
+            "rblock height mismatch"
+        );
+
         // 2. verify shares are valid
         DAVerifier.verifySharesToDataRootTupleRoot(
             daOracle,
@@ -86,17 +94,22 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return shareKey;
     }
 
-    function provideHeader(bytes32 _shareKey, ShareRange[] calldata _range) public  returns (bytes32) {
+    function provideHeader(
+        bytes32 _shareKey,
+        ShareRange[] calldata _range
+    ) public returns (bytes32) {
         bytes[] storage shareData = shares[_shareKey];
         require(shareData.length > 0, "share not found");
-        
+
         // 1. Decode the RLP header.
-        L2Header memory header = decodeRLPHeader(extractData(shareData, _range));
+        L2Header memory header = decodeRLPHeader(
+            extractData(shareData, _range)
+        );
         require(header.number > 0, "header number is 0");
 
         // 2. Hash the header.
         bytes32 headerHash = hashHeader(header);
- 
+
         // 3. Store the header.
         require(headers[headerHash].number == 0, "header already exists");
         headers[headerHash] = header;
@@ -104,13 +117,19 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return headerHash;
     }
 
-    function ShareKey(bytes32 _rblock, bytes[] memory _shareData) public pure returns (bytes32) {
-      return keccak256(abi.encode(_rblock, _shareData));
+    function ShareKey(
+        bytes32 _rblock,
+        bytes[] memory _shareData
+    ) public pure returns (bytes32) {
+        return keccak256(abi.encode(_rblock, _shareData));
     }
 
     // extractData extracts the data from the shares using the range.
     // TODO: Move to a library
-      function extractData(bytes[] memory raw, ShareRange[] memory ranges) public pure returns (bytes memory) {
+    function extractData(
+        bytes[] memory raw,
+        ShareRange[] memory ranges
+    ) public pure returns (bytes memory) {
         bytes memory data;
 
         for (uint i = 0; i < ranges.length; i++) {
@@ -132,7 +151,20 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     function decodeRLPHeader(
         bytes memory _data
     ) public view returns (L2Header memory) {
-        (bytes32 parentHash, bytes32 sha3Uncles, address coinbase, bytes32 stateRoot, bytes32 transactionsRoot, bytes32 receiptsRoot, uint difficulty, uint number, uint gasLimit, uint gasUsed, uint timestamp, uint nonce) = rlpReader.toBlockHeader(_data);
+        (
+            bytes32 parentHash,
+            bytes32 sha3Uncles,
+            address coinbase,
+            bytes32 stateRoot,
+            bytes32 transactionsRoot,
+            bytes32 receiptsRoot,
+            uint difficulty,
+            uint number,
+            uint gasLimit,
+            uint gasUsed,
+            uint timestamp,
+            uint nonce
+        ) = rlpReader.toBlockHeader(_data);
         L2Header memory header = L2Header({
             parentHash: parentHash,
             uncleHash: sha3Uncles,
@@ -140,7 +172,18 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             stateRoot: stateRoot,
             transactionsRoot: transactionsRoot,
             receiptsRoot: receiptsRoot,
-            logsBloom:  bytes(abi.encodePacked(bytes32(0), bytes32(0), bytes32(0), bytes32(0), bytes32(0), bytes32(0), bytes32(0), bytes32(0))),
+            logsBloom: bytes(
+                abi.encodePacked(
+                    bytes32(0),
+                    bytes32(0),
+                    bytes32(0),
+                    bytes32(0),
+                    bytes32(0),
+                    bytes32(0),
+                    bytes32(0),
+                    bytes32(0)
+                )
+            ),
             difficulty: difficulty,
             number: number,
             gasLimit: gasLimit,
@@ -160,7 +203,9 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         list[1] = RLPEncode.encodeBytes(abi.encodePacked(_header.uncleHash));
         list[2] = RLPEncode.encodeAddress(_header.beneficiary);
         list[3] = RLPEncode.encodeBytes(abi.encodePacked(_header.stateRoot));
-        list[4] = RLPEncode.encodeBytes(abi.encodePacked(_header.transactionsRoot));
+        list[4] = RLPEncode.encodeBytes(
+            abi.encodePacked(_header.transactionsRoot)
+        );
         list[5] = RLPEncode.encodeBytes(abi.encodePacked(_header.receiptsRoot));
         list[6] = RLPEncode.encodeBytes(_header.logsBloom);
         list[7] = RLPEncode.encodeUint(_header.difficulty);
