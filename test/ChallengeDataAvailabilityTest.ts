@@ -52,7 +52,8 @@ describe("ChallengeDataAvailability", function () {
         await canonicalStateChain.getAddress(),
         await mockDaOracle.getAddress(),
         ethers.ZeroAddress,
-      ])
+        ethers.ZeroAddress, // chainOracle not needed for this test
+      ]),
     );
 
     challenge = challengeFactory.attach(await proxy.getAddress());
@@ -75,13 +76,13 @@ describe("ChallengeDataAvailability", function () {
 
     it("should set the correct canonical state chain", async function () {
       expect(await challenge.chain()).to.equal(
-        await canonicalStateChain.getAddress()
+        await canonicalStateChain.getAddress(),
       );
     });
 
     it("should set the correct DAOracle", async function () {
       expect(await challenge.daOracle()).to.equal(
-        await mockDaOracle.getAddress()
+        await mockDaOracle.getAddress(),
       );
     });
   });
@@ -92,7 +93,7 @@ describe("ChallengeDataAvailability", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("challengeDataRootInclusion")
-          .send(0)
+          .send(0),
       ).to.be.revertedWith("cannot challenge genesis block");
     });
 
@@ -101,7 +102,7 @@ describe("ChallengeDataAvailability", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("challengeDataRootInclusion")
-          .send(100)
+          .send(100),
       ).to.be.revertedWith("block not in the chain yet");
     });
 
@@ -119,7 +120,7 @@ describe("ChallengeDataAvailability", function () {
     it("should allow challenge (if challenge fee is paid)", async function () {
       const [hash, header] = await pushRandomHeader(
         publisher,
-        canonicalStateChain
+        canonicalStateChain,
       );
 
       await challenge
@@ -130,14 +131,14 @@ describe("ChallengeDataAvailability", function () {
       const c = await challenge.daChallenges(hash);
       expect(
         c.challenger,
-        "expect: daChallenges(hash).challenger = challengeOwner.address"
+        "expect: daChallenges(hash).challenger = challengeOwner.address",
       ).to.equal(challengeOwner.address);
       expect(
         c.blockIndex,
-        "expect: daChallenges(hash).blockIndex = 1"
+        "expect: daChallenges(hash).blockIndex = 1",
       ).to.equal(1);
       expect(c.status, "expect: daChallenges(hash).status = 1").to.equal(
-        STATUS_INITIATED
+        STATUS_INITIATED,
       );
     });
 
@@ -153,7 +154,7 @@ describe("ChallengeDataAvailability", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("challengeDataRootInclusion")
-          .send(1, { value: challengeFee })
+          .send(1, { value: challengeFee }),
       ).to.be.revertedWith("challenge already exists");
     });
   });
@@ -168,14 +169,14 @@ describe("ChallengeDataAvailability", function () {
         challenge
           .connect(publisher)
           .getFunction("defendDataRootInclusion")
-          .send(hash, proof)
+          .send(hash, proof),
       ).to.be.revertedWith("challenge is not in the correct state");
     });
 
     it("should not allow defending a challenge with incorrect proof", async function () {
       const [hash, header] = await pushRandomHeader(
         publisher,
-        canonicalStateChain
+        canonicalStateChain,
       );
 
       await challenge
@@ -193,14 +194,14 @@ describe("ChallengeDataAvailability", function () {
         challenge
           .connect(publisher)
           .getFunction("defendDataRootInclusion")
-          .send(hash, proof)
+          .send(hash, proof),
       ).to.be.revertedWith("invalid proof");
     });
 
     it("should be able to defend a challenge", async function () {
       const [hash, header] = await pushRandomHeader(
         publisher,
-        canonicalStateChain
+        canonicalStateChain,
       );
 
       await challenge
@@ -212,7 +213,7 @@ describe("ChallengeDataAvailability", function () {
       proof.dataRootTuple.height = header.celestiaHeight;
 
       const prebalance = await challengeOwner.provider.getBalance(
-        publisher.address
+        publisher.address,
       );
 
       await challenge
@@ -222,11 +223,11 @@ describe("ChallengeDataAvailability", function () {
 
       const c = await challenge.daChallenges(hash);
       expect(c.status, "expect: daChallenges(hash).status = 3").to.equal(
-        STATUS_DEFENDER_WON
+        STATUS_DEFENDER_WON,
       );
 
       const postbalance = await challengeOwner.provider.getBalance(
-        publisher.address
+        publisher.address,
       );
 
       expect(postbalance).to.be.greaterThan(prebalance);
@@ -235,7 +236,7 @@ describe("ChallengeDataAvailability", function () {
     it("should not allow defending a challenge twice", async function () {
       const [hash, header] = await pushRandomHeader(
         publisher,
-        canonicalStateChain
+        canonicalStateChain,
       );
 
       await challenge
@@ -255,7 +256,7 @@ describe("ChallengeDataAvailability", function () {
         challenge
           .connect(publisher)
           .getFunction("defendDataRootInclusion")
-          .send(hash, proof)
+          .send(hash, proof),
       ).to.be.revertedWith("challenge is not in the correct state");
     });
   });
@@ -268,14 +269,14 @@ describe("ChallengeDataAvailability", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("settleDataRootInclusion")
-          .send(hash)
+          .send(hash),
       ).to.be.revertedWith("challenge is not in the correct state");
     });
 
     it("should not allow settling a challenge that is already defended", async function () {
       const [hash, header] = await pushRandomHeader(
         publisher,
-        canonicalStateChain
+        canonicalStateChain,
       );
 
       const proof = { ...EXAMPLE_PROOF };
@@ -295,14 +296,14 @@ describe("ChallengeDataAvailability", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("settleDataRootInclusion")
-          .send(hash)
+          .send(hash),
       ).to.be.revertedWith("challenge is not in the correct state");
     });
 
     it("should not settle challenge if challenge period is not over", async function () {
       const [hash, header] = await pushRandomHeader(
         publisher,
-        canonicalStateChain
+        canonicalStateChain,
       );
 
       await challenge
@@ -314,14 +315,14 @@ describe("ChallengeDataAvailability", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("settleDataRootInclusion")
-          .send(hash)
+          .send(hash),
       ).to.be.revertedWith("challenge has not expired");
     });
 
     it("should settle challenge if challenge period is over", async function () {
       const [hash, header] = await pushRandomHeader(
         publisher,
-        canonicalStateChain
+        canonicalStateChain,
       );
 
       await challenge
@@ -330,7 +331,7 @@ describe("ChallengeDataAvailability", function () {
         .send(1, { value: challengeFee });
 
       const prebalance = await challengeOwner.provider.getBalance(
-        challengeOwner.address
+        challengeOwner.address,
       );
 
       // increase time by 49 hours
@@ -344,11 +345,11 @@ describe("ChallengeDataAvailability", function () {
 
       const c = await challenge.daChallenges(hash);
       expect(c.status, "expect: daChallenges(hash).status = 2").to.equal(
-        STATUS_CHALLENGER_WON
+        STATUS_CHALLENGER_WON,
       );
 
       const postbalance = await challengeOwner.provider.getBalance(
-        challengeOwner.address
+        challengeOwner.address,
       );
       expect(postbalance).to.be.greaterThan(prebalance);
     });

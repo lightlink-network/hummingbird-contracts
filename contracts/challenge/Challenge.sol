@@ -12,9 +12,16 @@ contract Challenge is ChallengeHeader, ChallengeDataAvailability {
         address _treasury,
         address _chain,
         address _daOracle,
-        address _mipsChallenge
+        address _mipsChallenge,
+        address _chainOracle
     ) public initializer {
-        __ChallengeBase_init(_treasury, _chain, _daOracle, _mipsChallenge);
+        __ChallengeBase_init(
+            _treasury,
+            _chain,
+            _daOracle,
+            _mipsChallenge,
+            _chainOracle
+        );
 
         __ChallengeHeader_init();
     }
