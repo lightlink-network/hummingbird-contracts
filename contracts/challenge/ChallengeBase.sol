@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-// LightLink Hummingbird v0.0.1
+// LightLink Hummingbird v0.0.3
 
 pragma solidity ^0.8.0;
 
@@ -41,10 +41,10 @@ contract ChallengeBase is
         __Ownable_init(msg.sender);
         __ReentrancyGuard_init();
 
-        challengeWindow = 1 days;
-        challengePeriod = 1 days;
-        challengeFee = 0.1 ether;
-        challengeReward = 0.2 ether;
+        challengeWindow = 3 days;
+        challengePeriod = 2 days;
+        challengeFee = 1.5 ether;
+        challengeReward = 0.2 ether; // unused.
 
         treasury = ITreasury(_treasury);
         chain = ICanonicalStateChain(_chain);
