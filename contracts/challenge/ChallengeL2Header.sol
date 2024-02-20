@@ -116,6 +116,18 @@ contract ChallengeL2Header is ChallengeBase {
             "challenge is not in the correct state"
         );
 
+        // 0. Check that the header and previous headers are part of the correct rblocks
+        // - This prevents rolled back l2 headers from being used to defend
+        require(
+            chainOracle.headerToRblock(_headerHash) == challenge.header.rblock,
+            "header is not part of the correct rblock"
+        );
+        require(
+            chainOracle.headerToRblock(_headerPrevHash) ==
+                challenge.prevHeader.rblock,
+            "previous header is not part of the correct rblock"
+        );
+
         // 1. Load the header and previous header from the ChainOracle
         IChainOracle.L2Header memory header = chainOracle.headers(_headerHash);
         IChainOracle.L2Header memory prevHeader = chainOracle.headers(
