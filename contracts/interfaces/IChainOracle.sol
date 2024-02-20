@@ -82,4 +82,8 @@ interface IChainOracle {
     function transactions(
         bytes32 _txHash
     ) external view returns (DepositTx memory);
+
+    function headerToRblock(
+        bytes32 _headerHash
+    ) external view returns (bytes32);
 }

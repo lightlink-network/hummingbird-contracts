@@ -76,6 +76,10 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     mapping(bytes32 => L2Header) public headers;
     mapping(bytes32 => DepositTx) public transactions;
 
+    // a special mapping of sharekey to rblock
+    mapping(bytes32 => bytes32) private _sharekeyToRblock;
+    mapping(bytes32 => bytes32) public headerToRblock;
+
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function initialize(
@@ -119,6 +123,10 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
 
         // 4. store the shares
         shares[shareKey] = _proof.data;
+
+        // 5. store the sharekey to rblock
+        _sharekeyToRblock[shareKey] = _rblock;
+
         return shareKey;
     }
 
@@ -141,6 +149,9 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         // 3. Store the header.
         require(headers[headerHash].number == 0, "header already exists");
         headers[headerHash] = header;
+
+        // 4. Store the header to rblock
+        headerToRblock[headerHash] = _sharekeyToRblock[_shareKey];
 
         return headerHash;
     }
