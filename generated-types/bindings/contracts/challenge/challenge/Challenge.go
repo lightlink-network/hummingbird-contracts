@@ -51,7 +51,7 @@ type DataRootTuple struct {
 
 // ChallengeMetaData contains all meta data concerning the Challenge contract.
 var ChallengeMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"ERC1967InvalidImplementation\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC1967NonPayable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UUPSUnauthorizedCallContext\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"}],\"name\":\"UUPSUnsupportedProxiableUUID\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_expiry\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"_status\",\"type\":\"uint8\"}],\"name\":\"ChallengeDAUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"enumChallengeHeader.InvalidHeaderReason\",\"name\":\"_reason\",\"type\":\"uint8\"}],\"name\":\"InvalidHeader\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"UPGRADE_INTERFACE_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"contractICanonicalStateChain\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"challengeDataRootInclusion\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengePeriod\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeWindow\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"daChallenges\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"challenger\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"daOracle\",\"outputs\":[{\"internalType\":\"contractIDAOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"rootNonce\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"dataRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structDataRootTuple\",\"name\":\"dataRootTuple\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32[]\",\"name\":\"sideNodes\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint256\",\"name\":\"key\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"numLeaves\",\"type\":\"uint256\"}],\"internalType\":\"structBinaryMerkleProof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"structChallengeDataAvailability.ChallengeDAProof\",\"name\":\"_proof\",\"type\":\"tuple\"}],\"name\":\"defendDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defender\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"execChallenges\",\"outputs\":[{\"internalType\":\"enumChallengeExecution.ChallengeStatus\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"headerIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint64\",\"name\":\"mipSteps\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"assertionRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"finalSystemState\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"mipsChallengeId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_treasury\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chain\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_daOracle\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_mipsChallenge\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_headerIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint64\",\"name\":\"_mipSteps\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"_assertionRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_finalSystemState\",\"type\":\"bytes32\"}],\"name\":\"initiateChallenge\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"invalidateHeader\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"mipsChallenge\",\"outputs\":[{\"internalType\":\"contractIMipsChallenge\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeFee\",\"type\":\"uint256\"}],\"name\":\"setChallengeFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengePeriod\",\"type\":\"uint256\"}],\"name\":\"setChallengePeriod\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeReward\",\"type\":\"uint256\"}],\"name\":\"setChallengeReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeWindow\",\"type\":\"uint256\"}],\"name\":\"setChallengeWindow\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_defender\",\"type\":\"address\"}],\"name\":\"setDefender\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockhash\",\"type\":\"bytes32\"}],\"name\":\"settleDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"treasury\",\"outputs\":[{\"internalType\":\"contractITreasury\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"ERC1967InvalidImplementation\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC1967NonPayable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UUPSUnauthorizedCallContext\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"}],\"name\":\"UUPSUnsupportedProxiableUUID\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_expiry\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"_status\",\"type\":\"uint8\"}],\"name\":\"ChallengeDAUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"enumChallengeHeader.InvalidHeaderReason\",\"name\":\"_reason\",\"type\":\"uint8\"}],\"name\":\"InvalidHeader\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"UPGRADE_INTERFACE_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"contractICanonicalStateChain\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chainOracle\",\"outputs\":[{\"internalType\":\"contractIChainOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"challengeDataRootInclusion\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengePeriod\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeWindow\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"daChallenges\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"challenger\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"daOracle\",\"outputs\":[{\"internalType\":\"contractIDAOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"rootNonce\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"dataRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structDataRootTuple\",\"name\":\"dataRootTuple\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32[]\",\"name\":\"sideNodes\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint256\",\"name\":\"key\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"numLeaves\",\"type\":\"uint256\"}],\"internalType\":\"structBinaryMerkleProof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"structChallengeDataAvailability.ChallengeDAProof\",\"name\":\"_proof\",\"type\":\"tuple\"}],\"name\":\"defendDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defender\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_treasury\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chain\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_daOracle\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_mipsChallenge\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chainOracle\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"invalidateHeader\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"mipsChallenge\",\"outputs\":[{\"internalType\":\"contractIMipsChallenge\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeFee\",\"type\":\"uint256\"}],\"name\":\"setChallengeFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengePeriod\",\"type\":\"uint256\"}],\"name\":\"setChallengePeriod\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeReward\",\"type\":\"uint256\"}],\"name\":\"setChallengeReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeWindow\",\"type\":\"uint256\"}],\"name\":\"setChallengeWindow\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_defender\",\"type\":\"address\"}],\"name\":\"setDefender\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockhash\",\"type\":\"bytes32\"}],\"name\":\"settleDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"treasury\",\"outputs\":[{\"internalType\":\"contractITreasury\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
 }
 
 // ChallengeABI is the input ABI used to generate the binding from.
@@ -260,6 +260,37 @@ func (_Challenge *ChallengeSession) Chain() (common.Address, error) {
 // Solidity: function chain() view returns(address)
 func (_Challenge *ChallengeCallerSession) Chain() (common.Address, error) {
 	return _Challenge.Contract.Chain(&_Challenge.CallOpts)
+}
+
+// ChainOracle is a free data retrieval call binding the contract method 0xbfcf4495.
+//
+// Solidity: function chainOracle() view returns(address)
+func (_Challenge *ChallengeCaller) ChainOracle(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _Challenge.contract.Call(opts, &out, "chainOracle")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// ChainOracle is a free data retrieval call binding the contract method 0xbfcf4495.
+//
+// Solidity: function chainOracle() view returns(address)
+func (_Challenge *ChallengeSession) ChainOracle() (common.Address, error) {
+	return _Challenge.Contract.ChainOracle(&_Challenge.CallOpts)
+}
+
+// ChainOracle is a free data retrieval call binding the contract method 0xbfcf4495.
+//
+// Solidity: function chainOracle() view returns(address)
+func (_Challenge *ChallengeCallerSession) ChainOracle() (common.Address, error) {
+	return _Challenge.Contract.ChainOracle(&_Challenge.CallOpts)
 }
 
 // ChallengeFee is a free data retrieval call binding the contract method 0x1bd8f9ca.
@@ -503,76 +534,6 @@ func (_Challenge *ChallengeCallerSession) Defender() (common.Address, error) {
 	return _Challenge.Contract.Defender(&_Challenge.CallOpts)
 }
 
-// ExecChallenges is a free data retrieval call binding the contract method 0x89f86d12.
-//
-// Solidity: function execChallenges(uint256 ) view returns(uint8 status, uint256 headerIndex, uint256 blockIndex, uint64 mipSteps, bytes32 assertionRoot, bytes32 finalSystemState, uint256 mipsChallengeId)
-func (_Challenge *ChallengeCaller) ExecChallenges(opts *bind.CallOpts, arg0 *big.Int) (struct {
-	Status           uint8
-	HeaderIndex      *big.Int
-	BlockIndex       *big.Int
-	MipSteps         uint64
-	AssertionRoot    [32]byte
-	FinalSystemState [32]byte
-	MipsChallengeId  *big.Int
-}, error) {
-	var out []interface{}
-	err := _Challenge.contract.Call(opts, &out, "execChallenges", arg0)
-
-	outstruct := new(struct {
-		Status           uint8
-		HeaderIndex      *big.Int
-		BlockIndex       *big.Int
-		MipSteps         uint64
-		AssertionRoot    [32]byte
-		FinalSystemState [32]byte
-		MipsChallengeId  *big.Int
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.Status = *abi.ConvertType(out[0], new(uint8)).(*uint8)
-	outstruct.HeaderIndex = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
-	outstruct.BlockIndex = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
-	outstruct.MipSteps = *abi.ConvertType(out[3], new(uint64)).(*uint64)
-	outstruct.AssertionRoot = *abi.ConvertType(out[4], new([32]byte)).(*[32]byte)
-	outstruct.FinalSystemState = *abi.ConvertType(out[5], new([32]byte)).(*[32]byte)
-	outstruct.MipsChallengeId = *abi.ConvertType(out[6], new(*big.Int)).(**big.Int)
-
-	return *outstruct, err
-
-}
-
-// ExecChallenges is a free data retrieval call binding the contract method 0x89f86d12.
-//
-// Solidity: function execChallenges(uint256 ) view returns(uint8 status, uint256 headerIndex, uint256 blockIndex, uint64 mipSteps, bytes32 assertionRoot, bytes32 finalSystemState, uint256 mipsChallengeId)
-func (_Challenge *ChallengeSession) ExecChallenges(arg0 *big.Int) (struct {
-	Status           uint8
-	HeaderIndex      *big.Int
-	BlockIndex       *big.Int
-	MipSteps         uint64
-	AssertionRoot    [32]byte
-	FinalSystemState [32]byte
-	MipsChallengeId  *big.Int
-}, error) {
-	return _Challenge.Contract.ExecChallenges(&_Challenge.CallOpts, arg0)
-}
-
-// ExecChallenges is a free data retrieval call binding the contract method 0x89f86d12.
-//
-// Solidity: function execChallenges(uint256 ) view returns(uint8 status, uint256 headerIndex, uint256 blockIndex, uint64 mipSteps, bytes32 assertionRoot, bytes32 finalSystemState, uint256 mipsChallengeId)
-func (_Challenge *ChallengeCallerSession) ExecChallenges(arg0 *big.Int) (struct {
-	Status           uint8
-	HeaderIndex      *big.Int
-	BlockIndex       *big.Int
-	MipSteps         uint64
-	AssertionRoot    [32]byte
-	FinalSystemState [32]byte
-	MipsChallengeId  *big.Int
-}, error) {
-	return _Challenge.Contract.ExecChallenges(&_Challenge.CallOpts, arg0)
-}
-
 // MipsChallenge is a free data retrieval call binding the contract method 0xdca384be.
 //
 // Solidity: function mipsChallenge() view returns(address)
@@ -739,46 +700,25 @@ func (_Challenge *ChallengeTransactorSession) DefendDataRootInclusion(_blockHash
 	return _Challenge.Contract.DefendDataRootInclusion(&_Challenge.TransactOpts, _blockHash, _proof)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0xf8c8765e.
+// Initialize is a paid mutator transaction binding the contract method 0x1459457a.
 //
-// Solidity: function initialize(address _treasury, address _chain, address _daOracle, address _mipsChallenge) returns()
-func (_Challenge *ChallengeTransactor) Initialize(opts *bind.TransactOpts, _treasury common.Address, _chain common.Address, _daOracle common.Address, _mipsChallenge common.Address) (*types.Transaction, error) {
-	return _Challenge.contract.Transact(opts, "initialize", _treasury, _chain, _daOracle, _mipsChallenge)
+// Solidity: function initialize(address _treasury, address _chain, address _daOracle, address _mipsChallenge, address _chainOracle) returns()
+func (_Challenge *ChallengeTransactor) Initialize(opts *bind.TransactOpts, _treasury common.Address, _chain common.Address, _daOracle common.Address, _mipsChallenge common.Address, _chainOracle common.Address) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "initialize", _treasury, _chain, _daOracle, _mipsChallenge, _chainOracle)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0xf8c8765e.
+// Initialize is a paid mutator transaction binding the contract method 0x1459457a.
 //
-// Solidity: function initialize(address _treasury, address _chain, address _daOracle, address _mipsChallenge) returns()
-func (_Challenge *ChallengeSession) Initialize(_treasury common.Address, _chain common.Address, _daOracle common.Address, _mipsChallenge common.Address) (*types.Transaction, error) {
-	return _Challenge.Contract.Initialize(&_Challenge.TransactOpts, _treasury, _chain, _daOracle, _mipsChallenge)
+// Solidity: function initialize(address _treasury, address _chain, address _daOracle, address _mipsChallenge, address _chainOracle) returns()
+func (_Challenge *ChallengeSession) Initialize(_treasury common.Address, _chain common.Address, _daOracle common.Address, _mipsChallenge common.Address, _chainOracle common.Address) (*types.Transaction, error) {
+	return _Challenge.Contract.Initialize(&_Challenge.TransactOpts, _treasury, _chain, _daOracle, _mipsChallenge, _chainOracle)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0xf8c8765e.
+// Initialize is a paid mutator transaction binding the contract method 0x1459457a.
 //
-// Solidity: function initialize(address _treasury, address _chain, address _daOracle, address _mipsChallenge) returns()
-func (_Challenge *ChallengeTransactorSession) Initialize(_treasury common.Address, _chain common.Address, _daOracle common.Address, _mipsChallenge common.Address) (*types.Transaction, error) {
-	return _Challenge.Contract.Initialize(&_Challenge.TransactOpts, _treasury, _chain, _daOracle, _mipsChallenge)
-}
-
-// InitiateChallenge is a paid mutator transaction binding the contract method 0x78f142bb.
-//
-// Solidity: function initiateChallenge(uint256 _headerIndex, uint256 _blockIndex, uint64 _mipSteps, bytes32 _assertionRoot, bytes32 _finalSystemState) payable returns(uint256)
-func (_Challenge *ChallengeTransactor) InitiateChallenge(opts *bind.TransactOpts, _headerIndex *big.Int, _blockIndex *big.Int, _mipSteps uint64, _assertionRoot [32]byte, _finalSystemState [32]byte) (*types.Transaction, error) {
-	return _Challenge.contract.Transact(opts, "initiateChallenge", _headerIndex, _blockIndex, _mipSteps, _assertionRoot, _finalSystemState)
-}
-
-// InitiateChallenge is a paid mutator transaction binding the contract method 0x78f142bb.
-//
-// Solidity: function initiateChallenge(uint256 _headerIndex, uint256 _blockIndex, uint64 _mipSteps, bytes32 _assertionRoot, bytes32 _finalSystemState) payable returns(uint256)
-func (_Challenge *ChallengeSession) InitiateChallenge(_headerIndex *big.Int, _blockIndex *big.Int, _mipSteps uint64, _assertionRoot [32]byte, _finalSystemState [32]byte) (*types.Transaction, error) {
-	return _Challenge.Contract.InitiateChallenge(&_Challenge.TransactOpts, _headerIndex, _blockIndex, _mipSteps, _assertionRoot, _finalSystemState)
-}
-
-// InitiateChallenge is a paid mutator transaction binding the contract method 0x78f142bb.
-//
-// Solidity: function initiateChallenge(uint256 _headerIndex, uint256 _blockIndex, uint64 _mipSteps, bytes32 _assertionRoot, bytes32 _finalSystemState) payable returns(uint256)
-func (_Challenge *ChallengeTransactorSession) InitiateChallenge(_headerIndex *big.Int, _blockIndex *big.Int, _mipSteps uint64, _assertionRoot [32]byte, _finalSystemState [32]byte) (*types.Transaction, error) {
-	return _Challenge.Contract.InitiateChallenge(&_Challenge.TransactOpts, _headerIndex, _blockIndex, _mipSteps, _assertionRoot, _finalSystemState)
+// Solidity: function initialize(address _treasury, address _chain, address _daOracle, address _mipsChallenge, address _chainOracle) returns()
+func (_Challenge *ChallengeTransactorSession) Initialize(_treasury common.Address, _chain common.Address, _daOracle common.Address, _mipsChallenge common.Address, _chainOracle common.Address) (*types.Transaction, error) {
+	return _Challenge.Contract.Initialize(&_Challenge.TransactOpts, _treasury, _chain, _daOracle, _mipsChallenge, _chainOracle)
 }
 
 // InvalidateHeader is a paid mutator transaction binding the contract method 0x5dade412.
