@@ -1,4 +1,9 @@
+// SPDX-License-Identifier: UNLICENSED
+// LightLink Hummingbird UNRELEASED v0.2.0
+
 pragma solidity ^0.8.0;
+
+// // NOT FOR RELEASE
 
 import "./ChallengeBase.sol";
 

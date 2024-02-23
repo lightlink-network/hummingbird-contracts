@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-// LightLink Hummingbird v0.0.1
+// LightLink Hummingbird UNRELEASED v0.0.1
 
 // NOT FOR RELEASE
+// NOT IMPLEMENTED YET
 
 pragma solidity ^0.8.0;
 
