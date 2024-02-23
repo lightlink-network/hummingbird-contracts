@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-// LightLink Hummingbird v0.0.3
+// LightLink Hummingbird v0.1.0
 
 pragma solidity ^0.8.0;
 
@@ -12,6 +12,12 @@ import "../interfaces/ICanonicalStateChain.sol";
 import "./mips/IMipsChallenge.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 import "../interfaces/IChainOracle.sol";
+
+// ChallengeBase is the base contract for all challenges.
+// It contains the global variables for challenge period, fee, and reward.
+//
+// - The owner can set the challenge period, fee, and reward. Thus is expected
+//   to be the DAO Governance contract.
 
 contract ChallengeBase is
     UUPSUpgradeable,
@@ -49,7 +55,7 @@ contract ChallengeBase is
         challengeFee = 1.5 ether;
         challengeReward = 0.2 ether; // unused.
 
-        treasury = ITreasury(_treasury);
+        treasury = ITreasury(_treasury); // TODO: remove
         chain = ICanonicalStateChain(_chain);
         daOracle = IDAOracle(_daOracle);
         mipsChallenge = IMipsChallenge(_mipsChallenge);
@@ -65,6 +71,8 @@ contract ChallengeBase is
                 challengeWindow;
     }
 
+    // mustBeWithinChallengeWindow ensures that the block is within the challenge window.
+    // It is used to prevent challenges on blocks that are too old.
     modifier mustBeWithinChallengeWindow(uint256 index) {
         require(index != 0, "cannot challenge genesis block");
         require(
@@ -76,6 +84,7 @@ contract ChallengeBase is
         _;
     }
 
+    // mustBeCanonical ensures that the block is in the chain.
     modifier mustBeCanonical(uint256 index) {
         require(index <= chain.chainHead(), "block not in the chain yet");
         _;

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
-// LightLink Hummingbird v0.0.1
+// LightLink Hummingbird UNRELEASED v0.0.1
 
 pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
 
 // TODO: NOT IMPLEMENTED YET
+// NOT FOR RELEASE
 
 // no constructor
 abstract contract ChallengeExecution is ChallengeBase {
