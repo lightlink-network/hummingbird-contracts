@@ -45,8 +45,36 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         uint256 nonce;
     }
 
+    // Supported transaction types
+
+    struct LegacyTx {
+        uint64 nonce;
+        uint256 gasPrice;
+        uint64 gas;
+        address to;
+        uint256 value;
+        bytes data;
+        uint256 r;
+        uint256 s;
+        uint256 v;
+    }
+
+    struct DepositTx {
+        uint256 chainId;
+        uint64 nonce;
+        uint256 gasPrice;
+        uint64 gas;
+        address to;
+        uint256 value;
+        bytes data;
+        uint256 r;
+        uint256 s;
+        uint256 v;
+    }
+
     mapping(bytes32 => bytes[]) public shares;
     mapping(bytes32 => L2Header) public headers;
+    mapping(bytes32 => DepositTx) public transactions;
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
@@ -115,6 +143,40 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         headers[headerHash] = header;
 
         return headerHash;
+    }
+
+    function provideLegacyTx(
+        bytes32 _shareKey,
+        ShareRange[] calldata _range
+    ) public returns (bytes32) {
+        bytes[] storage shareData = shares[_shareKey];
+        require(shareData.length > 0, "share not found");
+
+        // 1. Extract the RLP transaction from the shares.
+        bytes memory rlpTx = extractData(shareData, _range);
+
+        // 2. Decode the RLP transaction.
+        LegacyTx memory ltx = decodeLegacyTx(rlpTx);
+
+        // 3. Hash the transaction.
+        bytes32 txHash = keccak256(rlpTx);
+
+        // 4. Store the transaction.
+        require(transactions[txHash].nonce == 0, "transaction already exists");
+        transactions[txHash] = DepositTx({
+            chainId: 0,
+            nonce: ltx.nonce,
+            gasPrice: ltx.gasPrice,
+            gas: ltx.gas,
+            to: ltx.to,
+            value: ltx.value,
+            data: ltx.data,
+            r: ltx.r,
+            s: ltx.s,
+            v: ltx.v
+        });
+
+        return txHash;
     }
 
     function ShareKey(
@@ -217,6 +279,64 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         list[13] = RLPEncode.encodeBytes(abi.encodePacked(_header.mixHash));
         list[14] = RLPEncode.encodeUint(_header.nonce);
         return keccak256(RLPEncode.encodeList(list));
+    }
+
+    function decodeLegacyTx(
+        bytes memory _data
+    ) public view returns (LegacyTx memory) {
+        (
+            uint nonce,
+            uint gasPrice,
+            uint gasLimit,
+            address to,
+            uint value,
+            bytes memory data,
+            uint8 v,
+            bytes32 r,
+            bytes32 s
+        ) = rlpReader.toLegacyTx(_data);
+        LegacyTx memory ltx = LegacyTx({
+            nonce: uint64(nonce),
+            gasPrice: gasPrice,
+            gas: uint64(gasLimit),
+            to: to,
+            value: value,
+            data: data,
+            r: uint256(r),
+            s: uint256(s),
+            v: v
+        });
+        return ltx;
+    }
+
+    function decodeDepositTx(
+        bytes memory _data
+    ) public view returns (DepositTx memory) {
+        (
+            uint256 chainId,
+            uint nonce,
+            uint gasPrice,
+            uint gasLimit,
+            address to,
+            uint value,
+            bytes memory data,
+            uint8 v,
+            bytes32 r,
+            bytes32 s
+        ) = rlpReader.toDepositTx(_data);
+        DepositTx memory dtx = DepositTx({
+            chainId: chainId,
+            nonce: uint64(nonce),
+            gasPrice: gasPrice,
+            gas: uint64(gasLimit),
+            to: to,
+            value: value,
+            data: data,
+            r: uint256(r),
+            s: uint256(s),
+            v: v
+        });
+        return dtx;
     }
 
     uint256[50] private __gap;

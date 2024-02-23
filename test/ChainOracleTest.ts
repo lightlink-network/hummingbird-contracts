@@ -123,4 +123,36 @@ describe("ChainOracle", function () {
       14547783457063351210n
     );
   });
+
+  it("should be able to decode legacy tx", async function () {
+    const TestRLPTx = "0xf8630182271082520894dfae45f5d42d7d893e15c3f55e947905c0bdec038227108026a00cc9626084e648b362f3358a10f74a9dd7928b262bb233ed9761172508592955a071a3904730383cc844e19ed819e90483493f93ed4db02225c899fe1e"
+
+    const tx = await chainOracle.decodeLegacyTx(TestRLPTx);
+    expect(tx).to.not.be.undefined;
+    expect(tx[0]).to.be.equal(
+      // nonce
+      1n
+    );
+    expect(tx[1]).to.be.equal(
+      // gasPrice
+      10000n
+    );
+    expect(tx[2]).to.be.equal(
+      // gasLimit
+      21000n
+    );
+    expect(tx[3].toLowerCase()).to.be.equal(
+      // to
+      "0xdfae45f5d42d7d893e15c3f55e947905c0bdec03".toLowerCase()
+    );
+    expect(tx[4]).to.be.equal(
+      // value
+      10000n
+    );
+    expect(tx[5]).to.be.equal(
+      // data
+      "0x"
+    );
+
+  });
 });

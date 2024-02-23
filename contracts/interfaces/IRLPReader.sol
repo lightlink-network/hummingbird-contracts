@@ -24,5 +24,9 @@ interface IRLPReader {
     function toBlockHeader(bytes memory rlpHeader) external pure returns (
         bytes32 parentHash, bytes32 sha3Uncles, address coinbase, bytes32 stateRoot, bytes32 transactionsRoot, bytes32 receiptsRoot,
         uint difficulty, uint number, uint gasLimit, uint gasUsed, uint timestamp, uint nonce);
-    
+    function toLegacyTx(bytes memory rlpTx) external pure returns (
+        uint nonce, uint gasPrice, uint gasLimit, address to, uint value, bytes memory data, uint8 v, bytes32 r, bytes32 s);
+    function toDepositTx(bytes memory rlpTx) external pure returns (
+        uint256 chainId, uint nonce, uint gasPrice, uint gasLimit, address to, uint value, bytes memory data, uint8 v, bytes32 r,
+        bytes32 s);
 }

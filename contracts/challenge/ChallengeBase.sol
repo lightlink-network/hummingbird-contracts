@@ -11,6 +11,7 @@ import "../interfaces/ITreasury.sol";
 import "../interfaces/ICanonicalStateChain.sol";
 import "./mips/IMipsChallenge.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
+import "../interfaces/IChainOracle.sol";
 
 contract ChallengeBase is
     UUPSUpgradeable,
@@ -24,6 +25,7 @@ contract ChallengeBase is
 
     address public defender; // The address of the defender.
 
+    IChainOracle public chainOracle; // The address of the chain oracle.
     ITreasury public treasury; // The address of the treasury to pay out challenges.
     ICanonicalStateChain public chain; // The address of the canonical state chain.
     IDAOracle public daOracle; // The address of the data availability oracle.
@@ -35,7 +37,8 @@ contract ChallengeBase is
         address _treasury,
         address _chain,
         address _daOracle,
-        address _mipsChallenge
+        address _mipsChallenge,
+        address _chainOracle
     ) internal {
         __UUPSUpgradeable_init();
         __Ownable_init(msg.sender);
@@ -50,6 +53,7 @@ contract ChallengeBase is
         chain = ICanonicalStateChain(_chain);
         daOracle = IDAOracle(_daOracle);
         mipsChallenge = IMipsChallenge(_mipsChallenge);
+        chainOracle = IChainOracle(_chainOracle);
     }
 
     function _isTargetWithinChallengeWindow(

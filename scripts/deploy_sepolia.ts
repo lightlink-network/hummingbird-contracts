@@ -1,6 +1,5 @@
 import { ethers, network } from "hardhat";
 import { verify } from "../utils/verify";
-import { Contract } from "ethers";
 
 // Set DAOracle address
 const DAOracleAddr = "0x3a5cbB6EF4756DA0b3f6DAE7aB6430fD8c46d247";
@@ -57,18 +56,31 @@ const main = async () => {
   /// Deploy contracts
   ///
 
-  // Deploy CanonicalStateChain contract
+  const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
+
+  // Deploy CanonicalStateChain contract as proxy
   console.log("Deploying CanonicalStateChain...");
-  const CanonicalStateChain = await ethers.getContractFactory(
+  const canonicalStateChainFactory: any  = await ethers.getContractFactory(
     "CanonicalStateChain"
   );
-  const canonicalStateChain = await CanonicalStateChain.deploy(
-    publisherAddr,
-    genesisHeader
+  const canonicalStateChainImplementation = await canonicalStateChainFactory.deploy();
+  await canonicalStateChainImplementation.waitForDeployment();
+  const canonicalStateChainImplementationAddr = await canonicalStateChainImplementation.getAddress();
+
+  const canonicalStateChainProxy = await proxyFactory.deploy(
+    canonicalStateChainImplementationAddr,
+    canonicalStateChainImplementation.interface.encodeFunctionData("initialize", [
+      publisherAddr,
+      genesisHeader
+    ])
   );
-  await canonicalStateChain.waitForDeployment();
-  const canonicalStateChainAddr = await canonicalStateChain.getAddress();
-  console.log(`→ CanonicalStateChain deployed to ${canonicalStateChainAddr}`);
+  await canonicalStateChainProxy.waitForDeployment();
+  const canonicalStateChain = canonicalStateChainFactory.attach(await canonicalStateChainProxy.getAddress());
+  const canonicalStateChainContractAddr = await canonicalStateChain.getAddress();
+  console.log(`→ CanonicalStateChain proxy deployed to ${canonicalStateChainContractAddr}`);
+  console.log(
+    `→ CanonicalStateChain implementation deployed to ${canonicalStateChainImplementationAddr}`
+  );
 
   // Deploy Treasury contract
   console.log("Deploying Treasury...");
@@ -78,26 +90,57 @@ const main = async () => {
   const treasuryAddr = await treasury.getAddress();
   console.log(`→ Treasury deployed to ${treasuryAddr}`);
 
+  // Deploy required RLPReader lib
+  console.log("Deploying RLPReader...");
+  const RLPReader = await ethers.getContractFactory("RLPReader");
+  const rlpReader = await RLPReader.deploy();
+  await rlpReader.waitForDeployment();
+  const rlpReaderAddr = await rlpReader.getAddress();
+  console.log(`→ RLPReader deployed to ${rlpReaderAddr}`);
+
+  // Deploying ChainOracle contract as a proxy
+  console.log("Deploying ChainOracle...");
+  const chainOracleFactory = await ethers.getContractFactory("ChainOracle");
+  const chainOracleImplementation = await chainOracleFactory.deploy();
+
+  await chainOracleImplementation.waitForDeployment();
+  const chainOracleImplementationAddr = await chainOracleImplementation.getAddress();
+  const chainOracleProxy = await proxyFactory.deploy(
+    chainOracleImplementationAddr,
+    chainOracleImplementation.interface.encodeFunctionData("initialize", [
+      canonicalStateChainContractAddr,
+      DAOracleAddr,
+      rlpReaderAddr,
+    ])
+  );
+  await chainOracleProxy.waitForDeployment();
+  const chainOracle = chainOracleFactory.attach(await chainOracleProxy.getAddress());
+  const chainOracleContractAddr = await chainOracle.getAddress();
+  console.log(`→ ChainOracle proxy deployed to ${chainOracleContractAddr}`);
+  console.log(
+    `→ ChainOracle implementation deployed to ${chainOracleImplementationAddr}`
+  );
+
   // Deploy Challenge contract as a proxy
   console.log("Deploying Challenge...");
-  const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
   const challengeFactory: any = await ethers.getContractFactory("Challenge");
   const challengeImplementation = await challengeFactory.deploy();
   await challengeImplementation.waitForDeployment();
   const challengeImplementationAddr =
     await challengeImplementation.getAddress();
 
-  const proxy = await proxyFactory.deploy(
+  const challengeProxy = await proxyFactory.deploy(
     challengeImplementationAddr,
     challengeImplementation.interface.encodeFunctionData("initialize", [
       treasuryAddr,
-      await canonicalStateChain.getAddress(),
+      canonicalStateChainContractAddr,
       DAOracleAddr,
       ethers.ZeroAddress,
+      chainOracleContractAddr,
     ])
   );
-  await proxy.waitForDeployment();
-  const challenge = challengeFactory.attach(await proxy.getAddress());
+  await challengeProxy.waitForDeployment();
+  const challenge = challengeFactory.attach(await challengeProxy.getAddress());
   const challengeContractAddr = await challenge.getAddress();
   console.log(`→ Challenge proxy deployed to ${challengeContractAddr}`);
   console.log(
@@ -108,16 +151,16 @@ const main = async () => {
   /// Set contract setters
   ///
 
-  // set Challenge.setDefender() to publisherAddr
-  await challenge.setDefender(publisherAddr);
-  console.log(`→ → Challenge.setDefender() set to ${publisherAddr}`);
-
   // set CanonicalStateChain.challengeContract() to challengeContractAddr
   await canonicalStateChain.setChallengeContract(challengeContractAddr);
   console.log(
     `→ → CanonicalStateChain.challengeContract() set to ${challengeContractAddr}` +
       "\n"
   );
+
+  // set Challenge.setDefender() to publisherAddr
+  await challenge.setDefender(publisherAddr);
+  console.log(`→ → Challenge.setDefender() set to ${publisherAddr}`);
 
   console.log("All Contracts deployed successfully! \n");
 
@@ -129,18 +172,59 @@ const main = async () => {
   console.log("Waiting for 1 min before verifying contracts..");
   await new Promise((r) => setTimeout(r, 60000));
 
-  // Verify CanonicalStateChain
+  // Verify CanonicalStateChain Implementation
   await verify(
-    canonicalStateChainAddr,
-    [publisherAddr, genesisHeader],
+    canonicalStateChainImplementationAddr,
+    [],
     "contracts/CanonicalStateChain.sol:CanonicalStateChain"
   );
   console.log(
-    `Verified CanonicalStateChain contract at ${canonicalStateChainAddr}`
+    `Verified CanonicalStateChain impl contract at ${canonicalStateChainImplementationAddr}`
+  );
+
+  // Verify CanonicalStateChain Proxy
+  await verify(
+    canonicalStateChainContractAddr,
+    [
+      canonicalStateChainImplementationAddr,
+      canonicalStateChainImplementation.interface.encodeFunctionData("initialize", [
+        publisherAddr,
+        genesisHeader,
+      ]),
+    ],
+    "contracts/proxy/CoreProxy.sol:CoreProxy"
   );
 
   // Verify Treasury
   await verify(treasuryAddr, [], "contracts/Treasury.sol:Treasury");
+
+  // Verify RLPReader
+  await verify(rlpReaderAddr, [], "contracts/RLPReader.sol:RLPReader");
+
+  // Verify ChainOracle Implementation
+  await verify(
+    chainOracleImplementationAddr,
+    [],
+    "contracts/ChainOracle.sol:ChainOracle"
+  );
+  console.log(
+    `Verified ChainOracle impl contract at ${chainOracleImplementationAddr}`
+  );
+
+  // Verify ChainOracle Proxy
+  await verify(
+    chainOracleContractAddr,
+    [
+      chainOracleImplementationAddr,
+      chainOracleImplementation.interface.encodeFunctionData("initialize", [
+        canonicalStateChainContractAddr,
+        DAOracleAddr,
+        rlpReaderAddr,
+      ]),
+    ],
+    "contracts/proxy/CoreProxy.sol:CoreProxy"
+  );
+
 
   // Verify Challenge Implementation
   await verify(
@@ -152,16 +236,17 @@ const main = async () => {
     `Verified Challenge impl contract at ${challengeImplementationAddr}`
   );
 
-  // Verify Proxy
+  // Verify Challenge Proxy
   await verify(
     challengeContractAddr,
     [
-      await challengeImplementation.getAddress(),
+      challengeImplementationAddr,
       challengeImplementation.interface.encodeFunctionData("initialize", [
         ethers.ZeroAddress,
-        canonicalStateChainAddr,
+        canonicalStateChainContractAddr,
         DAOracleAddr,
         ethers.ZeroAddress,
+        chainOracleContractAddr
       ]),
     ],
     "contracts/proxy/CoreProxy.sol:CoreProxy"

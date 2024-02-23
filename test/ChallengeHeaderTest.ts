@@ -37,7 +37,8 @@ describe("ChallengeHeader", function () {
         await canonicalStateChain.getAddress(),
         ethers.ZeroAddress,
         ethers.ZeroAddress,
-      ])
+        ethers.ZeroAddress, // chain Oracle not needed for this test
+      ]),
     );
 
     challenge = challengeFactory.attach(await proxy.getAddress());
@@ -54,7 +55,7 @@ describe("ChallengeHeader", function () {
 
     it("should set the correct canonical state chain", async function () {
       expect(await challenge.chain()).to.equal(
-        await canonicalStateChain.getAddress()
+        await canonicalStateChain.getAddress(),
       );
     });
   });
@@ -65,7 +66,7 @@ describe("ChallengeHeader", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(0)
+          .send(0),
       ).to.be.revertedWith("cannot challenge genesis block");
     });
 
@@ -74,7 +75,7 @@ describe("ChallengeHeader", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(100)
+          .send(100),
       ).to.be.revertedWith("block not in the chain yet");
     });
 
@@ -100,7 +101,7 @@ describe("ChallengeHeader", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(1)
+          .send(1),
       ).to.be.revertedWith("header is valid");
     });
 
@@ -126,7 +127,7 @@ describe("ChallengeHeader", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(1)
+          .send(1),
       ).to.emit(challenge, "InvalidHeader");
     });
 
@@ -159,14 +160,14 @@ describe("ChallengeHeader", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(2)
+          .send(2),
       ).to.be.revertedWith("header is valid");
 
       await expect(
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(1)
+          .send(1),
       ).to.emit(challenge, "InvalidHeader");
 
       const headIndex = await canonicalStateChain
@@ -191,7 +192,7 @@ describe("ChallengeHeader", function () {
       // 2. push invalid header as 10th block
       const [invalidHeader] = await makeNextBlock(
         publisher,
-        canonicalStateChain
+        canonicalStateChain,
       );
       invalidHeader.l2Height = BigInt(1);
 
@@ -205,7 +206,7 @@ describe("ChallengeHeader", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(9)
+          .send(9),
       ).to.be.revertedWith("header is valid");
 
       // 10. but should be able to invalidate 10th block
@@ -213,7 +214,7 @@ describe("ChallengeHeader", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(10)
+          .send(10),
       ).to.emit(challenge, "InvalidHeader");
 
       // 11. check the chain actually rolled back to 9th block
@@ -237,13 +238,13 @@ describe("ChallengeHeader", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(10)
+          .send(10),
       ).to.be.revertedWith("header is valid");
 
       // 14. add the 11th invalid block
       const [invalidBlock] = await makeNextBlock(
         publisher,
-        canonicalStateChain
+        canonicalStateChain,
       );
       invalidBlock.l2Height = BigInt(1);
 
@@ -257,7 +258,7 @@ describe("ChallengeHeader", function () {
         challenge
           .connect(challengeOwner)
           .getFunction("invalidateHeader")
-          .send(11)
+          .send(11),
       ).to.emit(challenge, "InvalidHeader");
     });
   });
