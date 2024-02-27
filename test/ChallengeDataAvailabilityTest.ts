@@ -5,6 +5,7 @@ import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signer
 import { setupCanonicalStateChain } from "./lib/chain";
 import { Header } from "./lib/header";
 import { pushRandomHeader } from "./lib/chain";
+import { CanonicalStateChain } from "../typechain-types";
 
 // Challenge Status
 const STATUS_NONE = 0;
@@ -22,7 +23,7 @@ describe("ChallengeDataAvailability", function () {
 
   let genesisHeader: Header;
   let genesisHash: string;
-  let canonicalStateChain: Contract;
+  let canonicalStateChain: CanonicalStateChain;
   let mockDaOracle: Contract;
   let challenge: Contract;
 
@@ -32,7 +33,7 @@ describe("ChallengeDataAvailability", function () {
 
     // 1. Setup canonical state chain
     const _chain = await setupCanonicalStateChain(owner, publisher.address);
-    canonicalStateChain = _chain.canonicalStateChain as any;
+    canonicalStateChain = _chain.canonicalStateChain;
     genesisHash = _chain.genesisHash;
     genesisHeader = _chain.genesisHeader;
 
