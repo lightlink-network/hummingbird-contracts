@@ -20,6 +20,7 @@
     "@openzeppelin/contracts-upgradeable": "^5.0.1",
     "blobstream-contracts": "github:celestiaorg/blobstream-contracts",
     "dotenv": "^16.3.1",
+    "hardhat-gas-reporter": "^1.0.10",
     "openzeppelin-contracts": "github:OpenZeppelin/openzeppelin-contracts"
   }
 }

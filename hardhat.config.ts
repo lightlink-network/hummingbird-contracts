@@ -3,6 +3,7 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 import "@solarity/hardhat-gobind";
+import "hardhat-gas-reporter";
 
 cfg();
 
