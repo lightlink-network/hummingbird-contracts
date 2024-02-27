@@ -13,11 +13,11 @@ export const packHeader = (h: Header) =>
   ethers.AbiCoder.defaultAbiCoder().encode(
     [
       "bytes32", // prevHash
-      "uint256", // epoch
-      "uint256", // l2Height
-      "uint256", // celestiaHeight
-      "uint256", // celestiaShareStart
-      "uint256", // celestiaShareLen
+      "uint32", // epoch
+      "uint32", // l2Height
+      "uint32", // celestiaHeight
+      "uint32", // celestiaShareStart
+      "uint32", // celestiaShareLen
     ],
     [
       h.prevHash,
