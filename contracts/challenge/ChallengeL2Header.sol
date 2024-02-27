@@ -120,12 +120,12 @@ contract ChallengeL2Header is ChallengeBase {
         // - This prevents rolled back l2 headers from being used to defend
         require(
             chainOracle.headerToRblock(_headerHash) == challenge.header.rblock,
-            "header is not part of the correct rblock"
+            "l2 header not loaded for the given rblock"
         );
         require(
             chainOracle.headerToRblock(_headerPrevHash) ==
                 challenge.prevHeader.rblock,
-            "previous header is not part of the correct rblock"
+            "previous l2 header not loaded for the given rblock"
         );
 
         // 1. Load the header and previous header from the ChainOracle
@@ -207,5 +207,12 @@ contract ChallengeL2Header is ChallengeBase {
         // pay out the challenger
         (bool success, ) = challenge.challenger.call{value: challengeFee}("");
         require(success, "failed to pay challenger");
+    }
+
+    function l2HeaderChallengeHash(
+        bytes32 _rblockHash,
+        uint256 _l2Num
+    ) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_rblockHash, _l2Num));
     }
 }
