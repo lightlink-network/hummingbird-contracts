@@ -6,7 +6,7 @@ library Lib_MerkleRoot {
     // @dev The number of leaf nodes must be a power of 2
     function calculateMerkleRoot(
         bytes32[] memory leafNodes
-    ) public pure returns (bytes32) {
+    ) internal pure returns (bytes32) {
         require(leafNodes.length > 0, "Must have at least one leaf node");
         require(
             // bitwise AND to check if the number of leaf nodes is a power of 2
