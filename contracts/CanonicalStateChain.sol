@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: UNLICENSED
-// LightLink Hummingbird v0.1.0
+// SPDX-License-Identifier: MIT
+// LightLink Hummingbird v0.1.1
 
 // TODO: use single version
 pragma solidity ^0.8.0;
