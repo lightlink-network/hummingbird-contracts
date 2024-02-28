@@ -1,5 +1,5 @@
 import { ethers, network } from "hardhat";
-import { verify } from "../utils/verify";
+import { verify } from "../../utils/verify";
 
 // Set DAOracle address
 const DAOracleAddr = "0x3a5cbB6EF4756DA0b3f6DAE7aB6430fD8c46d247";
@@ -170,7 +170,7 @@ const main = async () => {
 
   // Verify contract (after 1 min)
   console.log("Waiting for 1 min before verifying contracts..");
-  await new Promise((r) => setTimeout(r, 60000));
+  await new Promise((r) => setTimeout(r, 120000));
 
   // Verify CanonicalStateChain Implementation
   await verify(
