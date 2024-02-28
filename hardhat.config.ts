@@ -30,24 +30,21 @@ const config: HardhatUserConfig = {
       },
     ],
   },
+  defaultNetwork: "hardhat",
   networks: {
-    hardhat: {
-      forking: {
-        url: process.env.SEPOLIA_PROVIDER_URL || "",
-      },
-    },
+    hardhat: {},
     sepolia: {
       url: process.env.SEPOLIA_PROVIDER_URL || "",
       accounts: [
-        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "",
-        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0x000",
+        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     ethereum: {
       url: process.env.ETHEREUM_PROVIDER_URL || "",
       accounts: [
-        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "",
-        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0x000",
+        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     pegasus: {
