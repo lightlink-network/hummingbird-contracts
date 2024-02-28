@@ -33,6 +33,8 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
     struct ChallengeDA {
         uint256 blockIndex;
+        bytes32 blockHash;
+        uint8 pointer;
         address challenger;
         uint256 expiry;
         ChallengeDAStatus status;
@@ -45,8 +47,9 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     }
 
     event ChallengeDAUpdate(
-        bytes32 indexed _blockHash,
+        bytes32 indexed _challengeKey,
         uint256 indexed _blockIndex,
+        uint8 _pointer,
         uint256 _expiry,
         ChallengeDAStatus indexed _status
     );
@@ -56,7 +59,8 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     mapping(bytes32 => ChallengeDA) public daChallenges;
 
     function challengeDataRootInclusion(
-        uint256 _blockIndex
+        uint256 _blockIndex,
+        uint8 _pointer
     )
         external
         payable
@@ -66,25 +70,34 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         returns (uint256)
     {
         bytes32 h = chain.chain(_blockIndex);
+        bytes32 challengeKey = keccak256(abi.encode(h, _pointer));
+
+        require(
+            chain.getBlock(_blockIndex).pointers.length > _pointer,
+            "invalid pointer"
+        );
 
         // check if there is already a challenge for this block.
-        ChallengeDA storage challenge = daChallenges[h];
+        ChallengeDA storage challenge = daChallenges[challengeKey];
         require(
             challenge.status == ChallengeDAStatus.None,
             "challenge already exists"
         );
 
         // create a new challenge.
-        daChallenges[h] = ChallengeDA(
-            _blockIndex,
-            msg.sender,
-            block.timestamp + challengePeriod,
-            ChallengeDAStatus.ChallengerInitiated
-        );
+        daChallenges[challengeKey] = ChallengeDA({
+            blockIndex: _blockIndex,
+            blockHash: h,
+            pointer: _pointer,
+            challenger: msg.sender,
+            expiry: block.timestamp + challengePeriod,
+            status: ChallengeDAStatus.ChallengerInitiated
+        });
 
         emit ChallengeDAUpdate(
-            h,
+            challengeKey,
             _blockIndex,
+            _pointer,
             block.timestamp + challengePeriod,
             ChallengeDAStatus.ChallengerInitiated
         );
@@ -93,21 +106,22 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     }
 
     function defendDataRootInclusion(
-        bytes32 _blockHash,
+        bytes32 _challengeKey,
         ChallengeDAProof memory _proof
     ) public nonReentrant {
-        ChallengeDA storage challenge = daChallenges[_blockHash];
+        ChallengeDA storage challenge = daChallenges[_challengeKey];
         require(
             challenge.status == ChallengeDAStatus.ChallengerInitiated,
             "challenge is not in the correct state"
         );
 
-        ICanonicalStateChain.Header memory header = chain.headers(
-            chain.chain(challenge.blockIndex)
+        ICanonicalStateChain.Header memory header = chain.getBlockByHash(
+            challenge.blockHash
         );
 
         require(
-            header.celestiaHeight == _proof.dataRootTuple.height,
+            header.pointers[challenge.pointer].celestiaHeight ==
+                _proof.dataRootTuple.height,
             "invalid celestia height"
         );
 
@@ -124,8 +138,9 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         // update the challenge.
         challenge.status = ChallengeDAStatus.DefenderWon;
         emit ChallengeDAUpdate(
-            _blockHash,
+            _challengeKey,
             challenge.blockIndex,
+            challenge.pointer,
             challenge.expiry,
             ChallengeDAStatus.DefenderWon
         );
@@ -138,8 +153,10 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
     // settle the challenge in favor of the challenger if the defender does not respond
     // within the challenge period.
-    function settleDataRootInclusion(bytes32 _blockhash) public nonReentrant {
-        ChallengeDA storage challenge = daChallenges[_blockhash];
+    function settleDataRootInclusion(
+        bytes32 _challengeKey
+    ) public nonReentrant {
+        ChallengeDA storage challenge = daChallenges[_challengeKey];
         require(
             challenge.status == ChallengeDAStatus.ChallengerInitiated,
             "challenge is not in the correct state"
@@ -152,8 +169,9 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         // update the challenge.
         challenge.status = ChallengeDAStatus.ChallengerWon;
         emit ChallengeDAUpdate(
-            _blockhash,
+            _challengeKey,
             challenge.blockIndex,
+            challenge.pointer,
             challenge.expiry,
             ChallengeDAStatus.ChallengerWon
         );
