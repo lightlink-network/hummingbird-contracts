@@ -1,0 +1,24 @@
+name: Hardhat Tests
+on:
+  push:
+    branches:
+      - main # Trigger the workflow on pushes to the main branch
+    tags:
+      - "**" # Trigger the workflow on tags including hierarchical tags like v1.0/beta
+  pull_request:
+    types: [opened, synchronize] # Trigger the workflow when a PR is opened or updated
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install packages
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+      - run: npm ci
+        shell: bash
+      - name: Run Tests
+        run: npm run test
