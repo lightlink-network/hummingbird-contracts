@@ -106,6 +106,7 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     // @param _proof The proof that the shares are available and part of the rblocks dataroot commitment.
     function provideShares(
         bytes32 _rblock,
+        uint8 _pointer,
         SharesProof memory _proof
     ) public returns (bytes32) {
         // 1. Load the rblock (bundle) from the canonical state chain.
@@ -114,7 +115,8 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         );
         require(rHead.epoch > 0, "rblock not found");
         require(
-            rHead.celestiaHeight == _proof.attestationProof.tuple.height,
+            rHead.pointers[_pointer].celestiaHeight ==
+                _proof.attestationProof.tuple.height,
             "rblock height mismatch"
         );
 
