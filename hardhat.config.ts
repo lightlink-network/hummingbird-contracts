@@ -30,12 +30,9 @@ const config: HardhatUserConfig = {
       },
     ],
   },
+  defaultNetwork: "hardhat",
   networks: {
-    hardhat: {
-      forking: {
-        url: process.env.SEPOLIA_PROVIDER_URL || "",
-      },
-    },
+    hardhat: {},
     sepolia: {
       url: process.env.SEPOLIA_PROVIDER_URL || "",
       accounts: [
