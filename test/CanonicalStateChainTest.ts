@@ -1,7 +1,11 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { setupCanonicalStateChain } from "./lib/chain";
+import {
+  makeNextBlock,
+  pushRandomHeader,
+  setupCanonicalStateChain,
+} from "./lib/chain";
 import { CanonicalStateChain } from "../typechain-types";
 import { Header, hashHeader } from "./lib/header";
 
@@ -37,9 +41,13 @@ describe("CanonicalStateChain", function () {
         epoch: 1n,
         l2Height: 1n,
         prevHash: _chain.genesisHash,
-        celestiaHeight: 1n,
-        celestiaShareStart: 1n,
-        celestiaShareLen: 1n,
+        pointers: [
+          {
+            celestiaHeight: 1n,
+            celestiaShareStart: 1n,
+            celestiaShareLen: 1n,
+          },
+        ],
       };
 
       await expect(
@@ -52,11 +60,20 @@ describe("CanonicalStateChain", function () {
         epoch: 1n,
         l2Height: 1n,
         prevHash: _chain.genesisHash,
-        celestiaHeight: 1n,
-        celestiaShareStart: 1n,
-        celestiaShareLen: 1n,
+        pointers: [
+          {
+            celestiaHeight: 1n,
+            celestiaShareStart: 1n,
+            celestiaShareLen: 1n,
+          },
+          {
+            celestiaHeight: 2n,
+            celestiaShareStart: 2n,
+            celestiaShareLen: 2n,
+          },
+        ],
       };
-      const hash = hashHeader(header);
+      const hash = await hashHeader(canonicalStateChain, header);
 
       await expect(canonicalStateChain.connect(publisher).pushBlock(header))
         .to.emit(canonicalStateChain, "BlockAdded")
@@ -114,9 +131,13 @@ describe("CanonicalStateChain", function () {
         epoch: 1,
         l2Height: 1,
         prevHash: _chain.genesisHash,
-        celestiaHeight: 1,
-        celestiaShareStart: 1,
-        celestiaShareLen: 1,
+        pointers: [
+          {
+            celestiaHeight: 1,
+            celestiaShareStart: 1,
+            celestiaShareLen: 1,
+          },
+        ],
       });
 
       await expect(
@@ -128,6 +149,26 @@ describe("CanonicalStateChain", function () {
       await expect(
         canonicalStateChain.connect(challengeContract).rollback(0),
       ).to.emit(canonicalStateChain, "RolledBack");
+    });
+  });
+
+  describe("tooling", function () {
+    it("makeNextBlock should work", async function () {
+      const [header, hash] = await makeNextBlock(
+        publisher,
+        canonicalStateChain,
+      );
+      expect(header).to.not.be.undefined;
+      expect(hash).to.not.be.undefined;
+    });
+
+    it("pushNextBlock should work", async function () {
+      const [hash, header] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain,
+      );
+      expect(hash).to.not.be.undefined;
+      expect(header).to.not.be.undefined;
     });
   });
 });
