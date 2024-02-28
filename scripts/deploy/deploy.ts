@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { verify } from "../utils/verify";
+import { verify } from "../../utils/verify";
 
 async function main() {
   // Get deployer/signer account
