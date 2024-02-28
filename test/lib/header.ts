@@ -1,32 +1,31 @@
 import { ethers } from "hardhat";
+import { CanonicalStateChain } from "../../typechain-types";
+import { asBigInt } from "./utils";
 
-export type Header = {
-  prevHash: string;
-  epoch: bigint;
-  l2Height: bigint;
-  celestiaHeight: bigint;
-  celestiaShareStart: bigint;
-  celestiaShareLen: bigint;
+// export type Header = {
+//   prevHash: string;
+//   epoch: bigint; // uint32
+//   l2Height: bigint; // uint32
+//   pointers: CelestiaPointer[];
+// };
+
+// export type CelestiaPointer = {
+//   celestiaHeight: bigint; // uint32
+//   celestiaShareStart: bigint; // uint32
+//   celestiaShareLen: bigint; // uint32
+// };
+
+export type Header = CanonicalStateChain.HeaderStruct;
+
+export const hashHeader = async (csc: CanonicalStateChain, h: Header) => {
+  return await csc.hashHeader({
+    prevHash: h.prevHash,
+    epoch: asBigInt(h.epoch),
+    l2Height: asBigInt(h.l2Height),
+    pointers: h.pointers.map((p) => ({
+      celestiaHeight: asBigInt(p.celestiaHeight),
+      celestiaShareStart: asBigInt(p.celestiaShareStart),
+      celestiaShareLen: asBigInt(p.celestiaShareLen),
+    })),
+  });
 };
-
-export const packHeader = (h: Header) =>
-  ethers.AbiCoder.defaultAbiCoder().encode(
-    [
-      "bytes32", // prevHash
-      "uint32", // epoch
-      "uint32", // l2Height
-      "uint32", // celestiaHeight
-      "uint32", // celestiaShareStart
-      "uint32", // celestiaShareLen
-    ],
-    [
-      h.prevHash,
-      h.epoch,
-      h.l2Height,
-      h.celestiaHeight,
-      h.celestiaShareStart,
-      h.celestiaShareLen,
-    ],
-  );
-
-export const hashHeader = (h: Header) => ethers.keccak256(packHeader(h));

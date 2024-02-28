@@ -12,7 +12,9 @@
 //   uint256 numLeaves;
 // }
 
-interface ChallengeDAProof {
+import { ethers } from "hardhat";
+
+export interface ChallengeDAProof {
   rootNonce: bigint;
   dataRootTuple: DataRootTuple;
   proof: BinaryMerkleProof;
@@ -37,3 +39,12 @@ interface BinaryMerkleProof {
   key: bigint;
   numLeaves: bigint;
 }
+
+export const getChallengeKey = (hash: string, pointer: bigint) => {
+  const packed = ethers.AbiCoder.defaultAbiCoder().encode(
+    ["bytes32", "uint8"],
+    [hash, pointer],
+  );
+
+  return ethers.keccak256(packed);
+};
