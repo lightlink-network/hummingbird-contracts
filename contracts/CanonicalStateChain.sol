@@ -24,8 +24,12 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         bytes32 prevHash; // PrevHash is the hash of the previous block bundle.
         uint32 epoch; // Epoch refers to a block number on the Ethereum blockchain.
         uint32 l2Height; // L2Height is the index of the Last L2 Block in this bundle.
-        // Pointer to the blocks contents on celestia.
+        // Pointers to the blocks contents on celestia.
         // See `Span` from https://docs.celestia.org/developers/blobstream-offchain#defining-a-chain
+        CelestiaPointer[] pointers;
+    }
+
+    struct CelestiaPointer {
         uint32 celestiaHeight;
         uint32 celestiaShareStart;
         uint32 celestiaShareLen;
@@ -66,7 +70,7 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         publisher = _publisher;
 
         // Add the genesis block.
-        bytes32 _hash = hash(_header);
+        bytes32 _hash = hashHeader(_header);
         headers[_hash] = _header;
         chain[0] = _hash;
     }
@@ -89,7 +93,7 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         );
 
         // check that the block is not already in the chain.
-        bytes32 _hash = hash(_header);
+        bytes32 _hash = hashHeader(_header);
         require(headers[_hash].epoch == 0, "block already exists");
 
         // Add the block to the chain.
@@ -106,8 +110,14 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         emit BlockAdded(chainHead);
     }
 
-    function hash(Header memory _header) internal pure returns (bytes32) {
+    function hashHeader(Header memory _header) public pure returns (bytes32) {
         return keccak256(abi.encode(_header));
+    }
+
+    function getBlockByHash(
+        bytes32 _hash
+    ) external view returns (Header memory) {
+        return headers[_hash];
     }
 
     function getBlock(uint256 _index) public view returns (Header memory) {
