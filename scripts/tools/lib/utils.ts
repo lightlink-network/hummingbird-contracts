@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { ethers } from "hardhat";
 
 export const shouldFail = async (promise: Promise<any>, message: string) => {
   try {
@@ -53,4 +54,12 @@ export const chalkFlicker = (str: string) => {
 export const logProgress = (str: string) => {
   process.stdout.clearLine(0);
   process.stdout.write(`\r` + chalkFlicker(str) + `\r`);
+};
+
+export const formatFixedEther = (wei: bigint, fractionDigits = 2) => {
+  return parseFloat(ethers.formatEther(wei)).toFixed(fractionDigits);
+};
+
+export const formatGWEI = (wei: bigint) => {
+  return parseFloat(ethers.formatUnits(wei, "gwei")).toFixed(2);
 };
