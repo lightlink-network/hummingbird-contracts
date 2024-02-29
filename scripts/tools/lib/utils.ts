@@ -51,9 +51,18 @@ export const chalkFlicker = (str: string) => {
   return chalk.yellow(str);
 };
 
+const _spinner = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+let _spinnerIdx = 0;
+const getNextSpinner = () => {
+  _spinnerIdx++;
+  return _spinner[_spinnerIdx % _spinner.length];
+};
+
 export const logProgress = (str: string) => {
   process.stdout.clearLine(0);
-  process.stdout.write(`\r` + chalkFlicker(str) + `\r`);
+  process.stdout.write(
+    `\r` + ` ${getNextSpinner()} ` + chalkFlicker(str) + `\r`,
+  );
 };
 
 export const formatFixedEther = (wei: bigint, fractionDigits = 2) => {
