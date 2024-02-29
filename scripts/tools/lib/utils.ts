@@ -90,3 +90,31 @@ export const timeFormat = (timestampMs: number) => {
   }
   return Math.floor(seconds) + " seconds";
 };
+
+type ChalkWriter = (...text: string[]) => string;
+
+// logTable prints a table to the console
+// with the given cells: [row1, row2, ...], where row1 = [col1, col2, ...]
+// e.g. logTable(["name", "bob"], ["age", 20])
+export const logTable = (chalkWriters: ChalkWriter[], rows: any[][]) => {
+  // get longest cell length in each column
+  // go through each row and to find the longest cell in each column
+  const longestCellInColumn = rows.reduce((acc, row) => {
+    return row.map((cell, i) => {
+      return Math.max(acc[i] || 0, String(cell).length);
+    });
+  }, [] as number[]);
+
+  // print each row
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    let output = "→ ";
+    for (let j = 0; j < row.length; j++) {
+      const cell = row[j];
+      output +=
+        chalkWriters[j](String(cell).padEnd(longestCellInColumn[j])) + "  ";
+    }
+
+    console.log(output);
+  }
+};
