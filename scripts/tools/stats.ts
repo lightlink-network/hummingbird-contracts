@@ -10,8 +10,8 @@ import {
 } from "./lib/utils";
 import chalk from "chalk";
 
-const HEADER_SAMPLE_SIZE = 20;
-const TX_SAMPLE_SIZE = 20;
+const HEADER_SAMPLE_SIZE = 50;
+const TX_SAMPLE_SIZE = 50;
 
 const main = async () => {
   if (!process.env.CHALLENGE) {
