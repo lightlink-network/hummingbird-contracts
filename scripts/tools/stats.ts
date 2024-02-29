@@ -93,7 +93,7 @@ const main = async () => {
     if (i === 0) return 0n;
     return acc + header.l2Height - headers[i - 1].l2Height;
   }, 0n);
-  const avgL2BundleSize = totalL2BundleSize / BigInt(headers.length);
+  const avgL2BundleSize = totalL2BundleSize / BigInt(headers.length - 1);
 
   process.stdout.clearLine(0);
   console.log(`Stats:`);
@@ -122,8 +122,8 @@ const main = async () => {
         "Avg time between blocks:",
         timeFormat(Number(avgTimeBetweenBlocks) * 1000),
       ],
-      ["Avg L2 bundle size:", avgL2BundleSize + " txs"],
-      ["Total L2 blocks rolled up:", totalL2BundleSize + " txs"],
+      ["Avg L2 bundle size:", avgL2BundleSize + " blocks"],
+      ["Total L2 blocks rolled up:", totalL2BundleSize + " blocks"],
       [
         "Est. daily gas fees:",
         formatFixedEther(estimateDailyGasFees, 4) + chalk.cyan(" ETH"),
