@@ -14,5 +14,7 @@ node_modules
 /coverage.json
 
 .vscode
-.env.pegasus
-.env.sepolia
+
+# Ignore all .env files except .env.example
+.env*
+!.env.example

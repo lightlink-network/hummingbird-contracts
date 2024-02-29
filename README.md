@@ -8,7 +8,7 @@
 
 This repo contains smart contracts for the Hummingbird project. Work in progress.
 
-Documentation can be found [here](https://docs.lightlink.io/lightlink-protocol/achitecture-and-design/lightlink-protocol-deep-dive)
+Documentation & deployed contract addresses can be found [here](https://docs.lightlink.io/lightlink-protocol/achitecture-and-design/lightlink-protocol-deep-dive).
 
 ## Usage
 
