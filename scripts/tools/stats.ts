@@ -14,6 +14,12 @@ const HEADER_SAMPLE_SIZE = 20;
 const TX_SAMPLE_SIZE = 20;
 
 const main = async () => {
+  if (!process.env.CHALLENGE) {
+    console.error("Missing challenge address");
+    console.error("Define CHALLENGE in your .env file.");
+    process.exit(1);
+  }
+
   // 1. get contracts
   const challengeAddr = process.env.CHALLENGE!;
   const challenge = await ethers.getContractAt("Challenge", challengeAddr);

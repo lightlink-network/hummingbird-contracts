@@ -5,6 +5,12 @@ import { logProgress, timeAgo } from "./lib/utils";
 const ANTI_RATE_LIMIT_DELAY = 1000;
 
 const main = async () => {
+  if (!process.env.CHALLENGE) {
+    console.error("Missing challenge address");
+    console.error("Define CHALLENGE in your .env file.");
+    process.exit(1);
+  }
+
   const challengeAddr = process.env.CHALLENGE!;
   const challenge = await ethers.getContractAt("Challenge", challengeAddr);
   const canonicalStateChainAddr = await challenge.chain();
