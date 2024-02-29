@@ -77,7 +77,10 @@ const main = async () => {
   const avgGasPrice = totalGasFees / totalGasUsed;
   const avgTimeBetweenBlocks =
     (metadata[metadata.length - 1].timestamp - metadata[0].timestamp) /
-    BigInt(metadata.length - 1);
+    BigInt(metadata.length - 1); // in seconds
+
+  const estimateDailyGasFees =
+    (avgGasFees * 60n * 60n * 24n) / avgTimeBetweenBlocks;
 
   // e.g. l2BundleSize = header.l2Height - prevHeader.l2Height
   const totalL2BundleSize = headers.reduce((acc, header, i) => {
@@ -115,6 +118,10 @@ const main = async () => {
       ],
       ["Avg L2 bundle size:", avgL2BundleSize + " txs"],
       ["Total L2 blocks rolled up:", totalL2BundleSize + " txs"],
+      [
+        "Est. daily gas fees:",
+        formatFixedEther(estimateDailyGasFees, 4) + chalk.cyan(" ETH"),
+      ],
     ],
   );
 };
