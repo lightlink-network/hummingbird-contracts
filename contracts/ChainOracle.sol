@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: UNLICENSED
-// LightLink Hummingbird v0.0.3
+// SPDX-License-Identifier: MIT
+// LightLink Hummingbird v0.1.1
+
 // TODO: use single version
 pragma solidity ^0.8.0;
 
@@ -17,6 +18,16 @@ import "hardhat/console.sol";
 // TODO: remove this in production
 // hardhat console
 import "hardhat/console.sol";
+
+// This contract enables any user to directly upload valid Layer 2 blocks, from
+// the data availability layer, on to Layer 1. Once loaded, the headers and
+// transactions can be fetched from the ChainOracle by their respective hashes.
+// This mechanism is crucial for the other challenges listed below.
+//
+// Data is loaded in two parts:
+// 1. Celestia shares are loaded, along with the required merkle proofs and
+//    validator attestations.
+// 2. Stored shares can then be decoded into Layer 2 headers and transactions.
 
 contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     ICanonicalStateChain public canonicalStateChain;

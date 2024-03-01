@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// LightLink Hummingbird v0.1.1
+
 pragma solidity ^0.8.0;
 
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";

@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: UNLICENSED
-// LightLink Hummingbird v0.0.3
+// SPDX-License-Identifier: MIT
+// LightLink Hummingbird v0.1.1
 
 // TODO: use single version
 pragma solidity ^0.8.0;
@@ -8,8 +8,16 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-// CanonicalStateChain is placeholder contract that stores the canonical state of a
-// rollup chain.
+// The Canonical State Chain (CSC) can be considered the source of truth for
+// the layer two chain. All layer two blocks will eventually be bundled up by
+// the hummingbird publisher and published to the CSC. The chain can only be
+// rolled back by the challenge contract, assuming the block is within the
+// challenge/pending window.
+//
+// - The chain is append only, and the publisher is the only address that can
+//   add new blocks to the chain.
+// - The owner of the contract can replace the publisher address, and is
+//   expected to be the DAO Governance contract.
 
 contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
     struct Header {

@@ -1,10 +1,27 @@
-// SPDX-License-Identifier: UNLICENSED
-// LightLink Hummingbird v0.0.3
+// SPDX-License-Identifier: MIT
+// LightLink Hummingbird v0.1.1
 
 pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
+
+// ChallengeDataAvailability is a challenge for verifying a rollup blocks data
+// root has been included. (via Celestia Blobstream).
+//
+// This is a challenge game between two parties: the challenger and the defender.
+// There can only be one challenge per rblock hash.
+//
+// The Challenge goes through the following steps:
+// 1. A challenger initiates a challenge by calling challengeDataRootInclusion.
+// 2. The defending block publisher must provide a proof of inclusion for the
+//    data root. If the proof is valid, the defender wins the challenge and
+//    receives the challenge fee.
+// 3. Otherwise the challenge expires and the challenger wins the challenge and
+//    the block is rolled back.
+//
+// You can trigger a challenge easily via the hummingbird client:
+//      `hb challenge-da <block-index>`.
 
 abstract contract ChallengeDataAvailability is ChallengeBase {
     enum ChallengeDAStatus {
@@ -44,7 +61,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         external
         payable
         mustBeCanonical(_blockIndex)
-        mustBeWithinChallengeWindow(_blockIndex)
+        mustBeWithinChallengeWindow(_blockIndex) // TODO: use custom challenge period.
         requireChallengeFee
         returns (uint256)
     {

@@ -1,8 +1,14 @@
 # Hummingbird contracts
 
+>[!NOTE]  
+> Hummingbird is a work in progress and is not yet ready for production use.
+
+>[!NOTE]
+> Requires **Node version 18**. If you have nvm installed, run `nvm use` to switch to the correct version.
+
 This repo contains smart contracts for the Hummingbird project. Work in progress.
 
-> Note: Requires **Node version 18**. If you have nvm installed, run `nvm use` to switch to the correct version.
+Documentation & deployed contract addresses can be found [here](https://docs.lightlink.io/lightlink-protocol/achitecture-and-design/lightlink-protocol-deep-dive).
 
 ## Usage
 
