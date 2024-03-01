@@ -3,84 +3,74 @@ import { CanonicalStateChain, ChainOracle } from "../../typechain-types";
 import { SharesProofStruct } from "../../typechain-types/contracts/ChainOracle";
 import { Header } from "../lib/header";
 
-/*
-Epoch: 5329636
-L2Height: 69484106
-PrevHash: 0xa1d0b9e0de4ccfd612f75f1dab9b1fedc60491e654a5dfd9a0292a4459369d41
-TxRoot: 0x6f952897d5c682e66526f0e42a37c2a9aeaebeeaa68966a10d27815f08088607
-BlockRoot: 0xbc8fe206922ff2d655c15231f8e2209d5476df916d3dce282795efb6f5722bda
-StateRoot: 0xf1b3254a4dd4e47a6215b7ba699c42ec6106e63cbacbd36ca3ac064961cf1faa
-CelestiaHeight: 1215624
-CelestiaShareStart: 256
-CelestiaShareLen: 3462
-*/
-
 const rollupHeaders: CanonicalStateChain.HeaderStruct[] = [
   {
-    epoch: BigInt(5329636),
-    l2Height: BigInt(69484106),
+    epoch: BigInt(5394737),
+    l2Height: BigInt(71321264),
     prevHash: "", // This will be replaced when pushed to the chain
     txRoot:
-      "0x6f952897d5c682e66526f0e42a37c2a9aeaebeeaa68966a10d27815f08088607",
+      "0x327011612f67b356e0daeb6e0cacdf3b4c1e4dce7bbf4945c7b3d7c8e7c6da3d",
     blockRoot:
-      "0xbc8fe206922ff2d655c15231f8e2209d5476df916d3dce282795efb6f5722bda",
+      "0xdbe2e4268f3a831d141b7e8f3d948afc6243896c55431ee66caf9d2b72143978",
     stateRoot:
-      "0xf1b3254a4dd4e47a6215b7ba699c42ec6106e63cbacbd36ca3ac064961cf1faa",
-    celestiaHeight: BigInt(1215624),
-    celestiaShareStart: BigInt(256),
-    celestiaShareLen: BigInt(3462),
+      "0xa1baa0f693395b09151aaf19df587e7c0cfdeda557d71aa93f54ab1758f3e670",
+    celestiaHeight: BigInt(1286533),
+    celestiaShareStart: BigInt(64),
+    celestiaShareLen: BigInt(3465),
   },
 ];
 
 const l2HeaderHashes: string[] = [
-  "0x52c2fd04cfb7cbcea2b54d1d9bd5ba95a3cf08e5bf9166773cbef21f2323c58e",
-  "0x4a63bb258a8b7ecde64390ae55072309cfa5894682f84b4ee6dade945e47524f",
+  "0x9d1cf3aa5e493c95acf8d3795bd2d8e6d4b6f48d6ad32c0806837435294c1315",
+  "0x5d47205c2ea8c70dc35c76e9067724d2674538583d7b3762f77346487203449b",
 ];
 
 const l2Headers: ChainOracle.L2HeaderStruct[] = [
+  // 0x9d1cf3aa5e493c95acf8d3795bd2d8e6d4b6f48d6ad32c0806837435294c1315
   {
     parentHash:
-      "0x7eb362194afa8eb951c642f4d4c99358d604646dd3982bf5d4402cf150353f0b",
+      "0x59c64ea837712cb3c1a44273fb6a0eaf3a56d429d8cbf37c1bc9ba52d25be716",
     uncleHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     beneficiary: "0xdfad157b8d4e58c26bf9b947f8e75b5adbc7822b",
     stateRoot:
-      "0x4c6bc8a737c95ec9b2a53ac6fbb990bce84c250d2787e34e144da1a015868d46",
+      "0xc8ea9802ccee323836de401d50ac2baf871ed8eec8fd8785251b035efef9d6d0",
     transactionsRoot:
-      "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "0x43c52c4f0bf3b0ef929caa8227c365cec71142e5b93dfd286627cad342c5f8b8",
     receiptsRoot:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     logsBloom:
       "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-    difficulty: BigInt(500),
-    number: BigInt(69483210),
-    gasLimit: BigInt(15000000),
-    gasUsed: BigInt(0),
-    timestamp: BigInt(1708377995),
+    difficulty: "0x1f4",
+    number: "0x4403e7b",
+    gasLimit: "0xe4e1c0",
+    gasUsed: "0xdb93",
+    timestamp: "0x65e1db2a",
     extraData: "0x",
     mixHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     nonce: BigInt("0xc9e41bfa0b90b3aa"),
   },
+  // 0x5d47205c2ea8c70dc35c76e9067724d2674538583d7b3762f77346487203449b
   {
     parentHash:
-      "0x52c2fd04cfb7cbcea2b54d1d9bd5ba95a3cf08e5bf9166773cbef21f2323c58e",
+      "0x9d1cf3aa5e493c95acf8d3795bd2d8e6d4b6f48d6ad32c0806837435294c1315",
     uncleHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     beneficiary: "0xdfad157b8d4e58c26bf9b947f8e75b5adbc7822b",
     stateRoot:
-      "0x168fdbcb48457df2f0f1ec9f0fb8587f092e02a67628b7f381998c762eb8276c",
+      "0x3df56e35990cebb521ddf415be1ca169d0486f6e9b4742f89df36c24276fbbee",
     transactionsRoot:
-      "0x6c87336806abadbe78ba6f77a8588bccd14134618a5a0fc1444c446f23e5ce24",
+      "0x0cc14c6992b2960f0ce3d94e06692d512baada2d22a9a8cd03d7cefe40e90e8d",
     receiptsRoot:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     logsBloom:
       "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-    difficulty: BigInt(500),
-    number: BigInt(69483211),
-    gasLimit: BigInt(15000000),
-    gasUsed: BigInt(206612),
-    timestamp: BigInt(1708377996),
+    difficulty: "0x1f4",
+    number: "0x4403e7c",
+    gasLimit: "0xe4e1c0",
+    gasUsed: "0x64e1c",
+    timestamp: "0x65e1db2b",
     extraData: "0x",
     mixHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -89,599 +79,343 @@ const l2Headers: ChainOracle.L2HeaderStruct[] = [
 ];
 
 const shareProofs: SharesProofStruct[] = [
-  // 0x52c2fd04cfb7cbcea2b54d1d9bd5ba95a3cf08e5bf9166773cbef21f2323c58e
+  // 0x9d1cf3aa5e493c95acf8d3795bd2d8e6d4b6f48d6ad32c0806837435294c1315
   {
+    attestationProof: {
+      proof: {
+        key: "132",
+        numLeaves: "400",
+        sideNodes: [
+          "0x3c6ba044ba05ba8e76cc9dd5c6a1d97bfee61140efd98af5e7419b372923704b",
+          "0x066e58eb3706491b556a0806d859da6f414d0b2fe58d5ef59ae5df382235df2c",
+          "0x26e6c509bb6bcfce7ccb11b558cdbaad0d49f13463c5020d8fa94d3ceef3c16b",
+          "0xdf2513bef49743d2c9f18c78d26475bd2159669de3b4eb67039b9064d49fe74b",
+          "0x61d2f2e58ad61e40e43abcdd2946247fb9372189040ff2ffef372ddb4745cf25",
+          "0x1ac7d724dae2312a05fd85c6a13db08b49a6406ca12b49ac228cbc704b3f75dd",
+          "0xc987887bb57873e719394a8c5f700d71f1a0b58ba36c5ad4a70353f3c11cf650",
+          "0xd599625d6619f628d78fc60d6f6e5a78ddacf05a8b2ec0775e005efecc769f51",
+          "0x6c3833c8558b78e333725ba9c558e5dded06160b213bf0a3095c16bc66091cd7",
+        ],
+      },
+      tuple: {
+        dataRoot:
+          "0x0d0f3d14f9b69bb2399edd18a6bc0b2fdd98c08d6c1aa76992d1d2af6f0a3bb1",
+        height: "1286533",
+      },
+      tupleRootNonce: "3562",
+    },
     data: [
-      Buffer.from(
-        "AAAAAAAAAAAAAAAAAAAAAAAAAABsaWdodGxpbmsAC5CzqsDA+QIf+QIaoBeLsdcTSIFlaxX/NtgvbiY/ivgIYn0nvBSjz3JceR5AoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlN+tFXuNTljCa/m5R/jnW1rbx4IroJOepQQbtPTZVm+9YSw7BocT8b/sSAImY63Q/1FAm1WzoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAuQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIIB9IQEJDoog+ThwICEZdPHOqAAAAAAAAA=",
-        "base64",
-      ),
-      Buffer.from(
-        "AAAAAAAAAAAAAAAAAAAAAAAAAABsaWdodGxpbmsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACIyeQb+guQs6rAwPkCH/kCGqAXjyMTlzWXrODNBxdGlaBZKsvZgy4LhxzjkdvxzqP2mqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJTfrRV7jU5Ywmv5uUf451ta28eCK6CTnqUEG7T02VZvvWEsOwaHE/G/7EgCJmOt0P9RQJtVs6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALkBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
-        "base64",
-      ),
+      "0x00000000000000000000000000000000000000006c696768746c696e6b0083e4e1c0808465e1db2aa00000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000088c9e41bfa0b90b3aac0c0f902aff9021ca059c64ea837712cb3c1a44273fb6a0eaf3a56d429d8cbf37c1bc9ba52d25be716a0000000000000000000000000000000000000000000000000000000000000000094dfad157b8d4e58c26bf9b947f8e75b5adbc7822ba0c8ea9802ccee323836de401d50ac2baf871ed8eec8fd8785251b035efef9d6d0a043c52c4f0bf3b0ef929caa8227c365cec71142e5b93dfd286627cad342c5f8b8a00000000000000000000000000000000000000000000000000000000000000000b901000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "0x00000000000000000000000000000000000000006c696768746c696e6b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008201f48404403e7b83e4e1c082db938465e1db2aa00000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000088c9e41bfa0b90b3aaf88df88b83069b48830f424082db939402c27800f9c173e90dd6015d35989546e943afea80a487335443000000000000000000000000000000000000000000000000000000097d2ff2c0820ee9a06e3a89f403a2b04191435b7da3344c36b8c64381f19409f2a6f7c2002cc12183a01d09f03d226d8bbe5f83ed13b441a119bf6f000712709b7f08a1c56ac2ba3350c0f90958f9021da09d1cf3aa5e493c95acf8d3795bd2d8e6d4b6f48d6ad32c0806837435294c1315a0000000000000000000000000000000000000000000000000000000000000000094dfad157b8d4e58c26bf9b947f8e75b5adbc7822ba03df56e35990cebb521ddf415be1ca169d0486f6e9b4742f89df36c24276fbbeea00cc14c6992b2960f0ce3d94e06692d512baada2d22a9a8cd03d7cefe40e90e8da0000000000000000000000000000000000000000000000000000000",
+    ],
+    namespace: {
+      id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+      version: "0x00",
+    },
+    rowProofs: [
+      {
+        key: "17",
+        numLeaves: "256",
+        sideNodes: [
+          "0xe52c7918cd5035d7d38b982d6f12c7fa695140c4d312cfbb8934f7ea069292cb",
+          "0x442bf9f4570cc8e947687b79c281979b6cf9abd21f9d22277aa378fd51edca0e",
+          "0x49d9c98413f399228fa09fae8789dc97df06b18dd0a1a2dfd95f171838239810",
+          "0x0742c0aebffe6140e7abd718ef891acb458221f66221d419347a016ec5df305d",
+          "0x9c355f7a9de08a1c653e0925d3a6d56133a296dcdd4a22b63848fd595a28ced0",
+          "0xa2cc7c20143c24b795ef5ed02b53ccc566573a4a87a8d904c65046318e8fd383",
+          "0x75d9458fdce308d14a835e3f0b47be154ad26eb386aa6fb5aae3b6745de9d5d5",
+          "0x835d65543a214e98d3ec4028858997442de92edc4ded7581dee0952889d3e4b8",
+        ],
+      },
+    ],
+    rowRoots: [
+      {
+        digest:
+          "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
+        max: {
+          id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+          version: "0x00",
+        },
+        min: {
+          id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+          version: "0x00",
+        },
+      },
     ],
     shareProofs: [
       {
-        beginKey: 4,
-        endKey: 6,
+        beginKey: "6",
+        endKey: "8",
         sideNodes: [
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-              255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-              255, 255, 255, 255, 255, 255,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
         ],
       },
     ],
-    namespace: {
-      version: new Uint8Array([0]),
-      id: new Uint8Array([
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 105, 103,
-        104, 116, 108, 105, 110, 107,
-      ]),
-    },
-    rowRoots: [
-      {
-        min: {
-          version: new Uint8Array([0]),
-          id: new Uint8Array([
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 105,
-            103, 104, 116, 108, 105, 110, 107,
-          ]),
-        },
-        max: {
-          version: new Uint8Array([0]),
-          id: new Uint8Array([
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 105,
-            103, 104, 116, 108, 105, 110, 107,
-          ]),
-        },
-        digest: new Uint8Array([
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 105,
-          103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-        ]),
-      },
-    ],
-    rowProofs: [
-      {
-        sideNodes: [
-          new Uint8Array([
-            203, 127, 36, 204, 55, 238, 20, 207, 232, 182, 20, 179, 166, 106,
-            186, 133, 65, 17, 179, 254, 15, 153, 245, 147, 71, 188, 28, 152,
-            129, 102, 118, 13,
-          ]),
-          new Uint8Array([
-            114, 18, 74, 162, 231, 88, 150, 155, 51, 78, 64, 219, 118, 158, 199,
-            87, 157, 118, 181, 158, 175, 160, 221, 176, 247, 172, 20, 148, 193,
-            24, 174, 245,
-          ]),
-          new Uint8Array([
-            169, 62, 204, 43, 160, 194, 121, 168, 116, 42, 249, 206, 13, 154,
-            142, 255, 158, 126, 118, 224, 247, 117, 111, 79, 7, 167, 4, 138, 15,
-            82, 71, 184,
-          ]),
-          new Uint8Array([
-            216, 25, 139, 170, 146, 41, 202, 122, 106, 165, 201, 174, 182, 41,
-            22, 159, 194, 13, 182, 97, 71, 24, 4, 219, 150, 59, 110, 98, 203,
-            171, 129, 94,
-          ]),
-          new Uint8Array([
-            70, 17, 32, 130, 228, 0, 72, 120, 40, 46, 94, 237, 60, 221, 222,
-            130, 208, 137, 187, 145, 74, 152, 163, 6, 148, 112, 190, 42, 169,
-            169, 77, 186,
-          ]),
-          new Uint8Array([
-            14, 146, 27, 77, 228, 64, 249, 206, 244, 6, 179, 204, 41, 210, 187,
-            196, 31, 181, 237, 129, 97, 136, 6, 135, 28, 175, 60, 153, 91, 65,
-            128, 24,
-          ]),
-          new Uint8Array([
-            6, 146, 134, 122, 130, 228, 68, 202, 204, 171, 210, 181, 245, 60,
-            204, 69, 189, 170, 90, 76, 14, 189, 168, 78, 186, 144, 178, 76, 160,
-            126, 117, 174,
-          ]),
-          new Uint8Array([
-            140, 66, 35, 195, 166, 33, 48, 120, 45, 213, 132, 209, 22, 140, 128,
-            54, 4, 130, 147, 245, 29, 51, 104, 183, 146, 46, 203, 25, 181, 189,
-            60, 161,
-          ]),
-        ],
-        key: 39,
-        numLeaves: 256,
-      },
-    ],
-    attestationProof: {
-      tupleRootNonce: 3383,
-      tuple: {
-        height: 1215624,
-        dataRoot: new Uint8Array([
-          69, 207, 56, 157, 215, 169, 201, 84, 110, 149, 228, 243, 38, 249, 107,
-          40, 240, 138, 215, 221, 91, 153, 96, 142, 215, 190, 72, 98, 98, 183,
-          251, 22,
-        ]),
-      },
-      proof: {
-        sideNodes: [
-          new Uint8Array([
-            238, 112, 187, 95, 254, 122, 188, 44, 151, 221, 82, 132, 217, 153,
-            247, 122, 209, 45, 229, 229, 101, 210, 115, 225, 182, 100, 220, 71,
-            160, 49, 219, 82,
-          ]),
-          new Uint8Array([
-            41, 178, 137, 107, 95, 47, 61, 150, 156, 46, 84, 77, 243, 208, 82,
-            209, 80, 142, 247, 95, 155, 239, 147, 246, 166, 22, 148, 139, 33,
-            239, 206, 72,
-          ]),
-          new Uint8Array([
-            108, 20, 31, 228, 135, 184, 78, 33, 113, 130, 104, 139, 150, 94,
-            250, 34, 195, 186, 185, 29, 96, 184, 5, 201, 157, 183, 119, 243, 61,
-            165, 119, 162,
-          ]),
-          new Uint8Array([
-            61, 12, 254, 109, 182, 152, 247, 238, 136, 122, 194, 137, 219, 164,
-            197, 61, 91, 11, 170, 209, 115, 62, 3, 73, 74, 113, 58, 117, 125,
-            16, 9, 157,
-          ]),
-          new Uint8Array([
-            215, 167, 20, 40, 195, 168, 241, 214, 121, 140, 158, 7, 219, 237,
-            177, 116, 102, 226, 52, 197, 186, 162, 150, 141, 185, 166, 187, 252,
-            16, 178, 248, 48,
-          ]),
-          new Uint8Array([
-            138, 8, 15, 95, 176, 175, 170, 18, 16, 248, 114, 107, 122, 244, 63,
-            21, 78, 52, 154, 246, 141, 156, 108, 147, 187, 102, 129, 68, 170, 4,
-            235, 91,
-          ]),
-          new Uint8Array([
-            214, 117, 31, 212, 100, 239, 146, 4, 63, 3, 214, 226, 90, 226, 126,
-            120, 106, 180, 10, 211, 3, 171, 225, 226, 159, 147, 22, 89, 246, 10,
-            1, 227,
-          ]),
-          new Uint8Array([
-            244, 228, 147, 22, 2, 149, 21, 139, 149, 194, 174, 151, 238, 255, 9,
-            214, 128, 13, 249, 79, 146, 90, 120, 206, 111, 230, 247, 67, 29,
-            126, 116, 65,
-          ]),
-          new Uint8Array([
-            63, 10, 236, 59, 112, 243, 84, 242, 178, 204, 173, 187, 135, 52,
-            181, 168, 108, 129, 163, 43, 241, 230, 37, 53, 214, 174, 54, 6, 238,
-            27, 48, 6,
-          ]),
-        ],
-        key: 23,
-        numLeaves: 400,
-      },
-    },
   },
 
-  // 0x4a63bb258a8b7ecde64390ae55072309cfa5894682f84b4ee6dade945e47524f
+  // 0x5d47205c2ea8c70dc35c76e9067724d2674538583d7b3762f77346487203449b
   {
+    attestationProof: {
+      proof: {
+        key: "132",
+        numLeaves: "400",
+        sideNodes: [
+          "0x3c6ba044ba05ba8e76cc9dd5c6a1d97bfee61140efd98af5e7419b372923704b",
+          "0x066e58eb3706491b556a0806d859da6f414d0b2fe58d5ef59ae5df382235df2c",
+          "0x26e6c509bb6bcfce7ccb11b558cdbaad0d49f13463c5020d8fa94d3ceef3c16b",
+          "0xdf2513bef49743d2c9f18c78d26475bd2159669de3b4eb67039b9064d49fe74b",
+          "0x61d2f2e58ad61e40e43abcdd2946247fb9372189040ff2ffef372ddb4745cf25",
+          "0x1ac7d724dae2312a05fd85c6a13db08b49a6406ca12b49ac228cbc704b3f75dd",
+          "0xc987887bb57873e719394a8c5f700d71f1a0b58ba36c5ad4a70353f3c11cf650",
+          "0xd599625d6619f628d78fc60d6f6e5a78ddacf05a8b2ec0775e005efecc769f51",
+          "0x6c3833c8558b78e333725ba9c558e5dded06160b213bf0a3095c16bc66091cd7",
+        ],
+      },
+      tuple: {
+        dataRoot:
+          "0x0d0f3d14f9b69bb2399edd18a6bc0b2fdd98c08d6c1aa76992d1d2af6f0a3bb1",
+        height: "1286533",
+      },
+      tupleRootNonce: "3562",
+    },
     data: [
-      Buffer.from(
-        "AAAAAAAAAAAAAAAAAAAAAAAAAABsaWdodGxpbmsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACIyeQb+guQs6rAwPkCH/kCGqAXjyMTlzWXrODNBxdGlaBZKsvZgy4LhxzjkdvxzqP2mqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJTfrRV7jU5Ywmv5uUf451ta28eCK6CTnqUEG7T02VZvvWEsOwaHE/G/7EgCJmOt0P9RQJtVs6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALkBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
-        "base64",
-      ),
-      Buffer.from(
-        "AAAAAAAAAAAAAAAAAAAAAAAAAABsaWdodGxpbmsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAggH0hAQkOimD5OHAgIRl08c6oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiMnkG/oLkLOqwMD5Ah/5AhqgnZAKAgneTE4DphKu2cMPg+UqP2d8KQJqq0MO0+RXuyigAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACU360Ve41OWMJr+blH+OdbWtvHgiugk56lBBu09NlWb71hLDsGhxPxv+xIAiZjrdD/UUCbVbOgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC5AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
-        "base64",
-      ),
+      "0x00000000000000000000000000000000000000006c696768746c696e6b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008201f48404403e7b83e4e1c082db938465e1db2aa00000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000088c9e41bfa0b90b3aaf88df88b83069b48830f424082db939402c27800f9c173e90dd6015d35989546e943afea80a487335443000000000000000000000000000000000000000000000000000000097d2ff2c0820ee9a06e3a89f403a2b04191435b7da3344c36b8c64381f19409f2a6f7c2002cc12183a01d09f03d226d8bbe5f83ed13b441a119bf6f000712709b7f08a1c56ac2ba3350c0f90958f9021da09d1cf3aa5e493c95acf8d3795bd2d8e6d4b6f48d6ad32c0806837435294c1315a0000000000000000000000000000000000000000000000000000000000000000094dfad157b8d4e58c26bf9b947f8e75b5adbc7822ba03df56e35990cebb521ddf415be1ca169d0486f6e9b4742f89df36c24276fbbeea00cc14c6992b2960f0ce3d94e06692d512baada2d22a9a8cd03d7cefe40e90e8da0000000000000000000000000000000000000000000000000000000",
+      "0x00000000000000000000000000000000000000006c696768746c696e6b000000000000b90100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008201f48404403e7c83e4e1c083064e1c8465e1db2ba00000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000088c9e41bfa0b90b3aaf90734f901ca82031a808301938a949be0838bc4926faa5f1937ab8f990ce662c8c17280b901649eaa5ba1000000000000000000000000eadd17d6a969f56a4d6ca63f2124de39c12d3cd73635653164623131633564393631316536666537626234620000000000000000000000000000000000000000000000",
+    ],
+    namespace: {
+      id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+      version: "0x00",
+    },
+    rowProofs: [
+      {
+        key: "17",
+        numLeaves: "256",
+        sideNodes: [
+          "0xe52c7918cd5035d7d38b982d6f12c7fa695140c4d312cfbb8934f7ea069292cb",
+          "0x442bf9f4570cc8e947687b79c281979b6cf9abd21f9d22277aa378fd51edca0e",
+          "0x49d9c98413f399228fa09fae8789dc97df06b18dd0a1a2dfd95f171838239810",
+          "0x0742c0aebffe6140e7abd718ef891acb458221f66221d419347a016ec5df305d",
+          "0x9c355f7a9de08a1c653e0925d3a6d56133a296dcdd4a22b63848fd595a28ced0",
+          "0xa2cc7c20143c24b795ef5ed02b53ccc566573a4a87a8d904c65046318e8fd383",
+          "0x75d9458fdce308d14a835e3f0b47be154ad26eb386aa6fb5aae3b6745de9d5d5",
+          "0x835d65543a214e98d3ec4028858997442de92edc4ded7581dee0952889d3e4b8",
+        ],
+      },
+    ],
+    rowRoots: [
+      {
+        digest:
+          "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
+        max: {
+          id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+          version: "0x00",
+        },
+        min: {
+          id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+          version: "0x00",
+        },
+      },
     ],
     shareProofs: [
       {
-        beginKey: 5,
-        endKey: 7,
+        beginKey: "7",
+        endKey: "9",
         sideNodes: [
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-              105, 103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
           {
-            min: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
-            },
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
             max: {
-              version: new Uint8Array([0]),
-              id: new Uint8Array([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108,
-                105, 103, 104, 116, 108, 105, 110, 107,
-              ]),
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
             },
-            digest: new Uint8Array([
-              255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-              255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-              255, 255, 255, 255, 255, 255,
-            ]),
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
+          },
+          {
+            digest:
+              "0x00000000000000000000000000000000000000006c696768746c696e6b000000",
+            max: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
+          },
+          {
+            digest:
+              "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            max: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
+            min: {
+              id: "0x000000000000000000000000000000000000006c696768746c696e6b",
+              version: "0x00",
+            },
           },
         ],
       },
     ],
-    namespace: {
-      version: new Uint8Array([0]),
-      id: new Uint8Array([
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 105, 103,
-        104, 116, 108, 105, 110, 107,
-      ]),
-    },
-    rowRoots: [
-      {
-        min: {
-          version: new Uint8Array([0]),
-          id: new Uint8Array([
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 105,
-            103, 104, 116, 108, 105, 110, 107,
-          ]),
-        },
-        max: {
-          version: new Uint8Array([0]),
-          id: new Uint8Array([
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 105,
-            103, 104, 116, 108, 105, 110, 107,
-          ]),
-        },
-        digest: new Uint8Array([
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 105,
-          103, 104, 116, 108, 105, 110, 107, 0, 0, 0,
-        ]),
-      },
-    ],
-    rowProofs: [
-      {
-        sideNodes: [
-          new Uint8Array([
-            203, 127, 36, 204, 55, 238, 20, 207, 232, 182, 20, 179, 166, 106,
-            186, 133, 65, 17, 179, 254, 15, 153, 245, 147, 71, 188, 28, 152,
-            129, 102, 118, 13,
-          ]),
-          new Uint8Array([
-            114, 18, 74, 162, 231, 88, 150, 155, 51, 78, 64, 219, 118, 158, 199,
-            87, 157, 118, 181, 158, 175, 160, 221, 176, 247, 172, 20, 148, 193,
-            24, 174, 245,
-          ]),
-          new Uint8Array([
-            169, 62, 204, 43, 160, 194, 121, 168, 116, 42, 249, 206, 13, 154,
-            142, 255, 158, 126, 118, 224, 247, 117, 111, 79, 7, 167, 4, 138, 15,
-            82, 71, 184,
-          ]),
-          new Uint8Array([
-            216, 25, 139, 170, 146, 41, 202, 122, 106, 165, 201, 174, 182, 41,
-            22, 159, 194, 13, 182, 97, 71, 24, 4, 219, 150, 59, 110, 98, 203,
-            171, 129, 94,
-          ]),
-          new Uint8Array([
-            70, 17, 32, 130, 228, 0, 72, 120, 40, 46, 94, 237, 60, 221, 222,
-            130, 208, 137, 187, 145, 74, 152, 163, 6, 148, 112, 190, 42, 169,
-            169, 77, 186,
-          ]),
-          new Uint8Array([
-            14, 146, 27, 77, 228, 64, 249, 206, 244, 6, 179, 204, 41, 210, 187,
-            196, 31, 181, 237, 129, 97, 136, 6, 135, 28, 175, 60, 153, 91, 65,
-            128, 24,
-          ]),
-          new Uint8Array([
-            6, 146, 134, 122, 130, 228, 68, 202, 204, 171, 210, 181, 245, 60,
-            204, 69, 189, 170, 90, 76, 14, 189, 168, 78, 186, 144, 178, 76, 160,
-            126, 117, 174,
-          ]),
-          new Uint8Array([
-            140, 66, 35, 195, 166, 33, 48, 120, 45, 213, 132, 209, 22, 140, 128,
-            54, 4, 130, 147, 245, 29, 51, 104, 183, 146, 46, 203, 25, 181, 189,
-            60, 161,
-          ]),
-        ],
-        key: 39,
-        numLeaves: 256,
-      },
-    ],
-    attestationProof: {
-      tupleRootNonce: 3383,
-      tuple: {
-        height: 1215624,
-        dataRoot: new Uint8Array([
-          69, 207, 56, 157, 215, 169, 201, 84, 110, 149, 228, 243, 38, 249, 107,
-          40, 240, 138, 215, 221, 91, 153, 96, 142, 215, 190, 72, 98, 98, 183,
-          251, 22,
-        ]),
-      },
-      proof: {
-        sideNodes: [
-          new Uint8Array([
-            238, 112, 187, 95, 254, 122, 188, 44, 151, 221, 82, 132, 217, 153,
-            247, 122, 209, 45, 229, 229, 101, 210, 115, 225, 182, 100, 220, 71,
-            160, 49, 219, 82,
-          ]),
-          new Uint8Array([
-            41, 178, 137, 107, 95, 47, 61, 150, 156, 46, 84, 77, 243, 208, 82,
-            209, 80, 142, 247, 95, 155, 239, 147, 246, 166, 22, 148, 139, 33,
-            239, 206, 72,
-          ]),
-          new Uint8Array([
-            108, 20, 31, 228, 135, 184, 78, 33, 113, 130, 104, 139, 150, 94,
-            250, 34, 195, 186, 185, 29, 96, 184, 5, 201, 157, 183, 119, 243, 61,
-            165, 119, 162,
-          ]),
-          new Uint8Array([
-            61, 12, 254, 109, 182, 152, 247, 238, 136, 122, 194, 137, 219, 164,
-            197, 61, 91, 11, 170, 209, 115, 62, 3, 73, 74, 113, 58, 117, 125,
-            16, 9, 157,
-          ]),
-          new Uint8Array([
-            215, 167, 20, 40, 195, 168, 241, 214, 121, 140, 158, 7, 219, 237,
-            177, 116, 102, 226, 52, 197, 186, 162, 150, 141, 185, 166, 187, 252,
-            16, 178, 248, 48,
-          ]),
-          new Uint8Array([
-            138, 8, 15, 95, 176, 175, 170, 18, 16, 248, 114, 107, 122, 244, 63,
-            21, 78, 52, 154, 246, 141, 156, 108, 147, 187, 102, 129, 68, 170, 4,
-            235, 91,
-          ]),
-          new Uint8Array([
-            214, 117, 31, 212, 100, 239, 146, 4, 63, 3, 214, 226, 90, 226, 126,
-            120, 106, 180, 10, 211, 3, 171, 225, 226, 159, 147, 22, 89, 246, 10,
-            1, 227,
-          ]),
-          new Uint8Array([
-            244, 228, 147, 22, 2, 149, 21, 139, 149, 194, 174, 151, 238, 255, 9,
-            214, 128, 13, 249, 79, 146, 90, 120, 206, 111, 230, 247, 67, 29,
-            126, 116, 65,
-          ]),
-          new Uint8Array([
-            63, 10, 236, 59, 112, 243, 84, 242, 178, 204, 173, 187, 135, 52,
-            181, 168, 108, 129, 163, 43, 241, 230, 37, 53, 214, 174, 54, 6, 238,
-            27, 48, 6,
-          ]),
-        ],
-        key: 23,
-        numLeaves: 400,
-      },
-    },
   },
 ];
 
 const shareRanges: ChainOracle.ShareRangeStruct[][] = [
+  // 0x9d1cf3aa5e493c95acf8d3795bd2d8e6d4b6f48d6ad32c0806837435294c1315
   [
-    { start: 83, end: 512 },
-    { start: 30, end: 110 },
+    { end: 512, start: 120 },
+    { end: 181, start: 30 },
   ],
+  // 0x5d47205c2ea8c70dc35c76e9067724d2674538583d7b3762f77346487203449b
   [
-    { start: 115, end: 512 },
-    { start: 30, end: 145 },
+    { end: 512, start: 328 },
+    { end: 390, start: 30 },
   ],
 ];
 
