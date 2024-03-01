@@ -111,14 +111,12 @@ describe("ChallengeL2Header", function () {
       const challengeData = await challenge.l2HeaderChallenges(hash);
 
       expect(challengeData.header.rblock).to.be.equal(rBlockHash);
-      expect(challengeData.header.number.toString()).to.be.equal(
-        l2Header.number.toString(),
+      expect(challengeData.header.number).to.be.equal(
+        BigInt(l2Header.number.toString()),
       );
 
       expect(challengeData.prevHeader.rblock).to.be.equal(rBlockHash);
-      expect(challengeData.prevHeader.number.toString()).to.be.equal(
-        prevNumber.toString(),
-      );
+      expect(challengeData.prevHeader.number).to.be.equal(prevNumber);
     });
   });
 
@@ -170,12 +168,11 @@ describe("ChallengeL2Header", function () {
     });
 
     it("should be able to extra data from shares", async function () {
-      const data = await chainOracle
-        .connect(owner)
-        .extractData(MOCK_DATA.shareProofs[0].data, MOCK_DATA.shareRanges[0]);
-
-      console.log(MOCK_DATA.shareRanges[0]);
-      console.log(data);
+      expect(
+        chainOracle
+          .connect(owner)
+          .extractData(MOCK_DATA.shareProofs[0].data, MOCK_DATA.shareRanges[0]),
+      ).to.not.be.reverted;
     });
 
     it("should be able to load header shares to chainOracle", async function () {
@@ -191,7 +188,6 @@ describe("ChallengeL2Header", function () {
 
       const shareKey = await chainOracle.ShareKey(rblockHash, shareProof.data);
       const shares0 = await chainOracle.shares(shareKey, 0);
-      console.log("shares0", shares0);
       expect(shares0).to.be.equal(ethers.hexlify(shareProof.data[0]));
       const shares1 = await chainOracle.shares(shareKey, 1);
       expect(shares1).to.be.equal(ethers.hexlify(shareProof.data[1]));
@@ -202,11 +198,62 @@ describe("ChallengeL2Header", function () {
 
       // now load the header
       const loadedHeader = await chainOracle.connect(owner).headers(headerHash);
-      console.log(loadedHeader);
-      expect(loadedHeader.number.toString()).to.be.equal(
-        header.number.toString(),
-      );
+      expect(loadedHeader.number).to.be.equal(BigInt(header.number.toString()));
       expect(loadedHeader.stateRoot).to.be.equal(header.stateRoot);
+    });
+
+    it("should be able to defend", async function () {
+      const prevHeaderShares = MOCK_DATA.shareProofs[0];
+      const prevHeaderRanges = MOCK_DATA.shareRanges[0];
+      const headerShares = MOCK_DATA.shareProofs[1];
+      const headerRanges = MOCK_DATA.shareRanges[1];
+      const rblockHash = await chain.chain(1);
+
+      // load prev header
+      await expect(
+        chainOracle.connect(owner).provideShares(rblockHash, prevHeaderShares),
+      ).to.not.be.reverted;
+      const prevShareKey = await chainOracle.ShareKey(
+        rblockHash,
+        prevHeaderShares.data,
+      );
+      await expect(
+        chainOracle
+          .connect(owner)
+          .provideHeader(prevShareKey, prevHeaderRanges),
+      ).to.not.be.reverted;
+
+      // load header
+      await expect(
+        chainOracle.connect(owner).provideShares(rblockHash, headerShares),
+      ).to.not.be.reverted;
+      const shareKey = await chainOracle.ShareKey(
+        rblockHash,
+        headerShares.data,
+      );
+      await expect(
+        chainOracle.connect(owner).provideHeader(shareKey, headerRanges),
+      ).to.not.be.reverted;
+
+      // challenge
+      const l2Header = MOCK_DATA.l2Headers[1];
+      await challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+        value: challengeFee,
+      });
+
+      const challengeHash = await challenge.l2HeaderChallengeHash(
+        rblockHash,
+        l2Header.number,
+      );
+
+      // defend
+      const l2HeaderHash = MOCK_DATA.l2HeaderHashes[1];
+      const l2PrevHeaderHash = MOCK_DATA.l2HeaderHashes[0];
+      await challenge
+        .connect(publisher)
+        .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash);
+      // await expect(
+      // ).to.not.be.reverted;
     });
   });
 });
