@@ -13,12 +13,6 @@ import "blobstream-contracts/src/IDAOracle.sol";
 import "./interfaces/ICanonicalStateChain.sol";
 import "./lib/Lib_RLPEncode.sol";
 
-import "hardhat/console.sol";
-
-// TODO: remove this in production
-// hardhat console
-import "hardhat/console.sol";
-
 // This contract enables any user to directly upload valid Layer 2 blocks, from
 // the data availability layer, on to Layer 1. Once loaded, the headers and
 // transactions can be fetched from the ChainOracle by their respective hashes.
@@ -150,27 +144,21 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         bytes[] storage shareData = shares[_shareKey];
         require(shareData.length > 0, "share not found");
 
-        console.log(">> Shares found");
-
         // 1. Decode the RLP header.
         L2Header memory header = decodeRLPHeader(
             extractData(shareData, _range)
         );
-        console.log(">> Header decoded");
         require(header.number > 0, "header number is 0");
 
         // 2. Hash the header.
         bytes32 headerHash = hashHeader(header);
-        console.log(">> Header hashed");
 
         // 3. Store the header.
         require(headers[headerHash].number == 0, "header already exists");
         headers[headerHash] = header;
-        console.log(">> Header stored");
 
         // 4. Store the header to rblock
         headerToRblock[headerHash] = _sharekeyToRblock[_shareKey];
-        console.log(">> Header to rblock stored");
 
         return headerHash;
     }
@@ -367,6 +355,12 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             v: v
         });
         return dtx;
+    }
+
+    function getHeader(
+        bytes32 _headerHash
+    ) public view returns (L2Header memory) {
+        return headers[_headerHash];
     }
 
     uint256[50] private __gap;

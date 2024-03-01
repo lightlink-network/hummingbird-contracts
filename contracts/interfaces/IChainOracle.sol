@@ -89,4 +89,8 @@ interface IChainOracle {
     function headerToRblock(
         bytes32 _headerHash
     ) external view returns (bytes32);
+
+    function getHeader(
+        bytes32 _headerHash
+    ) external view returns (L2Header memory);
 }

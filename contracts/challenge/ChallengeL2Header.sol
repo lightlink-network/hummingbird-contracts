@@ -135,8 +135,10 @@ contract ChallengeL2Header is ChallengeBase {
         );
 
         // 1. Load the header and previous header from the ChainOracle
-        IChainOracle.L2Header memory header = chainOracle.headers(_headerHash);
-        IChainOracle.L2Header memory prevHeader = chainOracle.headers(
+        IChainOracle.L2Header memory header = chainOracle.getHeader(
+            _headerHash
+        );
+        IChainOracle.L2Header memory prevHeader = chainOracle.getHeader(
             _headerPrevHash
         );
 
