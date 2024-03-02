@@ -125,4 +125,12 @@ describe("ChallengeL2Tx", function () {
       ).to.emit(challenge, "L2TxChallengeUpdate");
     });
   });
+
+  describe("defendL2TxRoot", function () {
+    it("should not be able to defend non-existing challenge", async () => {
+      await expect(
+        challenge.connect(owner).defendL2TxRoot(5, MOCK_DATA.merkleLeaves),
+      ).to.be.revertedWith("challenge not initiated");
+    });
+  });
 });
