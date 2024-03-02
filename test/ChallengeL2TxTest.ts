@@ -132,5 +132,62 @@ describe("ChallengeL2Tx", function () {
         challenge.connect(owner).defendL2TxRoot(5, MOCK_DATA.merkleLeaves),
       ).to.be.revertedWith("challenge not initiated");
     });
+
+    it("should not be able to defend with wrong merkle leaves", async () => {
+      const RBLOCK_NUM = 1;
+      const rblockHash = await chain.chain(RBLOCK_NUM);
+      const challengeIndex = 0n;
+
+      // 1. preload header
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        MOCK_DATA.l2HeaderProof,
+        MOCK_DATA.l2HeaderRange,
+      );
+
+      // 2. initiate challenge
+      await challenge
+        .connect(owner)
+        .challengeL2Tx(RBLOCK_NUM, MOCK_DATA.l2HeaderHash, {
+          value: challengeFee,
+        });
+
+      await expect(
+        challenge
+          .connect(owner)
+          .defendL2TxRoot(challengeIndex, [
+            MOCK_DATA.merkleLeaves[0],
+            MOCK_DATA.merkleLeaves[1],
+          ]),
+      ).to.be.revertedWith("invalid tx root");
+    });
+
+    it("should be able to defend with correct merkle leaves", async () => {
+      const RBLOCK_NUM = 1;
+      const rblockHash = await chain.chain(RBLOCK_NUM);
+      const challengeIndex = 0n;
+
+      // 1. preload header
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        MOCK_DATA.l2HeaderProof,
+        MOCK_DATA.l2HeaderRange,
+      );
+
+      // 2. initiate challenge
+      await challenge
+        .connect(owner)
+        .challengeL2Tx(RBLOCK_NUM, MOCK_DATA.l2HeaderHash, {
+          value: challengeFee,
+        });
+
+      await expect(
+        challenge
+          .connect(owner)
+          .defendL2TxRoot(challengeIndex, MOCK_DATA.merkleLeaves),
+      ).to.emit(challenge, "L2TxChallengeUpdate");
+    });
   });
 });
