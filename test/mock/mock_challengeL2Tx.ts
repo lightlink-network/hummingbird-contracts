@@ -2,22 +2,21 @@ import { CanonicalStateChain, ChainOracle } from "../../typechain-types";
 import { SharesProofStruct } from "../../typechain-types/contracts/ChainOracle";
 
 // 0xb972daedc5d8445be40e7f4dd17ae7cd09f7e11691d5f7aeb6fc0705dd715053
-const rollupHeaders: CanonicalStateChain.HeaderStruct[] = [
-  {
-    epoch: BigInt(5394737),
-    l2Height: BigInt(71321264),
-    prevHash: "", // This will be replaced when pushed to the chain
-    txRoot:
-      "0x327011612f67b356e0daeb6e0cacdf3b4c1e4dce7bbf4945c7b3d7c8e7c6da3d",
-    blockRoot:
-      "0xdbe2e4268f3a831d141b7e8f3d948afc6243896c55431ee66caf9d2b72143978",
-    stateRoot:
-      "0xa1baa0f693395b09151aaf19df587e7c0cfdeda557d71aa93f54ab1758f3e670",
-    celestiaHeight: BigInt(1286533),
-    celestiaShareStart: BigInt(64),
-    celestiaShareLen: BigInt(3465),
-  },
-];
+const rollupHash =
+  "0xb972daedc5d8445be40e7f4dd17ae7cd09f7e11691d5f7aeb6fc0705dd715053";
+const rollupHeader: CanonicalStateChain.HeaderStruct = {
+  epoch: BigInt(5394737),
+  l2Height: BigInt(71321264),
+  prevHash: "", // This will be replaced when pushed to the chain
+  txRoot: "0x327011612f67b356e0daeb6e0cacdf3b4c1e4dce7bbf4945c7b3d7c8e7c6da3d",
+  blockRoot:
+    "0xdbe2e4268f3a831d141b7e8f3d948afc6243896c55431ee66caf9d2b72143978",
+  stateRoot:
+    "0xa1baa0f693395b09151aaf19df587e7c0cfdeda557d71aa93f54ab1758f3e670",
+  celestiaHeight: BigInt(1286533),
+  celestiaShareStart: BigInt(64),
+  celestiaShareLen: BigInt(3465),
+};
 
 const l2HeaderHash =
   "0x5d47205c2ea8c70dc35c76e9067724d2674538583d7b3762f77346487203449b";
@@ -403,7 +402,7 @@ const merkleLeaves = [
 ];
 
 export const MOCK_DATA = {
-  rollupHeaders,
+  rollupHeader,
   l2HeaderHash,
   l2Header,
   l2HeaderProof,
