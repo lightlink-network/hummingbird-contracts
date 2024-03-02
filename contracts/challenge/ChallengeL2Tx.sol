@@ -49,8 +49,10 @@ contract ChallengeL2Tx is ChallengeBase {
         requireChallengeFee
         returns (uint256)
     {
+        // TODO: PREVENT THE SAME CHALLENGE FROM BEING INITIATED MULTIPLE TIMES.
+
         // 1. load the l2 header
-        IChainOracle.L2Header memory l2Header = chainOracle.headers(
+        IChainOracle.L2Header memory l2Header = chainOracle.getHeader(
             _l2BlockHash
         );
         require(l2Header.number > 0, "l2BlockHash does not exist");
@@ -60,6 +62,11 @@ contract ChallengeL2Tx is ChallengeBase {
         require(
             chainOracle.headerToRblock(_l2BlockHash) == rblockHash,
             "l2BlockHash not part of rblock"
+        );
+
+        require(
+            l2Header.transactionsRoot != bytes32(0),
+            "l2BlockHash has no tx root"
         );
 
         l2TxChallenges[l2TxChallengesIdx] = L2TxChallenge({
