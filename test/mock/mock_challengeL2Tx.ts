@@ -402,7 +402,7 @@ const merkleLeaves = [
   "0xfbee8f3128e951f1d774dfe333676220fa10c2567f5f95c24f00191442d3c48a",
 ];
 
-export const mockChallengeL2Tx = {
+export const MOCK_DATA = {
   rollupHeaders,
   l2HeaderHash,
   l2Header,
