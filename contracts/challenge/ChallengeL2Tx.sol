@@ -5,6 +5,7 @@ import "../lib/Lib_MerkleRoot.sol";
 
 contract ChallengeL2Tx is ChallengeBase {
     enum L2TxChallengeStatus {
+        None,
         Initiated,
         RootProved,
         IndexProvided,
