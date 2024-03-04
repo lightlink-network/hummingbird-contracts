@@ -157,11 +157,11 @@ contract ChallengeL2Tx is ChallengeBase {
         );
         require(challenge.expiry > block.timestamp, "challenge expired");
 
-        IChainOracle.DepositTx memory tx = chainOracle.transactions(
+        IChainOracle.DepositTx memory _tx = chainOracle.getTransaction(
             txHashes[challengeIndex][challenge.txIndex]
         );
 
-        require(tx.nonce > 0, "tx does not exist");
+        require(_tx.nonce > 0, "tx not pre-submitted to chainOracle");
 
         challenge.status = L2TxChallengeStatus.DefenderWon;
         challenge.defender = msg.sender;
