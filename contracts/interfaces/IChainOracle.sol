@@ -93,4 +93,8 @@ interface IChainOracle {
     function getHeader(
         bytes32 _headerHash
     ) external view returns (L2Header memory);
+
+    function getTransaction(
+        bytes32 _txHash
+    ) external view returns (DepositTx memory);
 }
