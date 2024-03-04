@@ -8,7 +8,7 @@ import {
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { MOCK_DATA } from "./mock/mock_challengeL2Tx";
 import { setupCanonicalStateChain } from "./lib/chain";
-import { provideHeader } from "./lib/oracle";
+import { provideHeader, provideLegacyTx } from "./lib/oracle";
 
 describe("ChallengeL2Tx", function () {
   let chain: CanonicalStateChain;
@@ -187,6 +187,128 @@ describe("ChallengeL2Tx", function () {
         challenge
           .connect(owner)
           .defendL2TxRoot(challengeIndex, MOCK_DATA.merkleLeaves),
+      ).to.emit(challenge, "L2TxChallengeUpdate");
+    });
+  });
+
+  describe("challengeL2TxIndex", function () {
+    it("should not be able to challenge tx index for non-existing challenge", async () => {
+      await expect(
+        challenge.connect(owner).challengeL2TxIndex(5, 1),
+      ).to.be.revertedWith("challenge not in correct state");
+    });
+
+    it("should be able to challenge tx index", async () => {
+      const RBLOCK_NUM = 1;
+      const rblockHash = await chain.chain(RBLOCK_NUM);
+      const challengeIndex = 0n;
+
+      // 1. preload header
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        MOCK_DATA.l2HeaderProof,
+        MOCK_DATA.l2HeaderRange,
+      );
+
+      // 2. initiate challenge
+      await challenge
+        .connect(owner)
+        .challengeL2Tx(RBLOCK_NUM, MOCK_DATA.l2HeaderHash, {
+          value: challengeFee,
+        });
+
+      // 3. defend tx root
+      await challenge
+        .connect(owner)
+        .defendL2TxRoot(challengeIndex, MOCK_DATA.merkleLeaves);
+
+      // 4. challenge tx index
+      await expect(
+        challenge.connect(owner).challengeL2TxIndex(challengeIndex, 0),
+      ).to.emit(challenge, "L2TxChallengeUpdate");
+    });
+  });
+
+  describe("defendL2TxIndex", function () {
+    it("should not be able to defend non-existing challenge", async () => {
+      await expect(
+        challenge.connect(owner).defendL2TxIndex(1n),
+      ).to.be.revertedWith("challenge not in correct state");
+    });
+
+    it("should not be able to defend without preloaded tx", async () => {
+      const RBLOCK_NUM = 1;
+      const rblockHash = await chain.chain(RBLOCK_NUM);
+      const challengeIndex = 0n;
+
+      // 1. preload header
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        MOCK_DATA.l2HeaderProof,
+        MOCK_DATA.l2HeaderRange,
+      );
+
+      // 2. initiate challenge
+      await challenge
+        .connect(owner)
+        .challengeL2Tx(RBLOCK_NUM, MOCK_DATA.l2HeaderHash, {
+          value: challengeFee,
+        });
+
+      // 3. defend tx root
+      await challenge
+        .connect(publisher)
+        .defendL2TxRoot(challengeIndex, MOCK_DATA.merkleLeaves);
+
+      // 4. challenge tx index
+      await challenge.connect(owner).challengeL2TxIndex(challengeIndex, 0);
+
+      // 5. defend tx
+      await expect(
+        challenge.connect(publisher).defendL2TxIndex(challengeIndex),
+      ).to.be.revertedWith("tx not pre-submitted to chainOracle");
+    });
+
+    it("should be able to defend with preloaded tx", async () => {
+      const RBLOCK_NUM = 1;
+      const rblockHash = await chain.chain(RBLOCK_NUM);
+      const challengeIndex = 0n;
+
+      // 1. preload header
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        MOCK_DATA.l2HeaderProof,
+        MOCK_DATA.l2HeaderRange,
+      );
+
+      // 2. initiate challenge
+      await challenge
+        .connect(owner)
+        .challengeL2Tx(RBLOCK_NUM, MOCK_DATA.l2HeaderHash, {
+          value: challengeFee,
+        });
+
+      // 3. defend tx root
+      await challenge
+        .connect(publisher)
+        .defendL2TxRoot(challengeIndex, MOCK_DATA.merkleLeaves);
+
+      // 4. challenge tx index
+      await challenge.connect(owner).challengeL2TxIndex(challengeIndex, 0);
+
+      // 5. defend tx
+      await provideLegacyTx(
+        chainOracle,
+        rblockHash,
+        MOCK_DATA.l2TxProof,
+        MOCK_DATA.l2TxRange,
+      );
+
+      await expect(
+        challenge.connect(publisher).defendL2TxIndex(challengeIndex),
       ).to.emit(challenge, "L2TxChallengeUpdate");
     });
   });
