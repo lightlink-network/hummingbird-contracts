@@ -302,6 +302,7 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     function decodeLegacyTx(
         bytes memory _data
     ) public view returns (LegacyTx memory) {
+        // nonce, gasPrice, gasLimit, to, value, data, v, r, s
         (
             uint nonce,
             uint gasPrice,
@@ -309,10 +310,11 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             address to,
             uint value,
             bytes memory data,
-            uint8 v,
-            bytes32 r,
-            bytes32 s
+            uint v,
+            uint r,
+            uint s
         ) = rlpReader.toLegacyTx(_data);
+
         LegacyTx memory ltx = LegacyTx({
             nonce: uint64(nonce),
             gasPrice: gasPrice,
@@ -324,6 +326,7 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             s: uint256(s),
             v: v
         });
+
         return ltx;
     }
 
