@@ -363,5 +363,11 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return headers[_headerHash];
     }
 
+    function getTransaction(
+        bytes32 _txHash
+    ) public view returns (DepositTx memory) {
+        return transactions[_txHash];
+    }
+
     uint256[50] private __gap;
 }
