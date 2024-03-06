@@ -11,7 +11,7 @@ import "./interfaces/IRLPReader.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 import "./interfaces/ICanonicalStateChain.sol";
-import "./lib/Lib_RLPEncode.sol";
+import "contracts/libraries/rlp/Lib_RLPEncode.sol";
 
 // TODO: remove this in production
 // hardhat console

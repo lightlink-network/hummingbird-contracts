@@ -2,7 +2,7 @@
 
 pragma solidity >=0.5.10 <0.9.0;
 
-import "./lib/Lib_RLPReader.sol";
+import "contracts/libraries/rlp/Lib_RLPReader.sol";
 
 contract RLPReader {
     using Lib_RLPReader for bytes;
