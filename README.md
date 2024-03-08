@@ -39,17 +39,19 @@ Challenge
 Despite this being a hardhat project, we recommend using to [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil) run locally. There are some
 compatibility issues with hardhat node and the go bindings used in with the hummingbird client.
 
+### Starting the node
+
 ```bash
 anvil --chain-id 1337 --fork-url <SEPOLIA_RPC_URL>
 ```
 
-Then deploy the contracts:
+You need to provide a sepolia fork url if you want to use the chainOracle contract.
+
+### Then deploy the contracts
 
 ```bash
-npx hardhat deploy --network localhost
+npx hardhat run script/deploy_sepolia.ts --network localhost
 ```
-
-# Contracts overview
 
 ## Challenges Overview
 
