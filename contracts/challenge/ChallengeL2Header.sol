@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: MIT
 // LightLink Hummingbird UNRELEASED v0.1.1
 
-// NOT FOR RELEASE
-// NOT IMPLEMENTED YET
-
 pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
