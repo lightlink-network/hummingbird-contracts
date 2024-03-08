@@ -5,6 +5,14 @@ pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
 
+// ChallengeL2Header is a two party challenge game where the defender must provide
+// a valid L2 header to defend against a challenge.
+//
+// The Challenge goes through the following steps:
+// 1. A challenger initiates a challenge by calling challengeL2Header with the rblock number and the number of the L2 block it should contain.
+// 2. The defending block publisher must provide valid L2 headers to the chainOracle for both the challenged block and the previous block.
+// 3. If the headers are valid, the defender wins the challenge and receives the challenge fee.
+// 4. Otherwise the challenge expires and the challenger wins the challenge and the block is rolled back.
 contract ChallengeL2Header is ChallengeBase {
     enum L2HeaderChallengeStatus {
         None,
