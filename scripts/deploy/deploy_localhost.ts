@@ -30,7 +30,7 @@ const main = async () => {
 
   // Call pegasus rpc to get the latest blocks state root
   const latestBlock = await pegasus.provider.send("eth_getBlockByNumber", [
-    "latest",
+    "0x4403AF8",
     true,
   ]);
   const lastBlockNumber = parseInt(latestBlock?.number, 16);
