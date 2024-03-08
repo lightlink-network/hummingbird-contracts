@@ -3,9 +3,9 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 import "@solarity/hardhat-gobind";
-import "task/rollupHead";
-import "task/challengeL2Header";
-import "task/pushRBlock";
+import "tasks/rollupHead";
+import "tasks/challengeL2Header";
+import "tasks/pushRBlock";
 
 cfg();
 
