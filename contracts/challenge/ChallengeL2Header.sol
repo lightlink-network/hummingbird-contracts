@@ -36,7 +36,7 @@ contract ChallengeL2Header is ChallengeBase {
 
     event L2HeaderChallengeUpdate(
         bytes32 indexed challengeHash,
-        bytes32 indexed l2Number,
+        uint256 indexed l2Number,
         bytes32 rblock,
         uint256 expiry,
         L2HeaderChallengeStatus indexed status
@@ -105,7 +105,7 @@ contract ChallengeL2Header is ChallengeBase {
         // 7. Emit the challenge event
         emit L2HeaderChallengeUpdate(
             challengeHash,
-            bytes32(_l2Num),
+            _l2Num,
             rblockHash,
             block.timestamp + challengePeriod,
             L2HeaderChallengeStatus.Initiated
@@ -187,7 +187,7 @@ contract ChallengeL2Header is ChallengeBase {
         // emit the event
         emit L2HeaderChallengeUpdate(
             _challengeHash,
-            bytes32(challenge.header.number),
+            challenge.header.number,
             challenge.header.rblock,
             challenge.challengeEnd,
             L2HeaderChallengeStatus.DefenderWon
@@ -211,7 +211,7 @@ contract ChallengeL2Header is ChallengeBase {
 
         emit L2HeaderChallengeUpdate(
             _challengeHash,
-            bytes32(challenge.header.number),
+            challenge.header.number,
             challenge.header.rblock,
             challenge.challengeEnd,
             L2HeaderChallengeStatus.ChallengerWon
