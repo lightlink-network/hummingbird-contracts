@@ -12,10 +12,22 @@ Documentation & deployed contract addresses can be found [here](https://docs.lig
 
 ## Usage
 
-To update go bindings run:
+```bash
+npx hardhat gobind # updates go bindings
+npx hardhat compile # compiles the contracts
+npx hardhat test # runs the tests
+```
+
+We've also included some scripts for interacting with the contracts:
 
 ```bash
-npx hardhat gobind
+npx hardhat run scripts/deploy_sepolia.ts --network <localhost> # deploy the contracts to your local node
+
+npx hardhat run scripts/tools/stats.ts --network <sepolia|localhost> # prints some stats about the chain
+
+npx hardhat run scripts/tools/check.ts --network <sepolia|localhost> # checks to publishers health and for active challenges
+
+npx hardhat run scripts/tools/chain.ts --network <sepolia|localhost> # prints the local chain
 ```
 
 ## Overview
