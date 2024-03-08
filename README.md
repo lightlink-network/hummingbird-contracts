@@ -21,7 +21,7 @@ npx hardhat test # runs the tests
 We've also included some scripts for interacting with the contracts:
 
 ```bash
-npx hardhat run scripts/deploy_sepolia.ts --network <localhost> # deploy the contracts to your local node
+npx hardhat run scripts/deploy/deploy_sepolia.ts --network <localhost> # deploy the contracts to your local node
 
 npx hardhat run scripts/tools/stats.ts --network <sepolia|localhost> # prints some stats about the chain
 
