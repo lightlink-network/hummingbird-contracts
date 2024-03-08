@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-// LightLink Hummingbird v0.1.1
+// LightLink Hummingbird v0.2.0
 
-// TODO: use single version
-pragma solidity ^0.8.0;
+pragma solidity 0.8.22;
 
 // UUPS
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";

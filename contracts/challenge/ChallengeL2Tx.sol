@@ -1,5 +1,8 @@
 pragma solidity ^0.8.0;
 
+// NOT FOR RELEASE
+// NOT IMPLEMENTED YET
+
 import "./ChallengeBase.sol";
 import "../lib/Lib_MerkleRoot.sol";
 
