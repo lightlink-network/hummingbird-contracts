@@ -1,9 +1,9 @@
 # Hummingbird contracts
 
->[!NOTE]  
+> [!NOTE]  
 > Hummingbird is a work in progress and is not yet ready for production use.
 
->[!NOTE]
+> [!NOTE]
 > Requires **Node version 18**. If you have nvm installed, run `nvm use` to switch to the correct version.
 
 This repo contains smart contracts for the Hummingbird project. Work in progress.
@@ -34,6 +34,23 @@ Challenge
   └ mips – Contains MIPS contracts.
 ```
 
+## Running locally
+
+Despite this being a hardhat project, we recommend using to [anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil) run locally. There are some
+compatibility issues with hardhat node and the go bindings used in with the hummingbird client.
+
+```bash
+anvil --chain-id 1337 --fork-url <SEPOLIA_RPC_URL>
+```
+
+Then deploy the contracts:
+
+```bash
+npx hardhat deploy --network localhost
+```
+
+# Contracts overview
+
 ## Challenges Overview
 
 Challenges allow anyone to challenge the validity of a block. If a block is found to be invalid, the chain is rolled back to the previous block.
@@ -62,7 +79,19 @@ This a challenge game, anybody can challenge the DA of a block.
 
 Once initiated the defender (block publisher) must provide proof within a shorted time window. (This proof is verified via the blobstream contract). If they fail to do so, the challenger wins the challenge and the chain is rolled back to the previous block.
 
-The window on this challenge starts 80 mins after the block is published, and ends 6 hours after the block is published. The delay to the start of the challenge window gives enough time for celestia to validate the data and publish the proof. The shortened end window, gives time for subsequent challenges to after data availability is proven.
+The window on this challenge starts 80 mins after the block is published, and ends 1.5 days after the block is published. The delay to the start of the challenge window gives enough time for Celestia to validate the data and publish the proof. The shortened end window, gives time for subsequent challenges to after data availability is proven.
+
+### ChallengeL2Header
+
+This is another two party challenge game where the defender must provide
+a valid L2 header to defend against a challenge.
+
+The Challenge goes through the following steps:
+
+1.  A challenger initiates a challenge by calling challengeL2Header with the rblock number and the number of the L2 block it should contain.
+2.  The defending block publisher must provide valid L2 headers to the chainOracle for both the challenged block and the previous block.
+3.  If the headers are valid, the defender wins the challenge and receives the challenge fee.
+4.  Otherwise the challenge expires and the challenger wins the challenge and the block is rolled back.
 
 ### ChallengeExecution
 
