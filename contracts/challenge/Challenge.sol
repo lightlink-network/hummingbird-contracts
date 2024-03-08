@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 import "./ChallengeHeader.sol";
 import "./ChallengeDataAvailability.sol";
 import "./ChallengeL2Header.sol";
-import "./ChallengeL2Tx.sol";
 
 // Challenge is the entry point for all validity challenges.
 //
@@ -23,8 +22,7 @@ import "./ChallengeL2Tx.sol";
 contract Challenge is
     ChallengeHeader,
     ChallengeDataAvailability,
-    ChallengeL2Header,
-    ChallengeL2Tx
+    ChallengeL2Header
 {
     function initialize(
         address _treasury,
