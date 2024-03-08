@@ -1,0 +1,11 @@
+{
+  "epoch": 5394737,
+  "l2Height": 71321264,
+  "prevHash": "0xcf4a357225e3a1b3d50785f9d7ab81473c9e3507d2d3a6de7e43d1b7242954d1",
+  "txRoot": "0x327011612f67b356e0daeb6e0cacdf3b4c1e4dce7bbf4945c7b3d7c8e7c6da3d",
+  "blockRoot": "0xdbe2e4268f3a831d141b7e8f3d948afc6243896c55431ee66caf9d2b72143978",
+  "stateRoot": "0xa1baa0f693395b09151aaf19df587e7c0cfdeda557d71aa93f54ab1758f3e670",
+  "celestiaHeight": 1286533,
+  "celestiaShareStart": 64,
+  "celestiaShareLen": 3465
+}
