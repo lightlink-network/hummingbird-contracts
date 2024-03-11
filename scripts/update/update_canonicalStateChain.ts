@@ -25,25 +25,32 @@ const main = async () => {
 
   // Deploy new CanonicalStateChain contract implementation
   console.log("Deploying CanonicalStateChain...");
-  const canonicalStateChainFactory: any = await ethers.getContractFactory("CanonicalStateChain");
-  const canonicalStateChainImplementation = await canonicalStateChainFactory.deploy();
+  const canonicalStateChainFactory: any = await ethers.getContractFactory(
+    "CanonicalStateChain",
+  );
+  const canonicalStateChainImplementation =
+    await canonicalStateChainFactory.deploy();
   await canonicalStateChainImplementation.waitForDeployment();
   const canonicalStateChainImplementationAddr =
     await canonicalStateChainImplementation.getAddress();
 
   console.log(
-    `→ CanonicalStateChain implementation deployed to ${canonicalStateChainImplementationAddr}`
+    `→ CanonicalStateChain implementation deployed to ${canonicalStateChainImplementationAddr}`,
   );
 
   // Update CanonicalStateChain contract proxy to new implementation
   console.log("Updating CanonicalStateChain proxy to new implementation...");
   const canonicalStateChainProxy = await ethers.getContractAt(
     "CanonicalStateChain",
-    canonicalStateChainContractProxyAddr
+    canonicalStateChainContractProxyAddr,
   );
-  await canonicalStateChainProxy.upgradeToAndCall(canonicalStateChainImplementationAddr, "0x");
+  await canonicalStateChainProxy.upgradeToAndCall(
+    canonicalStateChainImplementationAddr,
+    "0x",
+  );
   console.log(
-    `→ CanonicalStateChain proxy (${canonicalStateChainContractProxyAddr}) updated to ${canonicalStateChainImplementationAddr}` + "\n"
+    `→ CanonicalStateChain proxy (${canonicalStateChainContractProxyAddr}) updated to ${canonicalStateChainImplementationAddr}` +
+      "\n",
   );
 
   console.log("All Contracts deployed successfully! \n");
@@ -60,10 +67,10 @@ const main = async () => {
   await verify(
     canonicalStateChainImplementationAddr,
     [],
-    "contracts/CanonicalStateChain.sol:CanonicalStateChain"
+    "contracts/CanonicalStateChain.sol:CanonicalStateChain",
   );
   console.log(
-    `Verified CanonicalStateChain impl contract at ${canonicalStateChainImplementationAddr}`
+    `Verified CanonicalStateChain impl contract at ${canonicalStateChainImplementationAddr}`,
   );
 };
 
