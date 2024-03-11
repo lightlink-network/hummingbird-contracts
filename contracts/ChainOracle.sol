@@ -372,5 +372,9 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return transactions[_txHash];
     }
 
+    function setRLPReader(address _rlpReader) public onlyOwner {
+        rlpReader = IRLPReader(_rlpReader);
+    }
+
     uint256[50] private __gap;
 }
