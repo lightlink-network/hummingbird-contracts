@@ -45,15 +45,19 @@ const config: HardhatUserConfig = {
     sepolia: {
       url: process.env.SEPOLIA_PROVIDER_URL || "",
       accounts: [
-        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
-        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     ethereum: {
       url: process.env.ETHEREUM_PROVIDER_URL || "",
       accounts: [
-        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
-        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     pegasus: {
@@ -80,9 +84,11 @@ const config: HardhatUserConfig = {
     runOnCompile: false,
     verbose: false,
     onlyFiles: [
-      "contracts/CanonicalStateChain.sol",
-      "contracts/challenge/Challenge.sol",
-      "contracts/ChainOracle.sol",
+      "contracts/L1/CanonicalStateChain.sol",
+      "contracts/L1/challenge/Challenge.sol",
+      "contracts/L1/ChainOracle.sol",
+      "contracts/L1/ChainOracle.sol",
+      "contracts/L1/OptimismPortal.sol",
     ],
     skipFiles: ["contracts/interfaces", "@openzeppelin", "@solarity"],
   },
