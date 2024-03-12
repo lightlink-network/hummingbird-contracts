@@ -185,9 +185,9 @@ contract RLPReader {
             else if (idx == 7) r = it.next().toUint();
             else if (idx == 8) s = it.next().toUint();
             else it.next();
-
             idx++;
         }
+        return (nonce, gasPrice, gasLimit, to, value, data, v, r, s);
     }
 
     function toDepositTx(

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-// LightLink Hummingbird v0.1.1
+// LightLink Hummingbird v0.2.0
 
 pragma solidity ^0.8.0;
 
 import "./ChallengeHeader.sol";
 import "./ChallengeDataAvailability.sol";
+import "./ChallengeL2Header.sol";
 
 // Challenge is the entry point for all validity challenges.
 //
@@ -18,7 +19,11 @@ import "./ChallengeDataAvailability.sol";
 // defenders for their costs. Challenges must be made within a specified time
 // window post-block publication, with late challenges being rejected. The
 // rules for fees and timing are outlined in ChallengeBase.sol.
-contract Challenge is ChallengeHeader, ChallengeDataAvailability {
+contract Challenge is
+    ChallengeHeader,
+    ChallengeDataAvailability,
+    ChallengeL2Header
+{
     function initialize(
         address _treasury,
         address _chain,

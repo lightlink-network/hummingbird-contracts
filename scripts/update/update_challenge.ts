@@ -32,18 +32,19 @@ const main = async () => {
     await challengeImplementation.getAddress();
 
   console.log(
-    `→ Challenge implementation deployed to ${challengeImplementationAddr}`
+    `→ Challenge implementation deployed to ${challengeImplementationAddr}`,
   );
 
   // Update Challenge contract proxy to new implementation
   console.log("Updating Challenge proxy to new implementation...");
   const challengeProxy = await ethers.getContractAt(
     "Challenge",
-    challengeContractProxyAddr
+    challengeContractProxyAddr,
   );
   await challengeProxy.upgradeToAndCall(challengeImplementationAddr, "0x");
   console.log(
-    `→ Challenge proxy (${challengeContractProxyAddr}) updated to ${challengeImplementationAddr}` + "\n"
+    `→ Challenge proxy (${challengeContractProxyAddr}) updated to ${challengeImplementationAddr}` +
+      "\n",
   );
 
   console.log("All Contracts deployed successfully! \n");
@@ -60,10 +61,10 @@ const main = async () => {
   await verify(
     challengeImplementationAddr,
     [],
-    "contracts/challenge/Challenge.sol:Challenge"
+    "contracts/challenge/Challenge.sol:Challenge",
   );
   console.log(
-    `Verified Challenge impl contract at ${challengeImplementationAddr}`
+    `Verified Challenge impl contract at ${challengeImplementationAddr}`,
   );
 };
 

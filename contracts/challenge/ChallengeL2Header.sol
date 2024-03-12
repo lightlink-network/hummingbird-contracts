@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: MIT
-// LightLink Hummingbird UNRELEASED v0.1.1
-
-// NOT FOR RELEASE
-// NOT IMPLEMENTED YET
+// LightLink Hummingbird v0.2.0
 
 pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
 
+// ChallengeL2Header is a two party challenge game where the defender must provide
+// a valid L2 header to defend against a challenge.
+//
+// The Challenge goes through the following steps:
+// 1. A challenger initiates a challenge by calling challengeL2Header with the rblock number and the number of the L2 block it should contain.
+// 2. The defending block publisher must provide valid L2 headers to the chainOracle for both the challenged block and the previous block.
+// 3. If the headers are valid, the defender wins the challenge and receives the challenge fee.
+// 4. Otherwise the challenge expires and the challenger wins the challenge and the block is rolled back.
 contract ChallengeL2Header is ChallengeBase {
     enum L2HeaderChallengeStatus {
         None,
@@ -31,7 +36,7 @@ contract ChallengeL2Header is ChallengeBase {
 
     event L2HeaderChallengeUpdate(
         bytes32 indexed challengeHash,
-        bytes32 indexed l2Number,
+        uint256 indexed l2Number,
         bytes32 rblock,
         uint256 expiry,
         L2HeaderChallengeStatus indexed status
@@ -100,7 +105,7 @@ contract ChallengeL2Header is ChallengeBase {
         // 7. Emit the challenge event
         emit L2HeaderChallengeUpdate(
             challengeHash,
-            bytes32(_l2Num),
+            _l2Num,
             rblockHash,
             block.timestamp + challengePeriod,
             L2HeaderChallengeStatus.Initiated
@@ -122,9 +127,23 @@ contract ChallengeL2Header is ChallengeBase {
             "challenge is not in the correct state"
         );
 
+        // 0. Check that the header and previous headers are part of the correct rblocks
+        // - This prevents rolled back l2 headers from being used to defend
+        require(
+            chainOracle.headerToRblock(_headerHash) == challenge.header.rblock,
+            "l2 header not loaded for the given rblock"
+        );
+        require(
+            chainOracle.headerToRblock(_headerPrevHash) ==
+                challenge.prevHeader.rblock,
+            "previous l2 header not loaded for the given rblock"
+        );
+
         // 1. Load the header and previous header from the ChainOracle
-        IChainOracle.L2Header memory header = chainOracle.headers(_headerHash);
-        IChainOracle.L2Header memory prevHeader = chainOracle.headers(
+        IChainOracle.L2Header memory header = chainOracle.getHeader(
+            _headerHash
+        );
+        IChainOracle.L2Header memory prevHeader = chainOracle.getHeader(
             _headerPrevHash
         );
 
@@ -146,7 +165,7 @@ contract ChallengeL2Header is ChallengeBase {
 
         // 4. Check the timestamp is correct
         require(
-            header.timestamp > prevHeader.timestamp,
+            header.timestamp >= prevHeader.timestamp,
             "header timestamp is too late"
         );
         require(
@@ -168,7 +187,7 @@ contract ChallengeL2Header is ChallengeBase {
         // emit the event
         emit L2HeaderChallengeUpdate(
             _challengeHash,
-            bytes32(challenge.header.number),
+            challenge.header.number,
             challenge.header.rblock,
             challenge.challengeEnd,
             L2HeaderChallengeStatus.DefenderWon
@@ -192,7 +211,7 @@ contract ChallengeL2Header is ChallengeBase {
 
         emit L2HeaderChallengeUpdate(
             _challengeHash,
-            bytes32(challenge.header.number),
+            challenge.header.number,
             challenge.header.rblock,
             challenge.challengeEnd,
             L2HeaderChallengeStatus.ChallengerWon
@@ -201,5 +220,12 @@ contract ChallengeL2Header is ChallengeBase {
         // pay out the challenger
         (bool success, ) = challenge.challenger.call{value: challengeFee}("");
         require(success, "failed to pay challenger");
+    }
+
+    function l2HeaderChallengeHash(
+        bytes32 _rblockHash,
+        uint256 _l2Num
+    ) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_rblockHash, _l2Num));
     }
 }

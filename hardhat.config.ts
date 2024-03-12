@@ -3,6 +3,9 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 import "@solarity/hardhat-gobind";
+import "./tasks/rollupHead";
+import "./tasks/challengeL2Header";
+import "./tasks/pushRBlock";
 
 cfg();
 
@@ -33,18 +36,25 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
+    localhost: {
+      chainId: 1337,
+    },
     sepolia: {
       url: process.env.SEPOLIA_PROVIDER_URL || "",
       accounts: [
-        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
-        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     ethereum: {
       url: process.env.ETHEREUM_PROVIDER_URL || "",
       accounts: [
-        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
-        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     pegasus: {

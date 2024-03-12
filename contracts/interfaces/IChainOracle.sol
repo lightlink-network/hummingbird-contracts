@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// LightLink Hummingbird v0.1.1
+// LightLink Hummingbird v0.2.0
 
 pragma solidity ^0.8.0;
 
@@ -83,6 +83,18 @@ interface IChainOracle {
     ) external view returns (L2Header memory);
 
     function transactions(
+        bytes32 _txHash
+    ) external view returns (DepositTx memory);
+
+    function headerToRblock(
+        bytes32 _headerHash
+    ) external view returns (bytes32);
+
+    function getHeader(
+        bytes32 _headerHash
+    ) external view returns (L2Header memory);
+
+    function getTransaction(
         bytes32 _txHash
     ) external view returns (DepositTx memory);
 }

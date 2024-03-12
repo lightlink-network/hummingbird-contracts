@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-// LightLink Hummingbird v0.1.1
+// LightLink Hummingbird v0.2.0
 
 // TODO: use single version
-pragma solidity ^0.8.0;
+pragma solidity 0.8.22;
 
 // UUPS
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -12,10 +12,6 @@ import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 import "./interfaces/ICanonicalStateChain.sol";
 import "./lib/Lib_RLPEncode.sol";
-
-// TODO: remove this in production
-// hardhat console
-import "hardhat/console.sol";
 
 // This contract enables any user to directly upload valid Layer 2 blocks, from
 // the data availability layer, on to Layer 1. Once loaded, the headers and
@@ -87,6 +83,10 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     mapping(bytes32 => L2Header) public headers;
     mapping(bytes32 => DepositTx) public transactions;
 
+    // a special mapping of sharekey to rblock
+    mapping(bytes32 => bytes32) private _sharekeyToRblock;
+    mapping(bytes32 => bytes32) public headerToRblock;
+
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function initialize(
@@ -130,6 +130,10 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
 
         // 4. store the shares
         shares[shareKey] = _proof.data;
+
+        // 5. store the sharekey to rblock
+        _sharekeyToRblock[shareKey] = _rblock;
+
         return shareKey;
     }
 
@@ -152,6 +156,9 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         // 3. Store the header.
         require(headers[headerHash].number == 0, "header already exists");
         headers[headerHash] = header;
+
+        // 4. Store the header to rblock
+        headerToRblock[headerHash] = _sharekeyToRblock[_shareKey];
 
         return headerHash;
     }
@@ -295,6 +302,7 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     function decodeLegacyTx(
         bytes memory _data
     ) public view returns (LegacyTx memory) {
+        // nonce, gasPrice, gasLimit, to, value, data, v, r, s
         (
             uint nonce,
             uint gasPrice,
@@ -302,10 +310,11 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             address to,
             uint value,
             bytes memory data,
-            uint8 v,
-            bytes32 r,
-            bytes32 s
+            uint v,
+            uint r,
+            uint s
         ) = rlpReader.toLegacyTx(_data);
+
         LegacyTx memory ltx = LegacyTx({
             nonce: uint64(nonce),
             gasPrice: gasPrice,
@@ -317,6 +326,7 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             s: uint256(s),
             v: v
         });
+
         return ltx;
     }
 
@@ -348,6 +358,22 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             v: v
         });
         return dtx;
+    }
+
+    function getHeader(
+        bytes32 _headerHash
+    ) public view returns (L2Header memory) {
+        return headers[_headerHash];
+    }
+
+    function getTransaction(
+        bytes32 _txHash
+    ) public view returns (DepositTx memory) {
+        return transactions[_txHash];
+    }
+
+    function setRLPReader(address _rlpReader) public onlyOwner {
+        rlpReader = IRLPReader(_rlpReader);
     }
 
     uint256[50] private __gap;

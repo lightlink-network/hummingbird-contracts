@@ -11,6 +11,11 @@ const main = async () => {
   console.log("Network name:", network.name);
   console.log("Network chain id:", chainId + "\n");
 
+  if (chainId !== 31337 && chainId !== 1337) {
+    console.error("This script is only meant for localhost network");
+    return;
+  }
+
   // Get deployer/signer account
   const [owner, publisher] = await ethers.getSigners();
   const ownerAddr = await owner.getAddress();
@@ -25,23 +30,20 @@ const main = async () => {
 
   // Call pegasus rpc to get the latest blocks state root
   const latestBlock = await pegasus.provider.send("eth_getBlockByNumber", [
-    "latest",
+    "0x4403AF8",
     true,
   ]);
-  console.log(
-    "Latest L2 block number for L1 genesis:",
-    parseInt(latestBlock?.number, 16),
-  );
+  const lastBlockNumber = parseInt(latestBlock?.number, 16);
+  const stateRoot = latestBlock?.stateRoot;
+
+  console.log("Latest L2 block number for L1 genesis:", lastBlockNumber);
   console.log("Latest L2 block hash for L1 genesis:", latestBlock?.hash);
-  console.log(
-    "Latest L2 block state root for L1 genesis:",
-    latestBlock?.stateRoot + "\n",
-  );
+  console.log("Latest L2 block state root for L1 genesis:", stateRoot + "\n");
 
   // Build genesis header from latest L2 block
   const genesisHeader = {
     epoch: 0,
-    l2Height: parseInt(latestBlock?.number, 16),
+    l2Height: latestBlock?.number,
     prevHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
