@@ -165,7 +165,7 @@ contract ChallengeL2Header is ChallengeBase {
 
         // 4. Check the timestamp is correct
         require(
-            header.timestamp > prevHeader.timestamp,
+            header.timestamp >= prevHeader.timestamp,
             "header timestamp is too late"
         );
         require(
