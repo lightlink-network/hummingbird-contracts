@@ -68,11 +68,11 @@ const main = async () => {
 
   log("DONE\n");
 
-  console.log(" canonicalStateChain:", canonicalStateChain.address);
-  console.log(" chainOracle:", chainOracle.address);
-  console.log(" challenge:", challenge.address);
-  console.log(" rlpReader:", rlpReaderAddr);
-  console.log(" daOracle:", DAOracleAddr);
+  console.log(" canonicalStateChain:", `"${canonicalStateChain.address}"`);
+  console.log(" chainOracle:", `"${chainOracle.address}"`);
+  console.log(" challenge:", `"${challenge.address}"`);
+  console.log(" rlpReader:", `"${rlpReaderAddr}"`);
+  console.log(" daOracle:", `"${DAOracleAddr}"`);
 };
 
 main()
