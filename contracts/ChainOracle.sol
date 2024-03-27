@@ -119,11 +119,12 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         );
 
         // 2. verify shares are valid
-        DAVerifier.verifySharesToDataRootTupleRoot(
+        (bool verified, ) = DAVerifier.verifySharesToDataRootTupleRoot(
             daOracle,
             _proof,
             _proof.attestationProof.tuple.dataRoot
         );
+        require(verified, "shares not verified");
 
         // 3. create a share by hashing the rblock and shares
         bytes32 shareKey = ShareKey(_rblock, _proof.data);
