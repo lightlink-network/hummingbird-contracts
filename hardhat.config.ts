@@ -84,8 +84,9 @@ const config: HardhatUserConfig = {
       "contracts/CanonicalStateChain.sol",
       "contracts/challenge/Challenge.sol",
       "contracts/ChainOracle.sol",
+      "contracts/interfaces/IBlobstreamX.sol",
     ],
-    skipFiles: ["contracts/interfaces", "@openzeppelin", "@solarity"],
+    skipFiles: ["@openzeppelin", "@solarity"],
   },
 };
 
