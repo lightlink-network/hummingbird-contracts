@@ -6,7 +6,7 @@
 # Vars
 forkUrl=$1
 persist=false
-persistLocation=".testnet-state"
+persistLocation=".testnet.state.log"
 
 while [[ $# -gt 0 ]]; do
   key="$1"
@@ -82,13 +82,15 @@ fi
 
 echo "Deploying contracts..."
 # only run if persist false or persistLocation doesnt exists 
-if [ $persist = false ] || [ ! -d $persistLocation ]; then
+if [[ $persist != true ]] || [[ ! -f $persistLocation ]]; then
   npx hardhat run scripts/deploy/deploy_arbsepolia.ts --network localhost > testnet.deployments.log
   if [ $? -eq 1 ]; then
     echo "Error: Failed to deploy contracts."
     kill $ANVIL_PID
     exit 1
   fi
+else 
+  echo "Contracts already deployed, skipping..."
 fi
 
 if [ $? -eq 0 ]; then
