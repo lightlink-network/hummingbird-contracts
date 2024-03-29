@@ -60,6 +60,15 @@ const config: HardhatUserConfig = {
     pegasus: {
       url: process.env.PEGASUS_PROVIDER_URL || "",
     },
+    arbSepolia: {
+      url: process.env.ARBITRUM_SEPOLIA_PROVIDER_URL || "",
+      accounts: [
+        process.env.ARBITRUM_SEPOLIA_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.ARBITRUM_SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+      ],
+    },
   },
   mocha: {
     timeout: 200000,
@@ -73,7 +82,18 @@ const config: HardhatUserConfig = {
       hardhat: "123456",
       mainnet: process.env.ETHERSCAN_API_KEY || "",
       sepolia: process.env.ETHERSCAN_API_KEY || "",
+      arbSepolia: process.env.ETHERSCAN_API_KEY || "",
     },
+    customChains: [
+      {
+        network: "arbSepolia",
+        chainId: 421614,
+        urls: {
+          apiURL: "https://api-sepolia.arbiscan.io/api",
+          browserURL: "https://sepolia.arbiscan.io",
+        },
+      },
+    ],
   },
   gobind: {
     outdir: "./generated-types/bindings",
