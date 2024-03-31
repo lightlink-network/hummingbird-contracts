@@ -49,7 +49,7 @@ const main = async () => {
   const chainOracle = await proxyDeployAndInitialize(
     owner,
     await ethers.getContractFactory("ChainOracle"),
-    [canonicalStateChain.implementationAddress, blobstreamXAddr, rlpReaderAddr],
+    [canonicalStateChain.address, blobstreamXAddr, rlpReaderAddr],
   );
 
   // Step 6. Deploy Challenge contract as a proxy
@@ -74,11 +74,11 @@ const main = async () => {
 
   log("DONE\n");
 
-  log(" canonicalStateChain:", `"${canonicalStateChain.address}"`);
-  log(" challenge:", `"${challenge.address}"`);
-  log(" chainOracle:", `"${chainOracle.address}"`);
-  log(" blobstreamX:", `"${blobstreamXAddr}"`);
-  log(" rlpReader:", `"${rlpReaderAddr}" \n`);
+  console.log(" canonicalStateChain:", `"${canonicalStateChain.address}"`);
+  console.log(" challenge:", `"${challenge.address}"`);
+  console.log(" chainOracle:", `"${chainOracle.address}"`);
+  console.log(" blobstreamX:", `"${blobstreamXAddr}"`);
+  console.log(" rlpReader:", `"${rlpReaderAddr}" \n`);
 
   /// Verify contracts
   if (chainId !== 31337 && chainId !== 1337) {
