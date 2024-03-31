@@ -57,7 +57,7 @@ type DataRootTuple struct {
 
 // ChallengeMetaData contains all meta data concerning the Challenge contract.
 var ChallengeMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"ERC1967InvalidImplementation\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC1967NonPayable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UUPSUnauthorizedCallContext\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"}],\"name\":\"UUPSUnsupportedProxiableUUID\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_expiry\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"_status\",\"type\":\"uint8\"}],\"name\":\"ChallengeDAUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"enumChallengeHeader.InvalidHeaderReason\",\"name\":\"_reason\",\"type\":\"uint8\"}],\"name\":\"InvalidHeader\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"challengeHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"l2Number\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"rblock\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enumChallengeL2Header.L2HeaderChallengeStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"name\":\"L2HeaderChallengeUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"UPGRADE_INTERFACE_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"contractICanonicalStateChain\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chainOracle\",\"outputs\":[{\"internalType\":\"contractIChainOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"challengeDataRootInclusion\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_rblockNum\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_l2Num\",\"type\":\"uint256\"}],\"name\":\"challengeL2Header\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengePeriod\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeWindow\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"daChallenges\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"challenger\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"daOracle\",\"outputs\":[{\"internalType\":\"contractIDAOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"rootNonce\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"dataRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structDataRootTuple\",\"name\":\"dataRootTuple\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32[]\",\"name\":\"sideNodes\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint256\",\"name\":\"key\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"numLeaves\",\"type\":\"uint256\"}],\"internalType\":\"structBinaryMerkleProof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"structChallengeDataAvailability.ChallengeDAProof\",\"name\":\"_proof\",\"type\":\"tuple\"}],\"name\":\"defendDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_headerHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_headerPrevHash\",\"type\":\"bytes32\"}],\"name\":\"defendL2Header\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defender\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_treasury\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chain\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_daOracle\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_mipsChallenge\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chainOracle\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"invalidateHeader\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_rblockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_l2Num\",\"type\":\"uint256\"}],\"name\":\"l2HeaderChallengeHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"l2HeaderChallenges\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"rblock\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"internalType\":\"structChallengeL2Header.L2HeaderPointer\",\"name\":\"header\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"rblock\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"internalType\":\"structChallengeL2Header.L2HeaderPointer\",\"name\":\"prevHeader\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"challengeEnd\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"challenger\",\"type\":\"address\"},{\"internalType\":\"enumChallengeL2Header.L2HeaderChallengeStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"mipsChallenge\",\"outputs\":[{\"internalType\":\"contractIMipsChallenge\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeFee\",\"type\":\"uint256\"}],\"name\":\"setChallengeFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengePeriod\",\"type\":\"uint256\"}],\"name\":\"setChallengePeriod\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeReward\",\"type\":\"uint256\"}],\"name\":\"setChallengeReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeWindow\",\"type\":\"uint256\"}],\"name\":\"setChallengeWindow\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_defender\",\"type\":\"address\"}],\"name\":\"setDefender\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockhash\",\"type\":\"bytes32\"}],\"name\":\"settleDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeHash\",\"type\":\"bytes32\"}],\"name\":\"settleL2HeaderChallenge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"treasury\",\"outputs\":[{\"internalType\":\"contractITreasury\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"ERC1967InvalidImplementation\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC1967NonPayable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UUPSUnauthorizedCallContext\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"}],\"name\":\"UUPSUnsupportedProxiableUUID\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_pointerIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_expiry\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"_status\",\"type\":\"uint8\"}],\"name\":\"ChallengeDAUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"enumChallengeHeader.InvalidHeaderReason\",\"name\":\"_reason\",\"type\":\"uint8\"}],\"name\":\"InvalidHeader\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"challengeHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"l2Number\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"rblock\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enumChallengeL2Header.L2HeaderChallengeStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"name\":\"L2HeaderChallengeUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"UPGRADE_INTERFACE_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"contractICanonicalStateChain\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chainOracle\",\"outputs\":[{\"internalType\":\"contractIChainOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"_pointerIndex\",\"type\":\"uint8\"}],\"name\":\"challengeDataRootInclusion\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_rblockNum\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_l2Num\",\"type\":\"uint256\"}],\"name\":\"challengeL2Header\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengePeriod\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeWindow\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"daChallenges\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"pointerIndex\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"challenger\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"daOracle\",\"outputs\":[{\"internalType\":\"contractIDAOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint8\",\"name\":\"_pointerIndex\",\"type\":\"uint8\"}],\"name\":\"dataRootInclusionChallengeKey\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeKey\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"rootNonce\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"dataRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structDataRootTuple\",\"name\":\"dataRootTuple\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32[]\",\"name\":\"sideNodes\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint256\",\"name\":\"key\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"numLeaves\",\"type\":\"uint256\"}],\"internalType\":\"structBinaryMerkleProof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"structChallengeDataAvailability.ChallengeDAProof\",\"name\":\"_proof\",\"type\":\"tuple\"}],\"name\":\"defendDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_headerHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_headerPrevHash\",\"type\":\"bytes32\"}],\"name\":\"defendL2Header\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defender\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_treasury\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chain\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_daOracle\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_mipsChallenge\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chainOracle\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"invalidateHeader\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_rblockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_l2Num\",\"type\":\"uint256\"}],\"name\":\"l2HeaderChallengeHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"l2HeaderChallenges\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"rblock\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"internalType\":\"structChallengeL2Header.L2HeaderPointer\",\"name\":\"header\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"rblock\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"internalType\":\"structChallengeL2Header.L2HeaderPointer\",\"name\":\"prevHeader\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"challengeEnd\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"challenger\",\"type\":\"address\"},{\"internalType\":\"enumChallengeL2Header.L2HeaderChallengeStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"mipsChallenge\",\"outputs\":[{\"internalType\":\"contractIMipsChallenge\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeFee\",\"type\":\"uint256\"}],\"name\":\"setChallengeFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengePeriod\",\"type\":\"uint256\"}],\"name\":\"setChallengePeriod\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeReward\",\"type\":\"uint256\"}],\"name\":\"setChallengeReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeWindow\",\"type\":\"uint256\"}],\"name\":\"setChallengeWindow\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_defender\",\"type\":\"address\"}],\"name\":\"setDefender\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeKey\",\"type\":\"bytes32\"}],\"name\":\"settleDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeHash\",\"type\":\"bytes32\"}],\"name\":\"settleL2HeaderChallenge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"treasury\",\"outputs\":[{\"internalType\":\"contractITreasury\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
 }
 
 // ChallengeABI is the input ABI used to generate the binding from.
@@ -425,30 +425,36 @@ func (_Challenge *ChallengeCallerSession) ChallengeWindow() (*big.Int, error) {
 
 // DaChallenges is a free data retrieval call binding the contract method 0x113e70fb.
 //
-// Solidity: function daChallenges(bytes32 ) view returns(uint256 blockIndex, address challenger, uint256 expiry, uint8 status)
+// Solidity: function daChallenges(bytes32 ) view returns(bytes32 blockHash, uint256 blockIndex, uint8 pointerIndex, address challenger, uint256 expiry, uint8 status)
 func (_Challenge *ChallengeCaller) DaChallenges(opts *bind.CallOpts, arg0 [32]byte) (struct {
-	BlockIndex *big.Int
-	Challenger common.Address
-	Expiry     *big.Int
-	Status     uint8
+	BlockHash    [32]byte
+	BlockIndex   *big.Int
+	PointerIndex uint8
+	Challenger   common.Address
+	Expiry       *big.Int
+	Status       uint8
 }, error) {
 	var out []interface{}
 	err := _Challenge.contract.Call(opts, &out, "daChallenges", arg0)
 
 	outstruct := new(struct {
-		BlockIndex *big.Int
-		Challenger common.Address
-		Expiry     *big.Int
-		Status     uint8
+		BlockHash    [32]byte
+		BlockIndex   *big.Int
+		PointerIndex uint8
+		Challenger   common.Address
+		Expiry       *big.Int
+		Status       uint8
 	})
 	if err != nil {
 		return *outstruct, err
 	}
 
-	outstruct.BlockIndex = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-	outstruct.Challenger = *abi.ConvertType(out[1], new(common.Address)).(*common.Address)
-	outstruct.Expiry = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
-	outstruct.Status = *abi.ConvertType(out[3], new(uint8)).(*uint8)
+	outstruct.BlockHash = *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+	outstruct.BlockIndex = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	outstruct.PointerIndex = *abi.ConvertType(out[2], new(uint8)).(*uint8)
+	outstruct.Challenger = *abi.ConvertType(out[3], new(common.Address)).(*common.Address)
+	outstruct.Expiry = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
+	outstruct.Status = *abi.ConvertType(out[5], new(uint8)).(*uint8)
 
 	return *outstruct, err
 
@@ -456,24 +462,28 @@ func (_Challenge *ChallengeCaller) DaChallenges(opts *bind.CallOpts, arg0 [32]by
 
 // DaChallenges is a free data retrieval call binding the contract method 0x113e70fb.
 //
-// Solidity: function daChallenges(bytes32 ) view returns(uint256 blockIndex, address challenger, uint256 expiry, uint8 status)
+// Solidity: function daChallenges(bytes32 ) view returns(bytes32 blockHash, uint256 blockIndex, uint8 pointerIndex, address challenger, uint256 expiry, uint8 status)
 func (_Challenge *ChallengeSession) DaChallenges(arg0 [32]byte) (struct {
-	BlockIndex *big.Int
-	Challenger common.Address
-	Expiry     *big.Int
-	Status     uint8
+	BlockHash    [32]byte
+	BlockIndex   *big.Int
+	PointerIndex uint8
+	Challenger   common.Address
+	Expiry       *big.Int
+	Status       uint8
 }, error) {
 	return _Challenge.Contract.DaChallenges(&_Challenge.CallOpts, arg0)
 }
 
 // DaChallenges is a free data retrieval call binding the contract method 0x113e70fb.
 //
-// Solidity: function daChallenges(bytes32 ) view returns(uint256 blockIndex, address challenger, uint256 expiry, uint8 status)
+// Solidity: function daChallenges(bytes32 ) view returns(bytes32 blockHash, uint256 blockIndex, uint8 pointerIndex, address challenger, uint256 expiry, uint8 status)
 func (_Challenge *ChallengeCallerSession) DaChallenges(arg0 [32]byte) (struct {
-	BlockIndex *big.Int
-	Challenger common.Address
-	Expiry     *big.Int
-	Status     uint8
+	BlockHash    [32]byte
+	BlockIndex   *big.Int
+	PointerIndex uint8
+	Challenger   common.Address
+	Expiry       *big.Int
+	Status       uint8
 }, error) {
 	return _Challenge.Contract.DaChallenges(&_Challenge.CallOpts, arg0)
 }
@@ -507,6 +517,37 @@ func (_Challenge *ChallengeSession) DaOracle() (common.Address, error) {
 // Solidity: function daOracle() view returns(address)
 func (_Challenge *ChallengeCallerSession) DaOracle() (common.Address, error) {
 	return _Challenge.Contract.DaOracle(&_Challenge.CallOpts)
+}
+
+// DataRootInclusionChallengeKey is a free data retrieval call binding the contract method 0x4374a47b.
+//
+// Solidity: function dataRootInclusionChallengeKey(bytes32 _blockHash, uint8 _pointerIndex) pure returns(bytes32)
+func (_Challenge *ChallengeCaller) DataRootInclusionChallengeKey(opts *bind.CallOpts, _blockHash [32]byte, _pointerIndex uint8) ([32]byte, error) {
+	var out []interface{}
+	err := _Challenge.contract.Call(opts, &out, "dataRootInclusionChallengeKey", _blockHash, _pointerIndex)
+
+	if err != nil {
+		return *new([32]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+
+	return out0, err
+
+}
+
+// DataRootInclusionChallengeKey is a free data retrieval call binding the contract method 0x4374a47b.
+//
+// Solidity: function dataRootInclusionChallengeKey(bytes32 _blockHash, uint8 _pointerIndex) pure returns(bytes32)
+func (_Challenge *ChallengeSession) DataRootInclusionChallengeKey(_blockHash [32]byte, _pointerIndex uint8) ([32]byte, error) {
+	return _Challenge.Contract.DataRootInclusionChallengeKey(&_Challenge.CallOpts, _blockHash, _pointerIndex)
+}
+
+// DataRootInclusionChallengeKey is a free data retrieval call binding the contract method 0x4374a47b.
+//
+// Solidity: function dataRootInclusionChallengeKey(bytes32 _blockHash, uint8 _pointerIndex) pure returns(bytes32)
+func (_Challenge *ChallengeCallerSession) DataRootInclusionChallengeKey(_blockHash [32]byte, _pointerIndex uint8) ([32]byte, error) {
+	return _Challenge.Contract.DataRootInclusionChallengeKey(&_Challenge.CallOpts, _blockHash, _pointerIndex)
 }
 
 // Defender is a free data retrieval call binding the contract method 0x7f4c91c5.
@@ -755,25 +796,25 @@ func (_Challenge *ChallengeCallerSession) Treasury() (common.Address, error) {
 	return _Challenge.Contract.Treasury(&_Challenge.CallOpts)
 }
 
-// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x7739f135.
+// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x1c6bb9ba.
 //
-// Solidity: function challengeDataRootInclusion(uint256 _blockIndex) payable returns(uint256)
-func (_Challenge *ChallengeTransactor) ChallengeDataRootInclusion(opts *bind.TransactOpts, _blockIndex *big.Int) (*types.Transaction, error) {
-	return _Challenge.contract.Transact(opts, "challengeDataRootInclusion", _blockIndex)
+// Solidity: function challengeDataRootInclusion(uint256 _blockIndex, uint8 _pointerIndex) payable returns(uint256)
+func (_Challenge *ChallengeTransactor) ChallengeDataRootInclusion(opts *bind.TransactOpts, _blockIndex *big.Int, _pointerIndex uint8) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "challengeDataRootInclusion", _blockIndex, _pointerIndex)
 }
 
-// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x7739f135.
+// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x1c6bb9ba.
 //
-// Solidity: function challengeDataRootInclusion(uint256 _blockIndex) payable returns(uint256)
-func (_Challenge *ChallengeSession) ChallengeDataRootInclusion(_blockIndex *big.Int) (*types.Transaction, error) {
-	return _Challenge.Contract.ChallengeDataRootInclusion(&_Challenge.TransactOpts, _blockIndex)
+// Solidity: function challengeDataRootInclusion(uint256 _blockIndex, uint8 _pointerIndex) payable returns(uint256)
+func (_Challenge *ChallengeSession) ChallengeDataRootInclusion(_blockIndex *big.Int, _pointerIndex uint8) (*types.Transaction, error) {
+	return _Challenge.Contract.ChallengeDataRootInclusion(&_Challenge.TransactOpts, _blockIndex, _pointerIndex)
 }
 
-// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x7739f135.
+// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x1c6bb9ba.
 //
-// Solidity: function challengeDataRootInclusion(uint256 _blockIndex) payable returns(uint256)
-func (_Challenge *ChallengeTransactorSession) ChallengeDataRootInclusion(_blockIndex *big.Int) (*types.Transaction, error) {
-	return _Challenge.Contract.ChallengeDataRootInclusion(&_Challenge.TransactOpts, _blockIndex)
+// Solidity: function challengeDataRootInclusion(uint256 _blockIndex, uint8 _pointerIndex) payable returns(uint256)
+func (_Challenge *ChallengeTransactorSession) ChallengeDataRootInclusion(_blockIndex *big.Int, _pointerIndex uint8) (*types.Transaction, error) {
+	return _Challenge.Contract.ChallengeDataRootInclusion(&_Challenge.TransactOpts, _blockIndex, _pointerIndex)
 }
 
 // ChallengeL2Header is a paid mutator transaction binding the contract method 0x5ae45d8b.
@@ -799,23 +840,23 @@ func (_Challenge *ChallengeTransactorSession) ChallengeL2Header(_rblockNum *big.
 
 // DefendDataRootInclusion is a paid mutator transaction binding the contract method 0x2fc72885.
 //
-// Solidity: function defendDataRootInclusion(bytes32 _blockHash, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
-func (_Challenge *ChallengeTransactor) DefendDataRootInclusion(opts *bind.TransactOpts, _blockHash [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
-	return _Challenge.contract.Transact(opts, "defendDataRootInclusion", _blockHash, _proof)
+// Solidity: function defendDataRootInclusion(bytes32 _challengeKey, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
+func (_Challenge *ChallengeTransactor) DefendDataRootInclusion(opts *bind.TransactOpts, _challengeKey [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "defendDataRootInclusion", _challengeKey, _proof)
 }
 
 // DefendDataRootInclusion is a paid mutator transaction binding the contract method 0x2fc72885.
 //
-// Solidity: function defendDataRootInclusion(bytes32 _blockHash, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
-func (_Challenge *ChallengeSession) DefendDataRootInclusion(_blockHash [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
-	return _Challenge.Contract.DefendDataRootInclusion(&_Challenge.TransactOpts, _blockHash, _proof)
+// Solidity: function defendDataRootInclusion(bytes32 _challengeKey, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
+func (_Challenge *ChallengeSession) DefendDataRootInclusion(_challengeKey [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
+	return _Challenge.Contract.DefendDataRootInclusion(&_Challenge.TransactOpts, _challengeKey, _proof)
 }
 
 // DefendDataRootInclusion is a paid mutator transaction binding the contract method 0x2fc72885.
 //
-// Solidity: function defendDataRootInclusion(bytes32 _blockHash, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
-func (_Challenge *ChallengeTransactorSession) DefendDataRootInclusion(_blockHash [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
-	return _Challenge.Contract.DefendDataRootInclusion(&_Challenge.TransactOpts, _blockHash, _proof)
+// Solidity: function defendDataRootInclusion(bytes32 _challengeKey, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
+func (_Challenge *ChallengeTransactorSession) DefendDataRootInclusion(_challengeKey [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
+	return _Challenge.Contract.DefendDataRootInclusion(&_Challenge.TransactOpts, _challengeKey, _proof)
 }
 
 // DefendL2Header is a paid mutator transaction binding the contract method 0x0200501d.
@@ -1009,23 +1050,23 @@ func (_Challenge *ChallengeTransactorSession) SetDefender(_defender common.Addre
 
 // SettleDataRootInclusion is a paid mutator transaction binding the contract method 0x5bba0ea9.
 //
-// Solidity: function settleDataRootInclusion(bytes32 _blockhash) returns()
-func (_Challenge *ChallengeTransactor) SettleDataRootInclusion(opts *bind.TransactOpts, _blockhash [32]byte) (*types.Transaction, error) {
-	return _Challenge.contract.Transact(opts, "settleDataRootInclusion", _blockhash)
+// Solidity: function settleDataRootInclusion(bytes32 _challengeKey) returns()
+func (_Challenge *ChallengeTransactor) SettleDataRootInclusion(opts *bind.TransactOpts, _challengeKey [32]byte) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "settleDataRootInclusion", _challengeKey)
 }
 
 // SettleDataRootInclusion is a paid mutator transaction binding the contract method 0x5bba0ea9.
 //
-// Solidity: function settleDataRootInclusion(bytes32 _blockhash) returns()
-func (_Challenge *ChallengeSession) SettleDataRootInclusion(_blockhash [32]byte) (*types.Transaction, error) {
-	return _Challenge.Contract.SettleDataRootInclusion(&_Challenge.TransactOpts, _blockhash)
+// Solidity: function settleDataRootInclusion(bytes32 _challengeKey) returns()
+func (_Challenge *ChallengeSession) SettleDataRootInclusion(_challengeKey [32]byte) (*types.Transaction, error) {
+	return _Challenge.Contract.SettleDataRootInclusion(&_Challenge.TransactOpts, _challengeKey)
 }
 
 // SettleDataRootInclusion is a paid mutator transaction binding the contract method 0x5bba0ea9.
 //
-// Solidity: function settleDataRootInclusion(bytes32 _blockhash) returns()
-func (_Challenge *ChallengeTransactorSession) SettleDataRootInclusion(_blockhash [32]byte) (*types.Transaction, error) {
-	return _Challenge.Contract.SettleDataRootInclusion(&_Challenge.TransactOpts, _blockhash)
+// Solidity: function settleDataRootInclusion(bytes32 _challengeKey) returns()
+func (_Challenge *ChallengeTransactorSession) SettleDataRootInclusion(_challengeKey [32]byte) (*types.Transaction, error) {
+	return _Challenge.Contract.SettleDataRootInclusion(&_Challenge.TransactOpts, _challengeKey)
 }
 
 // SettleL2HeaderChallenge is a paid mutator transaction binding the contract method 0xf8a22c6c.
@@ -1160,25 +1201,26 @@ func (it *ChallengeChallengeDAUpdateIterator) Close() error {
 
 // ChallengeChallengeDAUpdate represents a ChallengeDAUpdate event raised by the Challenge contract.
 type ChallengeChallengeDAUpdate struct {
-	BlockHash  [32]byte
-	BlockIndex *big.Int
-	Expiry     *big.Int
-	Status     uint8
-	Raw        types.Log // Blockchain specific contextual infos
+	BlockHash    [32]byte
+	PointerIndex *big.Int
+	BlockIndex   *big.Int
+	Expiry       *big.Int
+	Status       uint8
+	Raw          types.Log // Blockchain specific contextual infos
 }
 
-// FilterChallengeDAUpdate is a free log retrieval operation binding the contract event 0xcdbf857f75b46d9b94fe7c990b2b0457f168aef7b089a0cb5d4e88074f2d88e8.
+// FilterChallengeDAUpdate is a free log retrieval operation binding the contract event 0x53e4985042ec205f5e57d94bfa2804bdf33e6a9c8aa09d50549fadfde81b00ba.
 //
-// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _blockIndex, uint256 _expiry, uint8 indexed _status)
-func (_Challenge *ChallengeFilterer) FilterChallengeDAUpdate(opts *bind.FilterOpts, _blockHash [][32]byte, _blockIndex []*big.Int, _status []uint8) (*ChallengeChallengeDAUpdateIterator, error) {
+// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _pointerIndex, uint256 _blockIndex, uint256 _expiry, uint8 indexed _status)
+func (_Challenge *ChallengeFilterer) FilterChallengeDAUpdate(opts *bind.FilterOpts, _blockHash [][32]byte, _pointerIndex []*big.Int, _status []uint8) (*ChallengeChallengeDAUpdateIterator, error) {
 
 	var _blockHashRule []interface{}
 	for _, _blockHashItem := range _blockHash {
 		_blockHashRule = append(_blockHashRule, _blockHashItem)
 	}
-	var _blockIndexRule []interface{}
-	for _, _blockIndexItem := range _blockIndex {
-		_blockIndexRule = append(_blockIndexRule, _blockIndexItem)
+	var _pointerIndexRule []interface{}
+	for _, _pointerIndexItem := range _pointerIndex {
+		_pointerIndexRule = append(_pointerIndexRule, _pointerIndexItem)
 	}
 
 	var _statusRule []interface{}
@@ -1186,25 +1228,25 @@ func (_Challenge *ChallengeFilterer) FilterChallengeDAUpdate(opts *bind.FilterOp
 		_statusRule = append(_statusRule, _statusItem)
 	}
 
-	logs, sub, err := _Challenge.contract.FilterLogs(opts, "ChallengeDAUpdate", _blockHashRule, _blockIndexRule, _statusRule)
+	logs, sub, err := _Challenge.contract.FilterLogs(opts, "ChallengeDAUpdate", _blockHashRule, _pointerIndexRule, _statusRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ChallengeChallengeDAUpdateIterator{contract: _Challenge.contract, event: "ChallengeDAUpdate", logs: logs, sub: sub}, nil
 }
 
-// WatchChallengeDAUpdate is a free log subscription operation binding the contract event 0xcdbf857f75b46d9b94fe7c990b2b0457f168aef7b089a0cb5d4e88074f2d88e8.
+// WatchChallengeDAUpdate is a free log subscription operation binding the contract event 0x53e4985042ec205f5e57d94bfa2804bdf33e6a9c8aa09d50549fadfde81b00ba.
 //
-// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _blockIndex, uint256 _expiry, uint8 indexed _status)
-func (_Challenge *ChallengeFilterer) WatchChallengeDAUpdate(opts *bind.WatchOpts, sink chan<- *ChallengeChallengeDAUpdate, _blockHash [][32]byte, _blockIndex []*big.Int, _status []uint8) (event.Subscription, error) {
+// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _pointerIndex, uint256 _blockIndex, uint256 _expiry, uint8 indexed _status)
+func (_Challenge *ChallengeFilterer) WatchChallengeDAUpdate(opts *bind.WatchOpts, sink chan<- *ChallengeChallengeDAUpdate, _blockHash [][32]byte, _pointerIndex []*big.Int, _status []uint8) (event.Subscription, error) {
 
 	var _blockHashRule []interface{}
 	for _, _blockHashItem := range _blockHash {
 		_blockHashRule = append(_blockHashRule, _blockHashItem)
 	}
-	var _blockIndexRule []interface{}
-	for _, _blockIndexItem := range _blockIndex {
-		_blockIndexRule = append(_blockIndexRule, _blockIndexItem)
+	var _pointerIndexRule []interface{}
+	for _, _pointerIndexItem := range _pointerIndex {
+		_pointerIndexRule = append(_pointerIndexRule, _pointerIndexItem)
 	}
 
 	var _statusRule []interface{}
@@ -1212,7 +1254,7 @@ func (_Challenge *ChallengeFilterer) WatchChallengeDAUpdate(opts *bind.WatchOpts
 		_statusRule = append(_statusRule, _statusItem)
 	}
 
-	logs, sub, err := _Challenge.contract.WatchLogs(opts, "ChallengeDAUpdate", _blockHashRule, _blockIndexRule, _statusRule)
+	logs, sub, err := _Challenge.contract.WatchLogs(opts, "ChallengeDAUpdate", _blockHashRule, _pointerIndexRule, _statusRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1244,9 +1286,9 @@ func (_Challenge *ChallengeFilterer) WatchChallengeDAUpdate(opts *bind.WatchOpts
 	}), nil
 }
 
-// ParseChallengeDAUpdate is a log parse operation binding the contract event 0xcdbf857f75b46d9b94fe7c990b2b0457f168aef7b089a0cb5d4e88074f2d88e8.
+// ParseChallengeDAUpdate is a log parse operation binding the contract event 0x53e4985042ec205f5e57d94bfa2804bdf33e6a9c8aa09d50549fadfde81b00ba.
 //
-// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _blockIndex, uint256 _expiry, uint8 indexed _status)
+// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _pointerIndex, uint256 _blockIndex, uint256 _expiry, uint8 indexed _status)
 func (_Challenge *ChallengeFilterer) ParseChallengeDAUpdate(log types.Log) (*ChallengeChallengeDAUpdate, error) {
 	event := new(ChallengeChallengeDAUpdate)
 	if err := _Challenge.contract.UnpackLog(event, "ChallengeDAUpdate", log); err != nil {
