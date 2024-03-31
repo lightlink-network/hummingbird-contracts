@@ -110,9 +110,8 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         SharesProof memory _proof
     ) public returns (bytes32) {
         // 1. Load the rblock (bundle) from the canonical state chain.
-        ICanonicalStateChain.Header memory rHead = canonicalStateChain.headers(
-            _rblock
-        );
+        ICanonicalStateChain.Header memory rHead = canonicalStateChain
+            .getHeaderByHash(_rblock);
         require(rHead.epoch > 0, "rblock not found");
         require(
             rHead.celestiaPointers[_pointer].height ==
