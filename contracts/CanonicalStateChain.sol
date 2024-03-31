@@ -28,9 +28,13 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         bytes32 stateRoot; // The Stateroot after applying all the blocks in the Bundle.
         // Pointer to the blocks contents on celestia.
         // See `Span` from https://docs.celestia.org/developers/blobstream-offchain#defining-a-chain
-        uint64 celestiaHeight;
-        uint24 celestiaShareStart;
-        uint16 celestiaShareLen;
+        CelestiaPointer[] celestiaPointers;
+    }
+
+    struct CelestiaPointer {
+        uint64 height;
+        uint24 shareStart;
+        uint16 shareLen;
     }
 
     struct HeaderMetadata {
@@ -74,7 +78,8 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
     }
 
     // pushBlock optimistically pushes block headers to the canonical chain.
-    // The only fields that are checked are the epoch and prevHash.
+    // The only fields that are checked are the epoch, prevHash and that the
+    // block has atleast one celestia pointer.
     // Other fields are optimistically assumed to be correct, however they can be
     // challenged and rolled back via challenge contract.
     function pushBlock(Header calldata _header) external {
@@ -88,6 +93,10 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         require(
             _header.prevHash == chain[chainHead],
             "prevHash must be the previous block hash"
+        );
+        require(
+            _header.celestiaPointers.length > 0,
+            "block must have atleast one celestia pointer"
         );
 
         // check that the block is not already in the chain.
