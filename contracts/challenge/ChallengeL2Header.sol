@@ -57,9 +57,9 @@ contract ChallengeL2Header is ChallengeBase {
     {
         // 1. Load the rblock and the previous rblock
         bytes32 rblockHash = chain.chain(_rblockNum);
-        ICanonicalStateChain.Header memory rblock = chain.headers(rblockHash);
-        ICanonicalStateChain.Header memory prevRBlock = chain.headers(
-            rblock.prevHash
+        ICanonicalStateChain.Header memory rblock = chain.getBlock(_rblockNum);
+        ICanonicalStateChain.Header memory prevRBlock = chain.getBlock(
+            _rblockNum - 1
         );
 
         // 2. Check that this exact L2 header is not already challenged
