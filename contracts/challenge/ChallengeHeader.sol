@@ -54,7 +54,7 @@ abstract contract ChallengeHeader is ChallengeBase {
         mustBeWithinChallengeWindow(_blockIndex)
     {
         bytes32 _hash = chain.chain(_blockIndex);
-        ICanonicalStateChain.Header memory header = chain.headers(_hash);
+        ICanonicalStateChain.Header memory header = chain.getBlock(_blockIndex);
 
         // check header validity.
         require(!_isHeaderValid(header, _hash, _blockIndex), "header is valid");
@@ -69,7 +69,7 @@ abstract contract ChallengeHeader is ChallengeBase {
         uint256 _blockIndex
     ) internal returns (bool) {
         // check that the blocks epoch is greater than the previous epoch.
-        if (_header.epoch <= chain.headers(_header.prevHash).epoch) {
+        if (_header.epoch <= chain.getBlock(_blockIndex - 1).epoch) {
             emit InvalidHeader(
                 _header.epoch,
                 _hash,
@@ -79,7 +79,7 @@ abstract contract ChallengeHeader is ChallengeBase {
         }
 
         // check that the l2 height is greater than the previous l2 height.
-        if (_header.l2Height <= chain.headers(_header.prevHash).l2Height) {
+        if (_header.l2Height <= chain.getBlock(_blockIndex - 1).l2Height) {
             emit InvalidHeader(
                 _header.epoch,
                 _hash,
@@ -100,7 +100,7 @@ abstract contract ChallengeHeader is ChallengeBase {
 
         // check that the bundle size is less than the max bundle size.
         if (
-            _header.l2Height - chain.headers(_header.prevHash).l2Height >
+            _header.l2Height - chain.getBlock(_blockIndex - 1).l2Height >
             MAX_BUNDLESIZE
         ) {
             emit InvalidHeader(
