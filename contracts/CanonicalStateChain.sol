@@ -29,8 +29,8 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         // Pointer to the blocks contents on celestia.
         // See `Span` from https://docs.celestia.org/developers/blobstream-offchain#defining-a-chain
         uint64 celestiaHeight;
-        uint64 celestiaShareStart;
-        uint64 celestiaShareLen;
+        uint24 celestiaShareStart;
+        uint16 celestiaShareLen;
     }
 
     struct HeaderMetadata {
