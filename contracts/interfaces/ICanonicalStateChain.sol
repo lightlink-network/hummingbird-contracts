@@ -12,9 +12,14 @@ interface ICanonicalStateChain {
         bytes32 blockRoot; // The root of a merkle tree containing all the blocks in the Bundle.
         bytes32 stateRoot; // The Stateroot after applying all the blocks in the Bundle.
         // Pointer to the blocks contents on celestia.
-        uint64 celestiaHeight;
-        uint64 celestiaShareStart;
-        uint64 celestiaShareLen;
+        // See `Span` from https://docs.celestia.org/developers/blobstream-offchain#defining-a-chain
+        CelestiaPointer[] celestiaPointers;
+    }
+
+    struct CelestiaPointer {
+        uint64 height;
+        uint24 shareStart;
+        uint16 shareLen;
     }
 
     struct HeaderMetadata {
