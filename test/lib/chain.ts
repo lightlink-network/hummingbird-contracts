@@ -1,11 +1,17 @@
 import { ethers } from "hardhat";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { Header, hashHeader } from "./header";
-import { Contract } from "ethers";
+import { Contract, toBigInt } from "ethers";
+import {
+  CanonicalStateChain__factory,
+  CanonicalStateChain,
+} from "../../typechain-types";
+import { proxyDeployAndInitialize } from "../../scripts/lib/deploy";
+
+type Header = CanonicalStateChain.HeaderStruct;
 
 export const setupCanonicalStateChain = async (
   signer: HardhatEthersSigner,
-  publisher: string
+  publisher: string,
 ) => {
   let genesisHeader: Header = {
     epoch: BigInt(0),
@@ -14,82 +20,74 @@ export const setupCanonicalStateChain = async (
     txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    celestiaHeight: BigInt(0),
-    celestiaShareStart: BigInt(0),
-    celestiaShareLen: BigInt(0),
+    celestiaPointers: [],
   };
 
-  let genesisHash = hashHeader(genesisHeader);
-
-  const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
-  const canonicalStateChainFactory = await ethers.getContractFactory(
-    "CanonicalStateChain"
-  );
-  const canonicalStateChainImplementation =
-    await canonicalStateChainFactory.deploy();
-
-  const proxy = await proxyFactory.deploy(
-    await canonicalStateChainImplementation.getAddress(),
-    canonicalStateChainImplementation.interface.encodeFunctionData(
-      "initialize",
-      [publisher, genesisHeader]
-    )
+  const deployed = await proxyDeployAndInitialize(
+    signer,
+    await ethers.getContractFactory("CanonicalStateChain"),
+    [publisher, genesisHeader],
   );
 
-  const canonicalStateChain = canonicalStateChainFactory.attach(
-    await proxy.getAddress()
-  ) as any;
+  const canonicalStateChain = CanonicalStateChain__factory.connect(
+    deployed.address,
+    signer,
+  );
 
-  return { canonicalStateChain, genesisHash, genesisHeader };
+  return {
+    canonicalStateChain,
+    genesisHash: await canonicalStateChain.chain(0),
+    genesisHeader,
+  };
 };
 
 export const pushRandomHeader = async (
   signer: HardhatEthersSigner,
-  canonicalStateChain: Contract
+  canonicalStateChain: CanonicalStateChain,
 ): Promise<[string, Header]> => {
-  const head: Header = await canonicalStateChain.getHead();
-  const headHash = hashHeader(head);
-
-  let header: Header = {
-    epoch: head.epoch + BigInt(1),
-    l2Height: head.l2Height + BigInt(5),
-    prevHash: headHash,
-    txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    celestiaHeight: head.celestiaHeight + BigInt(5),
-    celestiaShareStart: head.celestiaShareStart + BigInt(5),
-    celestiaShareLen: head.celestiaShareLen + BigInt(5),
-  };
+  const [header, headerHash] = await makeNextBlock(signer, canonicalStateChain);
 
   // push header
-
   await canonicalStateChain
     .connect(signer)
     .getFunction("pushBlock")
     .send(header);
 
-  return [hashHeader(header), header];
+  return [headerHash, header];
 };
 
 export const makeNextBlock = async (
   signer: HardhatEthersSigner,
-  canonicalStateChain: Contract
+  canonicalStateChain: CanonicalStateChain,
 ): Promise<[Header, string]> => {
   const head: Header = await canonicalStateChain.getHead();
-  const headHash = hashHeader(head);
+  const headNum = await canonicalStateChain.chainHead();
+  const headHash = await canonicalStateChain.chain(headNum);
+
+  let lastPointerHeight = 1n;
+  if (head.celestiaPointers.length > 0) {
+    lastPointerHeight = toBigInt(
+      head.celestiaPointers[head.celestiaPointers.length - 1].height,
+    );
+  }
 
   let header: Header = {
-    epoch: head.epoch + BigInt(1),
-    l2Height: head.l2Height + BigInt(1),
+    epoch: toBigInt(head.epoch) + 1n,
+    l2Height: toBigInt(head.l2Height) + 5n,
     prevHash: headHash,
     txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    celestiaHeight: head.celestiaHeight + BigInt(1),
-    celestiaShareStart: head.celestiaShareStart + BigInt(1),
-    celestiaShareLen: head.celestiaShareLen + BigInt(1),
+    celestiaPointers: [
+      {
+        height: lastPointerHeight + 1n,
+        shareStart: 1n,
+        shareLen: 1n,
+      },
+    ],
   };
 
-  return [header, hashHeader(header)];
+  // get header hash
+  const headerHash = await canonicalStateChain.calculateHeaderHash(header);
+  return [header, headerHash];
 };
