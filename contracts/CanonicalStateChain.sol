@@ -129,7 +129,9 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         return keccak256(abi.encode(_header));
     }
 
-    function getBlock(uint256 _index) public view returns (Header memory) {
+    function getHeaderByNum(
+        uint256 _index
+    ) public view returns (Header memory) {
         return headers[chain[_index]];
     }
 

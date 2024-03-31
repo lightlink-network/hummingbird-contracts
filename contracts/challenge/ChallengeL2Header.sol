@@ -57,8 +57,10 @@ contract ChallengeL2Header is ChallengeBase {
     {
         // 1. Load the rblock and the previous rblock
         bytes32 rblockHash = chain.chain(_rblockNum);
-        ICanonicalStateChain.Header memory rblock = chain.getBlock(_rblockNum);
-        ICanonicalStateChain.Header memory prevRBlock = chain.getBlock(
+        ICanonicalStateChain.Header memory rblock = chain.getHeaderByNum(
+            _rblockNum
+        );
+        ICanonicalStateChain.Header memory prevRBlock = chain.getHeaderByNum(
             _rblockNum - 1
         );
 

@@ -59,7 +59,9 @@ interface ICanonicalStateChain {
 
     function hash(Header memory _header) external pure returns (bytes32);
 
-    function getBlock(uint256 _index) external view returns (Header memory);
+    function getHeaderByNum(
+        uint256 _index
+    ) external view returns (Header memory);
 
     function getHead() external view returns (Header memory);
 
