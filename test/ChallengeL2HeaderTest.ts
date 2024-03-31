@@ -4,11 +4,15 @@ import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signer
 import {
   CanonicalStateChain,
   ChainOracle,
+  ChainOracle__factory,
   Challenge,
+  Challenge__factory,
 } from "../typechain-types";
 import { makeNextBlock, setupCanonicalStateChain } from "./lib/chain";
-import { Header } from "./lib/header";
 import { MOCK_DATA } from "./mock/mock_challengeL2Header";
+import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
+
+type Header = CanonicalStateChain.HeaderStruct;
 
 describe("ChallengeL2Header", function () {
   let chain: CanonicalStateChain;
@@ -37,40 +41,38 @@ describe("ChallengeL2Header", function () {
     const RLPReaderFactory = await ethers.getContractFactory("RLPReader");
     const rlpReader = await RLPReaderFactory.deploy();
     //  - 2.C deploy chain oracle implementation
-    const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
-    const chainOracleFactory = await ethers.getContractFactory("ChainOracle");
-    const chainOracleImplementation = await chainOracleFactory.deploy();
-    //  - 2.D deploy chain oracle proxy
-    const chainOracleProxy = await proxyFactory.deploy(
-      await chainOracleImplementation.getAddress(),
-      chainOracleImplementation.interface.encodeFunctionData("initialize", [
+    // const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
+    // const chainOracleFactory = await ethers.getContractFactory("ChainOracle");
+    // const chainOracleImplementation = await chainOracleFactory.deploy();
+    const chainOracleDeployment = await proxyDeployAndInitialize(
+      owner,
+      await ethers.getContractFactory("ChainOracle"),
+      [
         await chain.getAddress(),
         await mockDaOracle.getAddress(),
         await rlpReader.getAddress(),
-      ]),
+      ],
     );
 
-    chainOracle = chainOracleFactory.attach(
-      await chainOracleProxy.getAddress(),
-    ) as any;
+    chainOracle = ChainOracle__factory.connect(
+      chainOracleDeployment.address,
+      owner,
+    );
 
     // 3. setup challenge
-    const challengeFactory: any = await ethers.getContractFactory("Challenge");
-    const challengeImplementation = await challengeFactory.deploy();
-    const challengeProxy = await proxyFactory.deploy(
-      await challengeImplementation.getAddress(),
-      challengeImplementation.interface.encodeFunctionData("initialize", [
+    const challengeDeployment = await proxyDeployAndInitialize(
+      owner,
+      await ethers.getContractFactory("Challenge"),
+      [
         ethers.ZeroAddress, // treasury
         await chain.getAddress(),
         await mockDaOracle.getAddress(),
         ethers.ZeroAddress, // mipsChallenge
         await chainOracle.getAddress(),
-      ]),
+      ],
     );
 
-    challenge = challengeFactory.attach(
-      await challengeProxy.getAddress(),
-    ) as any;
+    challenge = Challenge__factory.connect(challengeDeployment.address, owner);
     await challenge.connect(owner).setChallengeFee(challengeFee);
 
     // 4. push next block
@@ -97,11 +99,11 @@ describe("ChallengeL2Header", function () {
       const l2Header = MOCK_DATA.l2Headers[0];
       const prevNumber = BigInt(l2Header.number) - 1n;
 
-      expect(
+      await expect(
         challenge.connect(owner).challengeL2Header(1, l2Header.number, {
           value: challengeFee,
         }),
-      ).to.emit(challenge, "L2HeaderChallenge");
+      ).to.emit(challenge, "L2HeaderChallengeUpdate");
 
       const rBlockHash = await chain.chain(1);
       const hash = await challenge.l2HeaderChallengeHash(
@@ -110,13 +112,23 @@ describe("ChallengeL2Header", function () {
       );
       const challengeData = await challenge.l2HeaderChallenges(hash);
 
-      expect(challengeData.header.rblock).to.be.equal(rBlockHash);
+      expect(challengeData.header.rblock).to.be.equal(
+        rBlockHash,
+        "invalid rblock hash on challenge data",
+      );
       expect(challengeData.header.number).to.be.equal(
         BigInt(l2Header.number.toString()),
+        "invalid number on challenge data",
       );
 
-      expect(challengeData.prevHeader.rblock).to.be.equal(rBlockHash);
-      expect(challengeData.prevHeader.number).to.be.equal(prevNumber);
+      expect(challengeData.prevHeader.rblock).to.be.equal(
+        rBlockHash,
+        "invalid prev rblock hash on challenge data",
+      );
+      expect(challengeData.prevHeader.number).to.be.equal(
+        prevNumber,
+        "invalid prev number on challenge data",
+      );
     });
   });
 
@@ -160,7 +172,7 @@ describe("ChallengeL2Header", function () {
       ).to.be.revertedWith("l2 header not loaded for the given rblock");
     });
 
-    it("should be have same hash", async function () {
+    it("should have same hash", async function () {
       const header = MOCK_DATA.l2Headers[0];
       const headerHash = MOCK_DATA.l2HeaderHashes[0];
 
@@ -183,7 +195,7 @@ describe("ChallengeL2Header", function () {
       const shareRanges = MOCK_DATA.shareRanges[0];
 
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, shareProof),
+        chainOracle.connect(owner).provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, shareProof.data);
@@ -211,7 +223,9 @@ describe("ChallengeL2Header", function () {
 
       // load prev header
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, prevHeaderShares),
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, prevHeaderShares),
       ).to.not.be.reverted;
       const prevShareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -225,7 +239,7 @@ describe("ChallengeL2Header", function () {
 
       // load header
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, headerShares),
+        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const shareKey = await chainOracle.ShareKey(
         rblockHash,
