@@ -1,4 +1,5 @@
 import { ethers } from "hardhat";
+import { CanonicalStateChain } from "../../typechain-types";
 
 /**
  * Deploy a Proxy and contract and initialize it.
@@ -44,16 +45,14 @@ export const createGenesisHeader = async (pegasusRPC: string) => {
   ]);
 
   // Step 3. Build genesis header from latest L2 block
-  return {
+  const genesisHeader: CanonicalStateChain.HeaderStruct = {
     epoch: 0,
     l2Height: parseInt(latestBlock?.number, 16),
     prevHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
-    txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    blockRoot: latestBlock?.hash,
     stateRoot: latestBlock?.stateRoot, // fix state root
-    celestiaHeight: 0,
-    celestiaShareStart: 0,
-    celestiaShareLen: 0,
+    celestiaPointers: [],
   };
+
+  return genesisHeader;
 };
