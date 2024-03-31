@@ -39,8 +39,6 @@ describe("CanonicalStateChain", function () {
         epoch: 1,
         l2Height: 1,
         prevHash: _chain.genesisHash,
-        txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaPointers: [{ height: 1, shareStart: 1, shareLen: 1 }],
       };
@@ -58,8 +56,6 @@ describe("CanonicalStateChain", function () {
         epoch: 1,
         l2Height: 1,
         prevHash: _chain.genesisHash,
-        txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaPointers: [{ height: 1, shareStart: 1, shareLen: 1 }],
       };
@@ -170,8 +166,6 @@ describe("CanonicalStateChain", function () {
           epoch: 1,
           l2Height: 1,
           prevHash: _chain.genesisHash,
-          txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-          blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
           stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
           celestiaPointers: [{ height: 1, shareStart: 1, shareLen: 1 }],
         });

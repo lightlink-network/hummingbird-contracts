@@ -8,8 +8,6 @@ interface ICanonicalStateChain {
         uint64 epoch; // Epoch refers to a block number on the Ethereum blockchain.
         uint64 l2Height; // L2Height is the index of the Last L2 Block in this bundle.
         bytes32 prevHash; // PrevHash is the hash of the previous block bundle.
-        bytes32 txRoot; // The root of a merkle tree containing all the transactions in the Bundle.
-        bytes32 blockRoot; // The root of a merkle tree containing all the blocks in the Bundle.
         bytes32 stateRoot; // The Stateroot after applying all the blocks in the Bundle.
         // Pointer to the blocks contents on celestia.
         // See `Span` from https://docs.celestia.org/developers/blobstream-offchain#defining-a-chain
