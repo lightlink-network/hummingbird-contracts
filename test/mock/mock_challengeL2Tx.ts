@@ -8,9 +8,6 @@ const rollupHeader: CanonicalStateChain.HeaderStruct = {
   epoch: BigInt(5394737),
   l2Height: BigInt(71321264),
   prevHash: "", // This will be replaced when pushed to the chain
-  txRoot: "0x327011612f67b356e0daeb6e0cacdf3b4c1e4dce7bbf4945c7b3d7c8e7c6da3d",
-  blockRoot:
-    "0xdbe2e4268f3a831d141b7e8f3d948afc6243896c55431ee66caf9d2b72143978",
   stateRoot:
     "0xa1baa0f693395b09151aaf19df587e7c0cfdeda557d71aa93f54ab1758f3e670",
   celestiaPointers: [
