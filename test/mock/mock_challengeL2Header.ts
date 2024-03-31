@@ -1,7 +1,6 @@
 import { ethers } from "hardhat";
 import { CanonicalStateChain, ChainOracle } from "../../typechain-types";
 import { SharesProofStruct } from "../../typechain-types/contracts/ChainOracle";
-import { Header } from "../lib/header";
 
 const rollupHeaders: CanonicalStateChain.HeaderStruct[] = [
   {
@@ -14,9 +13,7 @@ const rollupHeaders: CanonicalStateChain.HeaderStruct[] = [
       "0xdbe2e4268f3a831d141b7e8f3d948afc6243896c55431ee66caf9d2b72143978",
     stateRoot:
       "0xa1baa0f693395b09151aaf19df587e7c0cfdeda557d71aa93f54ab1758f3e670",
-    celestiaHeight: BigInt(1286533),
-    celestiaShareStart: BigInt(64),
-    celestiaShareLen: BigInt(3465),
+    celestiaPointers: [{ height: 1286533n, shareStart: 64n, shareLen: 3465n }],
   },
 ];
 

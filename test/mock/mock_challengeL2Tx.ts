@@ -13,9 +13,9 @@ const rollupHeader: CanonicalStateChain.HeaderStruct = {
     "0xdbe2e4268f3a831d141b7e8f3d948afc6243896c55431ee66caf9d2b72143978",
   stateRoot:
     "0xa1baa0f693395b09151aaf19df587e7c0cfdeda557d71aa93f54ab1758f3e670",
-  celestiaHeight: BigInt(1286533),
-  celestiaShareStart: BigInt(64),
-  celestiaShareLen: BigInt(3465),
+  celestiaPointers: [
+    { height: BigInt(1286533), shareStart: BigInt(64), shareLen: BigInt(3465) },
+  ],
 };
 
 const l2HeaderHash =
