@@ -58,6 +58,7 @@ interface IChainOracle {
     // External Functions
     function provideShares(
         bytes32 _rblock,
+        uint8 _pointer,
         SharesProof memory _proof
     ) external returns (bytes32);
 
