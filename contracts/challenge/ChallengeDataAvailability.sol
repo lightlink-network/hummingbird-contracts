@@ -86,7 +86,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             "challenge already exists"
         );
         require(
-            _pointerIndex < chain.headers(h).celestiaPointers.length,
+            _pointerIndex < chain.getBlock(_blockIndex).celestiaPointers.length,
             "invalid pointer index"
         );
 
@@ -121,8 +121,8 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             "challenge is not in the correct state"
         );
 
-        ICanonicalStateChain.Header memory header = chain.headers(
-            chain.chain(challenge.blockIndex)
+        ICanonicalStateChain.Header memory header = chain.getBlock(
+            challenge.blockIndex
         );
 
         require(
