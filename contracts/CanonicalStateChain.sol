@@ -19,6 +19,8 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 //   expected to be the DAO Governance contract.
 
 contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
+    uint8 public constant MAX_POINTERS = 10;
+
     struct Header {
         uint64 epoch; // Epoch refers to a block number on the Ethereum blockchain.
         uint64 l2Height; // L2Height is the index of the Last L2 Block in this bundle.
@@ -97,6 +99,10 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         require(
             _header.celestiaPointers.length > 0,
             "block must have atleast one celestia pointer"
+        );
+        require(
+            _header.celestiaPointers.length <= MAX_POINTERS,
+            "block can have at most 10 celestia pointers"
         );
 
         // check that the block is not already in the chain.
