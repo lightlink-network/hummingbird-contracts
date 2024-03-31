@@ -45,6 +45,8 @@ interface ICanonicalStateChain {
 
     function headers(bytes32) external view returns (Header memory);
 
+    function getHeaderByHash(bytes32) external view returns (Header memory);
+
     function headerMetadata(
         bytes32
     ) external view returns (HeaderMetadata memory);

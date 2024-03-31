@@ -60,7 +60,7 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
 
     // Rollup Blockchain.
     uint256 public chainHead; // The index of the last block in the chain.
-    mapping(bytes32 => Header) public headers; // block hash => header
+    mapping(bytes32 => Header) private headers; // block hash => header
     mapping(bytes32 => HeaderMetadata) public headerMetadata; // block hash => metadata
     mapping(uint256 => bytes32) public chain; // block number => block hash
 
@@ -160,6 +160,13 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
     function setChallengeContract(address _challenge) external onlyOwner {
         challenge = _challenge;
         emit ChallengeChanged(_challenge);
+    }
+
+    // getters
+    function getHeaderByHash(
+        bytes32 _hash
+    ) public view returns (Header memory) {
+        return headers[_hash];
     }
 
     uint256[50] private __gap;
