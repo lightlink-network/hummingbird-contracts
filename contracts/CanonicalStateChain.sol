@@ -74,7 +74,7 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         publisher = _publisher;
 
         // Add the genesis block.
-        bytes32 _hash = hash(_header);
+        bytes32 _hash = calculateHeaderHash(_header);
         headers[_hash] = _header;
         chain[0] = _hash;
     }
@@ -102,11 +102,11 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         );
         require(
             _header.celestiaPointers.length <= MAX_POINTERS,
-            "block can have at most 10 celestia pointers"
+            "block has too many celestia pointers"
         );
 
         // check that the block is not already in the chain.
-        bytes32 _hash = hash(_header);
+        bytes32 _hash = calculateHeaderHash(_header);
         require(headers[_hash].epoch == 0, "block already exists");
 
         // Add the block to the chain.
@@ -123,7 +123,9 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         emit BlockAdded(chainHead);
     }
 
-    function hash(Header memory _header) internal pure returns (bytes32) {
+    function calculateHeaderHash(
+        Header memory _header
+    ) public pure returns (bytes32) {
         return keccak256(abi.encode(_header));
     }
 
