@@ -19,11 +19,12 @@ import "./ChallengeL2Header.sol";
 // defenders for their costs. Challenges must be made within a specified time
 // window post-block publication, with late challenges being rejected. The
 // rules for fees and timing are outlined in ChallengeBase.sol.
-contract Challenge is
-    ChallengeHeader,
-    ChallengeDataAvailability,
-    ChallengeL2Header
-{
+
+// The following challenges are currently disabled on mainnet, until celestia is ready:
+// ChallengeDataAvailability
+// ChallengeL2Header
+// ChallengeL2Tx
+contract Challenge is ChallengeHeader {
     function initialize(
         address _treasury,
         address _chain,
