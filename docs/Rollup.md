@@ -4,9 +4,9 @@
 
 Our optimisic rollup/validium implementation utilizies a modular approach, using three layers:
 
-1.  **The consensus layer** – This is the layer where headers are posted, and disputes are settled.
-2.  **The execution layer** – This is the layer where transactions are aggregated and executed.
-3.  **The data availability layer** – This is the layer where the data is posted off-chain.
+1.  **The consensus layer** – The layer where headers are posted, and disputes are settled.
+2.  **The execution layer** – The layer where transactions are aggregated and executed.
+3.  **The data availability layer** – The layer where the data is posted off-chain.
 
 We inherit the security of the Ethereum mainnet as the consensus layer (L1), leverage the speed of the LightLink sequencer as an execution layer (L2), and dramatically reduce end-user fees by using Celestia blobstream as the data availability layer.
 
