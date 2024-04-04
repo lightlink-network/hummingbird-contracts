@@ -68,6 +68,8 @@ describe("ChallengeDataAvailability", function () {
     await challenge.setChallengeFee(challengeFee);
     // set publisher as defender
     await challenge.setDefender(publisher.address);
+    // set isDAChallengeEnabled to true
+    await challenge.getFunction("toggleDAChallenge").send(true);
   });
 
   describe("deployment", function () {
@@ -361,6 +363,45 @@ describe("ChallengeDataAvailability", function () {
         challengeOwner.address,
       );
       expect(postbalance).to.be.greaterThan(prebalance);
+    });
+  });
+
+  describe("toggleDAChallenge", function () {
+    it("toggleDAChallenge should be failed without owner", async function () {
+      await expect(
+        challenge
+          .connect(otherAccount)
+          .getFunction("toggleDAChallenge")
+          .send(false),
+      ).to.be.revertedWithCustomError(challenge, "OwnableUnauthorizedAccount");
+    });
+
+    it("toggleDAChallenge should be correct", async function () {
+      await challenge.getFunction("toggleDAChallenge").send(true);
+      expect(await challenge.isDAChallengeEnabled()).to.equal(true);
+
+      await challenge.getFunction("toggleDAChallenge").send(false);
+      expect(await challenge.isDAChallengeEnabled()).to.equal(false);
+    });
+
+    it("challenge DA should revert when disabled", async function () {
+      await pushRandomHeader(publisher, canonicalStateChain);
+      await challenge.getFunction("toggleDAChallenge").send(false);
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .challengeDataRootInclusion(1, 0, { value: challengeFee }),
+      ).to.be.revertedWith("DA challenges are disabled");
+    });
+
+    it("challenge DA should not revert when enabled", async function () {
+      await pushRandomHeader(publisher, canonicalStateChain);
+      await challenge.getFunction("toggleDAChallenge").send(true);
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .challengeDataRootInclusion(1, 0, { value: challengeFee }),
+      ).to.not.be.reverted;
     });
   });
 });

@@ -79,6 +79,9 @@ describe("ChallengeL2Header", function () {
     const nextBlock = { ...MOCK_DATA.rollupHeaders[0] };
     nextBlock.prevHash = genesisHash;
     await chain.connect(publisher).pushBlock(nextBlock);
+
+    // set isL2HeaderChallengeEnabled to true
+    await challenge.getFunction("toggleL2HeaderChallenge").send(true);
   });
 
   it("should deploy", async function () {
@@ -268,6 +271,47 @@ describe("ChallengeL2Header", function () {
         .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash);
       // await expect(
       // ).to.not.be.reverted;
+    });
+  });
+
+  describe("toggleL2HeaderChallenge", function () {
+    it("toggleL2HeaderChallenge should be failed without owner", async function () {
+      await expect(
+        challenge
+          .connect(publisher)
+          .getFunction("toggleL2HeaderChallenge")
+          .send(false),
+      ).to.be.revertedWithCustomError(challenge, "OwnableUnauthorizedAccount");
+    });
+
+    it("toggleL2HeaderChallenge should be correct", async function () {
+      await challenge.getFunction("toggleL2HeaderChallenge").send(true);
+      expect(await challenge.isL2HeaderChallengeEnabled()).to.equal(true);
+
+      await challenge.getFunction("toggleL2HeaderChallenge").send(false);
+      expect(await challenge.isL2HeaderChallengeEnabled()).to.equal(false);
+    });
+
+    it("challenge L2 header should revert when disabled", async function () {
+      await challenge.getFunction("toggleL2HeaderChallenge").send(false);
+      const l2Header = MOCK_DATA.l2Headers[0];
+
+      await expect(
+        challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+          value: challengeFee,
+        }),
+      ).to.revertedWith("L2 header challenge is disabled");
+    });
+
+    it("challenge L2 header should not revert when enabled", async function () {
+      await challenge.getFunction("toggleL2HeaderChallenge").send(true);
+      const l2Header = MOCK_DATA.l2Headers[0];
+
+      await expect(
+        challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+          value: challengeFee,
+        }),
+      ).to.emit(challenge, "L2HeaderChallengeUpdate");
     });
   });
 });
