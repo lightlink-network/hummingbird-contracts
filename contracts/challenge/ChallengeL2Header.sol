@@ -38,6 +38,7 @@ contract ChallengeL2Header is ChallengeBase {
     );
 
     mapping(bytes32 => L2HeaderChallenge) public l2HeaderChallenges;
+    bool public isL2HeaderChallengeEnabled; // default is false
 
     function challengeL2Header(
         uint256 _rblockNum,
@@ -201,5 +202,9 @@ contract ChallengeL2Header is ChallengeBase {
         // pay out the challenger
         (bool success, ) = challenge.challenger.call{value: challengeFee}("");
         require(success, "failed to pay challenger");
+    }
+
+    function enableL2HeaderChallenge(bool _status) external onlyOwner {
+        isL2HeaderChallengeEnabled = _status;
     }
 }

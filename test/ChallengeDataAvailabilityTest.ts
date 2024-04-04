@@ -87,6 +87,25 @@ describe("ChallengeDataAvailability", function () {
     });
   });
 
+  describe("toggleDAChallenge should be correct", function () {
+    it("toggleDAChallenge should be failed without owner", async function () {
+      await expect(
+        challenge
+          .connect(otherAccount)
+          .getFunction("toggleDAChallenge")
+          .send(false),
+      ).to.be.revertedWithCustomError(challenge, 'OwnableUnauthorizedAccount')
+    });
+
+    it("toggleDAChallenge should be correct", async function () {
+      await challenge.getFunction("toggleDAChallenge").send(true);
+      expect(await challenge.isDAChallengeEnabled()).to.equal(true);
+
+      await challenge.getFunction("toggleDAChallenge").send(false);
+      expect(await challenge.isDAChallengeEnabled()).to.equal(false);
+    });
+  });
+
   describe("challengeDataRootInclusion", function () {
     it("should not allow challenging the genesis header", async function () {
       await expect(

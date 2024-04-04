@@ -54,6 +54,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     // a mapping of block hashes to challenges.
     // Note: There should only be one challenge per block.
     mapping(bytes32 => ChallengeDA) public daChallenges;
+    bool public isDAChallengeEnabled; // default is false
 
     function challengeDataRootInclusion(
         uint256 _blockIndex
@@ -165,5 +166,9 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
         // rollback the chain.
         chain.rollback(challenge.blockIndex - 1);
+    }
+
+    function toggleDAChallenge(bool _status) external onlyOwner {
+        isDAChallengeEnabled = _status;
     }
 }
