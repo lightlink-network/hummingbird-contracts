@@ -24,7 +24,11 @@ import "./ChallengeL2Header.sol";
 // ChallengeDataAvailability
 // ChallengeL2Header
 // ChallengeL2Tx
-contract Challenge is ChallengeHeader {
+contract Challenge is
+    ChallengeHeader,
+    ChallengeDataAvailability,
+    ChallengeL2Header
+{
     function initialize(
         address _treasury,
         address _chain,

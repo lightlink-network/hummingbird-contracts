@@ -43,6 +43,7 @@ contract ChallengeL2Header is ChallengeBase {
     );
 
     mapping(bytes32 => L2HeaderChallenge) public l2HeaderChallenges;
+    bool public isL2HeaderChallengeEnabled;
 
     function challengeL2Header(
         uint256 _rblockNum,
@@ -55,6 +56,8 @@ contract ChallengeL2Header is ChallengeBase {
         requireChallengeFee
         returns (bytes32)
     {
+        require(isL2HeaderChallengeEnabled, "L2 header challenge is disabled");
+
         // 1. Load the rblock and the previous rblock
         bytes32 rblockHash = chain.chain(_rblockNum);
         ICanonicalStateChain.Header memory rblock = chain.getHeaderByNum(
@@ -229,5 +232,10 @@ contract ChallengeL2Header is ChallengeBase {
         uint256 _l2Num
     ) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(_rblockHash, _l2Num));
+    }
+
+    // toggleL2HeaderChallenge enables or disables the L2 header challenges.
+    function toggleL2HeaderChallenge(bool _status) external onlyOwner {
+        isL2HeaderChallengeEnabled = _status;
     }
 }

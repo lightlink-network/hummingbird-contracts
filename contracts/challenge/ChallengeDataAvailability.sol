@@ -57,6 +57,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     // a mapping of challengeKey to challenges.
     // Note: There should only be one challenge per blockhash-celestiapointer pair.
     mapping(bytes32 => ChallengeDA) public daChallenges;
+    bool public isDAChallengeEnabled;
 
     function dataRootInclusionChallengeKey(
         bytes32 _blockHash,
@@ -76,6 +77,8 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         requireChallengeFee
         returns (uint256)
     {
+        require(isDAChallengeEnabled, "DA challenges are disabled");
+
         bytes32 h = chain.chain(_blockIndex);
         bytes32 challengeKey = dataRootInclusionChallengeKey(h, _pointerIndex);
 
@@ -190,5 +193,10 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
         // rollback the chain.
         chain.rollback(challenge.blockIndex - 1);
+    }
+
+    // toggleDAChallenge enables or disables the data availability challenges.
+    function toggleDAChallenge(bool _status) external onlyOwner {
+        isDAChallengeEnabled = _status;
     }
 }

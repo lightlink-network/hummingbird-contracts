@@ -39,6 +39,8 @@ abstract contract ChallengeHeader is ChallengeBase {
         InvalidHeaderReason indexed _reason
     );
 
+    bool public isHeaderChallengeEnabled;
+
     function __ChallengeHeader_init() internal {
         MAX_BUNDLESIZE = 5000;
         CHALLENGE_PAYOUT = 0.2e18;
@@ -53,6 +55,8 @@ abstract contract ChallengeHeader is ChallengeBase {
         mustBeCanonical(_blockIndex)
         mustBeWithinChallengeWindow(_blockIndex)
     {
+        require(isHeaderChallengeEnabled, "header challenge is disabled");
+
         bytes32 _hash = chain.chain(_blockIndex);
         ICanonicalStateChain.Header memory header = chain.getHeaderByNum(
             _blockIndex
@@ -116,6 +120,11 @@ abstract contract ChallengeHeader is ChallengeBase {
         }
 
         return true;
+    }
+
+    // toggleHeaderChallenge enables or disables the header challenge.
+    function toggleHeaderChallenge(bool _status) external onlyOwner {
+        isHeaderChallengeEnabled = _status;
     }
 
     // gap
