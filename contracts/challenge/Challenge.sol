@@ -21,8 +21,6 @@ import "./ChallengeL2Header.sol";
 // rules for fees and timing are outlined in ChallengeBase.sol.
 
 // The following challenges are currently disabled on mainnet, until celestia is ready:
-// ChallengeDataAvailability
-// ChallengeL2Header
 // ChallengeL2Tx
 contract Challenge is
     ChallengeHeader,
