@@ -65,6 +65,9 @@ describe("ChallengeHeader", function () {
     _chain.canonicalStateChain
       .getFunction("setChallengeContract")
       .send(await challenge.getAddress());
+
+    // set isHeaderChallengeEnabled to true
+    await challenge.getFunction("toggleHeaderChallenge").send(true);
   });
 
   describe("deployment", function () {
@@ -267,6 +270,73 @@ describe("ChallengeHeader", function () {
           .getFunction("invalidateHeader")
           .send(11),
       ).to.emit(challenge, "InvalidHeader");
+    });
+  });
+
+  describe("toggleHeaderChallenge", function () {
+    it("toggleHeaderChallenge should be failed without owner", async function () {
+      await expect(
+        challenge
+          .connect(otherAccount)
+          .getFunction("toggleHeaderChallenge")
+          .send(false),
+      ).to.be.revertedWithCustomError(challenge, "OwnableUnauthorizedAccount");
+    });
+
+    it("toggleHeaderChallenge should be correct", async function () {
+      await challenge.getFunction("toggleHeaderChallenge").send(true);
+      expect(await challenge.isHeaderChallengeEnabled()).to.equal(true);
+
+      await challenge.getFunction("toggleHeaderChallenge").send(false);
+      expect(await challenge.isHeaderChallengeEnabled()).to.equal(false);
+    });
+
+    it("challenge header should revert when disabled", async function () {
+      await challenge.getFunction("toggleHeaderChallenge").send(false);
+
+      const validHeader: Header = {
+        epoch: BigInt(1),
+        l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
+        prevHash: genesisHash,
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
+      };
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(validHeader);
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(1),
+      ).to.be.revertedWith("header challenge is disabled");
+    });
+
+    it("challenge header should not revert when enabled", async function () {
+      await challenge.getFunction("toggleHeaderChallenge").send(true);
+
+      const validHeader: Header = {
+        epoch: BigInt(1),
+        l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
+        prevHash: genesisHash,
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
+      };
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(validHeader);
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(1),
+      ).to.be.revertedWith("header is valid");
     });
   });
 });
