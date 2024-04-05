@@ -306,7 +306,7 @@ describe("ChallengeL2Header", function () {
 
     it("challenge L2 header should revert when disabled", async function () {
       await challenge.getFunction("toggleL2HeaderChallenge").send(false);
-      const l2Header = MOCK_DATA.l2Headers[0];
+      const l2Header = MOCK_DATA[0].headers[0].header;
 
       await expect(
         challenge.connect(owner).challengeL2Header(1, l2Header.number, {
@@ -317,7 +317,7 @@ describe("ChallengeL2Header", function () {
 
     it("challenge L2 header should not revert when enabled", async function () {
       await challenge.getFunction("toggleL2HeaderChallenge").send(true);
-      const l2Header = MOCK_DATA.l2Headers[0];
+      const l2Header = MOCK_DATA[0].headers[0].header;
 
       await expect(
         challenge.connect(owner).challengeL2Header(1, l2Header.number, {
