@@ -42,7 +42,7 @@ abstract contract ChallengeHeader is ChallengeBase {
     bool public isHeaderChallengeEnabled;
 
     function __ChallengeHeader_init() internal {
-        MAX_BUNDLESIZE = 5000;
+        MAX_BUNDLESIZE = 20000;
         CHALLENGE_PAYOUT = 0.2e18;
     }
 
