@@ -24,7 +24,6 @@ import "./ChallengeBase.sol";
 // no constructor
 abstract contract ChallengeHeader is ChallengeBase {
     uint256 MAX_BUNDLESIZE;
-    uint256 CHALLENGE_PAYOUT;
 
     enum InvalidHeaderReason {
         InvalidEpoch,
@@ -43,7 +42,6 @@ abstract contract ChallengeHeader is ChallengeBase {
 
     function __ChallengeHeader_init() internal {
         MAX_BUNDLESIZE = 20000;
-        CHALLENGE_PAYOUT = 0.2e18;
     }
 
     // invalidateHeader challenges a block header by checking that the header is valid.
