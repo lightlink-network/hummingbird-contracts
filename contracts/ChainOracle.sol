@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: MIT
-// LightLink Hummingbird v0.2.0
+pragma solidity 0.8.22; // TODO: use single version
 
-// TODO: use single version
-pragma solidity 0.8.22;
-
-// UUPS
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/IRLPReader.sol";
@@ -13,27 +9,53 @@ import "blobstream-contracts/src/IDAOracle.sol";
 import "./interfaces/ICanonicalStateChain.sol";
 import "./lib/Lib_RLPEncode.sol";
 
-// This contract enables any user to directly upload valid Layer 2 blocks, from
-// the data availability layer, on to Layer 1. Once loaded, the headers and
-// transactions can be fetched from the ChainOracle by their respective hashes.
-// This mechanism is crucial for the other challenges listed below.
-//
-// Data is loaded in two parts:
-// 1. Celestia shares are loaded, along with the required merkle proofs and
-//    validator attestations.
-// 2. Stored shares can then be decoded into Layer 2 headers and transactions.
-
+/// @custom:proxied
+/// @title ChainOracle
+/// @author LightLink Hummingbird
+/// @custom:version v1.0.0-alpha
+/// @notice This contract enables any user to directly upload valid Layer 2 blocks, from
+///         the data availability layer, on to Layer 1. Once loaded, the headers and
+///         transactions can be fetched from the ChainOracle by their respective hashes.
+///         This mechanism is crucial for the other challenges listed below.
+///
+///         Data is loaded in two parts:
+///         1. Celestia shares are loaded, along with the required merkle proofs and
+///            validator attestations.
+///         2. Stored shares can then be decoded into Layer 2 headers and transactions.
 contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
+    /// @notice The Canonical State Chain contract.
     ICanonicalStateChain public canonicalStateChain;
+
+    /// @notice The Data Availability Oracle contract.
     IDAOracle public daOracle;
+
+    /// @notice The RLP Reader contract.
     IRLPReader public rlpReader;
 
+    /// @notice The SharesProof struct.
+    /// @param start - The start index of the shares in the block.
+    /// @param end - The end index of the shares in the block.
     struct ShareRange {
         uint256 start;
         uint256 end;
     }
 
-    // L2 Header
+    /// @notice An L2 Header.
+    /// @param parentHash - The hash of the parent block.
+    /// @param uncleHash - The hash of the uncle block.
+    /// @param beneficiary - The address of the beneficiary.
+    /// @param stateRoot - The state root hash.
+    /// @param transactionsRoot - The transactions root hash.
+    /// @param receiptsRoot - The receipts root hash.
+    /// @param logsBloom - The logs bloom filter.
+    /// @param difficulty - The difficulty of the block.
+    /// @param number - The block number.
+    /// @param gasLimit - The gas limit of the block.
+    /// @param gasUsed - The gas used in the block.
+    /// @param timestamp - The timestamp of the block.
+    /// @param extraData - The extra data of the block.
+    /// @param mixHash - The mix hash of the block.
+    /// @param nonce - The nonce of the block.
     struct L2Header {
         bytes32 parentHash;
         bytes32 uncleHash;
@@ -52,8 +74,16 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         uint256 nonce;
     }
 
-    // Supported transaction types
-
+    /// @notice A Legacy Transaction.
+    /// @param nonce - The nonce of the transaction.
+    /// @param gasPrice - The gas price of the transaction.
+    /// @param gas - The gas limit of the transaction.
+    /// @param to - The address of the recipient.
+    /// @param value - The value of the transaction.
+    /// @param data - The data of the transaction.
+    /// @param r - The r value of the signature.
+    /// @param s - The s value of the signature.
+    /// @param v - The v value of the signature.
     struct LegacyTx {
         uint64 nonce;
         uint256 gasPrice;
@@ -66,6 +96,17 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         uint256 v;
     }
 
+    /// @notice A Deposit Transaction.
+    /// @param chainId - The chain ID of the transaction.
+    /// @param nonce - The nonce of the transaction.
+    /// @param gasPrice - The gas price of the transaction.
+    /// @param gas - The gas limit of the transaction.
+    /// @param to - The address of the recipient.
+    /// @param value - The value of the transaction.
+    /// @param data - The data of the transaction.
+    /// @param r - The r value of the signature.
+    /// @param s - The s value of the signature.
+    /// @param v - The v value of the signature.
     struct DepositTx {
         uint256 chainId;
         uint64 nonce;
@@ -79,16 +120,35 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         uint256 v;
     }
 
+    /// @notice Stores shares that are provided to the contract.
     mapping(bytes32 => bytes[]) public shares;
+
+    /// @notice Stores headers that are provided to the contract.
     mapping(bytes32 => L2Header) public headers;
+
+    /// @notice Stores transactions that are provided to the contract.
     mapping(bytes32 => DepositTx) public transactions;
 
-    // a special mapping of sharekey to rblock
+    /// @notice Stores the sharekey to rblock mapping.
+    /// @dev a special mapping of sharekey to rblock
     mapping(bytes32 => bytes32) private _sharekeyToRblock;
+
+    /// @notice Stores the header to rblock mapping.
     mapping(bytes32 => bytes32) public headerToRblock;
 
+    /// @notice This function is a special internal function that's part of
+    ///         the UUPS upgradeable contract's lifecycle. When you want to
+    ///         upgrade the contract to a new version, _authorizeUpgrade is
+    ///         called to check whether the upgrade is authorized, thus
+    ///         preventing anyone from just upgrading the contract.
+    /// @dev Only the owner can call this function.
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
+    /// @notice Initializes the contract with the canonical state chain, the data
+    ///         availability oracle, and the RLP reader.
+    /// @param _canonicalStateChain - The address of the canonical state chain.
+    /// @param _daOracle - The address of the data availability oracle.
+    /// @param _rlpReader - The address of the RLP reader.
     function initialize(
         address _canonicalStateChain,
         address _daOracle,
@@ -100,10 +160,13 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         rlpReader = IRLPReader(_rlpReader);
     }
 
-    // provideShares loads some shares that were uploaded to the Data Availability layer. It verifies the shares
-    // are included in a given rblock (bundle) and stores them in the contract.
-    // @param _rblock The rblock (bundle) that the shares are related to.
-    // @param _proof The proof that the shares are available and part of the rblocks dataroot commitment.
+    /// @notice Loads some shares that were uploaded to the Data
+    ///         Availability layer. It verifies the shares are included in a
+    ///         given rblock (bundle) and stores them in the contract.
+    /// @param _rblock - The rblock (bundle) that the shares are related to.
+    /// @param _proof - The proof that the shares are available and part of the
+    ///               rblocks dataroot commitment.
+    /// @return The share key that the shares are stored under.
     function provideShares(
         bytes32 _rblock,
         uint8 _pointer,
@@ -139,6 +202,11 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return shareKey;
     }
 
+    /// @notice Decodes the shares into an L2 header and stores it
+    ///         in the contract.
+    /// @param _shareKey - The share key that the header is related to.
+    /// @param _range - The range of the shares that contain the header.
+    /// @return The hash of the header.
     function provideHeader(
         bytes32 _shareKey,
         ShareRange[] calldata _range
@@ -165,6 +233,11 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return headerHash;
     }
 
+    /// @notice Decodes the shares into a transaction and stores it
+    ///         in the contract.
+    /// @param _shareKey - The share key that the transaction is related to.
+    /// @param _range - The range of the shares that contain the transaction.
+    /// @return The hash of the transaction.
     function provideLegacyTx(
         bytes32 _shareKey,
         ShareRange[] calldata _range
@@ -199,6 +272,10 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return txHash;
     }
 
+    /// @notice Calulates the share key from the rblock and share data.
+    /// @param _rblock - The rblock that the shares are related to.
+    /// @param _shareData - The share data.
+    /// @return The share key.
     function ShareKey(
         bytes32 _rblock,
         bytes[] memory _shareData
@@ -206,8 +283,11 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return keccak256(abi.encode(_rblock, _shareData));
     }
 
-    // extractData extracts the data from the shares using the range.
-    // TODO: Move to a library
+    /// TODO: Move to a library
+    /// @notice Extracts the data from the shares using the range.
+    /// @param raw - The raw data.
+    /// @param ranges - The ranges of the data.
+    /// @return The extracted data.
     function extractData(
         bytes[] memory raw,
         ShareRange[] memory ranges
@@ -229,7 +309,9 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return data;
     }
 
-    // decodeRLPHHeader decodes an RLP header into the Header struct.
+    /// @notice Decodes an RLP header into the Header struct.
+    /// @param _data - The RLP encoded header.
+    /// @return The decoded header.
     function decodeRLPHeader(
         bytes memory _data
     ) public view returns (L2Header memory) {
@@ -278,7 +360,9 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return header;
     }
 
-    // HashHeader hashes an Ethereum header in the same way that it is hashed on Ethereum.
+    /// @notice Hashes an Ethereum header in the same way that it is hashed on Ethereum.
+    /// @param _header - The header to hash.
+    /// @return The hash of the header.
     function hashHeader(L2Header memory _header) public pure returns (bytes32) {
         bytes[] memory list = new bytes[](15);
         list[0] = RLPEncode.encodeBytes(abi.encodePacked(_header.parentHash));
@@ -301,10 +385,12 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return keccak256(RLPEncode.encodeList(list));
     }
 
+    /// @notice Decodes a legacy transaction from RLP encoded data.
+    /// @param _data - The RLP encoded transaction.
+    /// @return The decoded transaction.
     function decodeLegacyTx(
         bytes memory _data
     ) public view returns (LegacyTx memory) {
-        // nonce, gasPrice, gasLimit, to, value, data, v, r, s
         (
             uint nonce,
             uint gasPrice,
@@ -332,6 +418,9 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return ltx;
     }
 
+    /// @notice Decodes a deposit transaction from RLP encoded data.
+    /// @param _data - The RLP encoded transaction.
+    /// @return The decoded transaction.
     function decodeDepositTx(
         bytes memory _data
     ) public view returns (DepositTx memory) {
@@ -362,18 +451,25 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         return dtx;
     }
 
+    /// @notice Returns the header for a given header hash.
+    /// @param _headerHash - The hash of the header.
+    /// @return The header.
     function getHeader(
         bytes32 _headerHash
     ) public view returns (L2Header memory) {
         return headers[_headerHash];
     }
 
+    /// @notice Returns the transaction for a given transaction hash.
+    /// @param _txHash - The hash of the transaction.
+    /// @return The transaction.
     function getTransaction(
         bytes32 _txHash
     ) public view returns (DepositTx memory) {
         return transactions[_txHash];
     }
 
+    /// @notice Sets the RLPReader contract address.
     function setRLPReader(address _rlpReader) public onlyOwner {
         rlpReader = IRLPReader(_rlpReader);
     }
