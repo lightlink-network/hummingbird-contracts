@@ -18,7 +18,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 ///         to be the DAO Governance contract.
 contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
     /// @notice The maximum number of celestia pointers a block can have.
-    uint8 public constant MAX_POINTERS = 10;
+    uint8 public constant MAX_POINTERS = 20;
 
     /// @notice The header of a L1 rollup block.
     /// @param epoch - Refers to a block number on the Ethereum blockchain
