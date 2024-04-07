@@ -25,6 +25,12 @@ contract Challenge is
     ChallengeDataAvailability,
     ChallengeL2Header
 {
+    /// @notice Initializes the Challenge contract.
+    /// @param _treasury - The address of the treasury contract.
+    /// @param _chain - The address of the chain contract.
+    /// @param _daOracle - The address of the data availability oracle.
+    /// @param _mipsChallenge - The address of the MIPS challenge contract.
+    /// @param _chainOracle - The address of the chain oracle contract.
     function initialize(
         address _treasury,
         address _chain,
