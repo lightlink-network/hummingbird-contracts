@@ -83,7 +83,7 @@ fi
 echo "Deploying contracts..."
 # only run if persist false or persistLocation doesnt exists 
 if [[ $persist != true ]] || [[ ! -f $persistLocation ]]; then
-  npx hardhat run scripts/deploy/deploy_arbsepolia.ts --network localhost > testnet.deployments.log
+  npx hardhat run scripts/deploy/deploy.ts --network localhost > testnet.deployments.log
   if [ $? -eq 1 ]; then
     echo "Error: Failed to deploy contracts."
     kill $ANVIL_PID

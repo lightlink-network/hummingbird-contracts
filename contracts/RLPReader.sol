@@ -1,20 +1,29 @@
 // SPDX-License-Identifier: Apache-2.0
-
 pragma solidity >=0.5.10 <0.9.0;
 
 import "./lib/Lib_RLPReader.sol";
 
+/// @title RLPReader
+/// @author LightLink Hummingbird
+/// @custom:version v1.0.0-alpha
+/// @notice A contract that reads RLP encoded data.
 contract RLPReader {
     using Lib_RLPReader for bytes;
     using Lib_RLPReader for uint;
     using Lib_RLPReader for Lib_RLPReader.RLPItem;
     using Lib_RLPReader for Lib_RLPReader.Iterator;
 
+    /// @notice Returns true if the item is a list.
+    /// @param item - The RLP encoded data.
+    /// @return True if the item is a list.
     function isList(bytes memory item) public pure returns (bool) {
         Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
         return rlpItem.isList();
     }
 
+    /// @notice Returns the length of the item.
+    /// @param item - The RLP encoded data.
+    /// @return The length of the item.
     function itemLength(bytes memory item) public pure returns (uint) {
         uint memPtr;
         assembly {
@@ -24,11 +33,19 @@ contract RLPReader {
         return _itemLength(memPtr);
     }
 
+    /// @notice Returns the length of the RLP encoded data.
+    /// @param item - The RLP encoded data.
+    /// @return The length of the RLP encoded data.
     function rlpLen(bytes memory item) public pure returns (uint) {
         Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
         return rlpItem.rlpLen();
     }
 
+    /// @notice Returns the location of the payload.
+    /// @param item - The RLP encoded data.
+    /// @return payloadMemPtr - The memory pointer to the payload.
+    /// @return payloadLen - The length of the payload.
+    /// @return itemMemPtr - The memory pointer to the item.
     function payloadLocation(
         bytes memory item
     )
@@ -41,11 +58,17 @@ contract RLPReader {
         return (memPtr, len, rlpItem.memPtr);
     }
 
+    /// @notice Returns the number of items in the list.
+    /// @param item - The RLP encoded data.
+    /// @return The number of items in the list.
     function numItems(bytes memory item) public pure returns (uint) {
         Lib_RLPReader.RLPItem[] memory rlpItem = item.toRlpItem().toList();
         return rlpItem.length;
     }
 
+    /// @notice Returns the keccak256 hash of the RLP encoded data.
+    /// @param item - The RLP encoded data.
+    /// @return The keccak256 hash of the RLP encoded data.
     function rlpBytesKeccak256(
         bytes memory item
     ) public pure returns (bytes32) {
@@ -53,41 +76,65 @@ contract RLPReader {
         return rlpItem.rlpBytesKeccak256();
     }
 
+    /// @notice Returns the keccak256 hash of the payload.
+    /// @param item - The RLP encoded data.
+    /// @return The keccak256 hash of the payload.
     function payloadKeccak256(bytes memory item) public pure returns (bytes32) {
         Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
         return rlpItem.payloadKeccak256();
     }
 
+    /// @notice Returns the RLP encoded data.
+    /// @param item - The RLP encoded data.
+    /// @return The RLP encoded data.
     function toRlpBytes(bytes memory item) public pure returns (bytes memory) {
         Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
         return rlpItem.toRlpBytes();
     }
 
+    /// @notice Returns the RLP encoded data.
+    /// @param item - The RLP encoded data.
+    /// @return The RLP encoded data.
     function toBytes(bytes memory item) public pure returns (bytes memory) {
         Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
         return rlpItem.toBytes();
     }
 
+    /// @notice Returns the RLP encoded data as a uint.
+    /// @param item - The RLP encoded data.
+    /// @return The RLP encoded data as a uint.
     function toUint(bytes memory item) public pure returns (uint) {
         Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
         return rlpItem.toUint();
     }
 
+    /// @notice Returns the RLP encoded data as a uint or reverts.
+    /// @param item - The RLP encoded data.
+    /// @return The RLP encoded data as a uint.
     function toUintStrict(bytes memory item) public pure returns (uint) {
         Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
         return rlpItem.toUintStrict();
     }
 
+    /// @notice Returns the RLP encoded data as an address.
+    /// @param item - The RLP encoded data.
+    /// @return The RLP encoded data as an address.
     function toAddress(bytes memory item) public pure returns (address) {
         Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
         return rlpItem.toAddress();
     }
 
+    /// @notice Returns the RLP encoded data as a boolean.
+    /// @param item - The RLP encoded data.
+    /// @return The RLP encoded data as a boolean.
     function toBoolean(bytes memory item) public pure returns (bool) {
         Lib_RLPReader.RLPItem memory rlpItem = item.toRlpItem();
         return rlpItem.toBoolean();
     }
 
+    /// @notice Returns the RLP encoded data as a string.
+    /// @param item - The RLP encoded data.
+    /// @return The RLP encoded data as a string.
     function bytesToString(
         bytes memory item
     ) public pure returns (string memory) {
@@ -95,12 +142,16 @@ contract RLPReader {
         return string(rlpItem.toBytes());
     }
 
+    /// @notice Returns an iterator for the RLP encoded data.
+    /// @param item - The RLP encoded data.å
     function toIterator(bytes memory item) public pure {
         // we just care that this does not revert
         item.toRlpItem().iterator();
     }
 
-    // expects [["somestring"]]
+    /// @notice Returns the nested iteration of the RLP encoded data.
+    /// @param item - The RLP encoded data.
+    /// @return The nested iteration of the RLP encoded data.
     function nestedIteration(
         bytes memory item
     ) public pure returns (string memory) {
@@ -114,6 +165,20 @@ contract RLPReader {
         return result;
     }
 
+    /// @notice Returns the block header from the RLP encoded data.
+    /// @param rlpHeader - The RLP encoded block header.
+    /// @return parentHash - The parent hash.
+    /// @return sha3Uncles - The sha3 uncles.
+    /// @return coinbase - The coinbase address.
+    /// @return stateRoot - The state root.
+    /// @return transactionsRoot - The transactions root.
+    /// @return receiptsRoot - The receipts root.
+    /// @return difficulty - The difficulty.
+    /// @return number - The block number.
+    /// @return gasLimit - The gas limit.
+    /// @return gasUsed - The gas used.
+    /// @return timestamp - The timestamp.
+    /// @return nonce - The nonce.
     function toBlockHeader(
         bytes memory rlpHeader
     )
@@ -155,6 +220,17 @@ contract RLPReader {
         }
     }
 
+    /// @notice Returns the legacy transaction from the RLP encoded data.
+    /// @param rlpTx - The RLP encoded transaction.
+    /// @return nonce - The nonce.
+    /// @return gasPrice - The gas price.
+    /// @return gasLimit - The gas limit.
+    /// @return to - The recipient address.
+    /// @return value - The value.
+    /// @return data - The data.
+    /// @return v - The v value.
+    /// @return r - The r value.
+    /// @return s - The s value.
     function toLegacyTx(
         bytes memory rlpTx
     )
@@ -190,6 +266,18 @@ contract RLPReader {
         return (nonce, gasPrice, gasLimit, to, value, data, v, r, s);
     }
 
+    /// @notice Returns the deposit transaction from the RLP encoded data.
+    /// @param rlpTx - The RLP encoded transaction.
+    /// @return chainId - The chain ID.
+    /// @return nonce - The nonce.
+    /// @return gasPrice - The gas price.
+    /// @return gasLimit - The gas limit.
+    /// @return to - The recipient address.
+    /// @return value - The value.
+    /// @return data - The data.
+    /// @return v - The v value.
+    /// @return r - The r value.
+    /// @return s - The s value.
     function toDepositTx(
         bytes memory rlpTx
     )

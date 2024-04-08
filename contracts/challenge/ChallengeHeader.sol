@@ -1,30 +1,35 @@
 // SPDX-License-Identifier: MIT
-// LightLink Hummingbird v0.2.0
-
 pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
 
-// ChallengeHeader lets anyone challenge a block header against some basic validity checks.
-// If the header is invalid, the chain is rolled back to the previous block.
-// Note: This challenge is free and has no payout.
-//
-// The challenge is made in a single step by calling invalidateHeader. This function directly checks
-// the validity of the header without requiring the defender to respond.
-//
-// The following checks are made:
-// 1. The epoch is greater than the previous epoch.
-// 2. The l2Height is greater than the previous l2Height.
-// 3. The prevHash is the previous block hash.
-// 4. The bundle size is less than the max bundle size.
-//
-// If any of these checks fail, the chain is rolled back to the previous block.
-// Just like with all challenges, the challenge window must be open.
-
-// no constructor
+/// @title  ChallengeHeader
+/// @author LightLink Hummingbird
+/// @custom:version v1.0.0-alpha
+/// @notice ChallengeHeader lets anyone challenge a block header against some basic validity checks.
+///         If the header is invalid, the chain is rolled back to the previous block.
+///         Note: This challenge is free and has no payout.
+///
+///         The challenge is made in a single step by calling invalidateHeader. This function directly checks
+///         the validity of the header without requiring the defender to respond.
+///
+///         The following checks are made:
+///         1. The epoch is greater than the previous epoch.
+///         2. The l2Height is greater than the previous l2Height.
+///         3. The prevHash is the previous block hash.
+///         4. The bundle size is less than the max bundle size.
+///
+///         If any of these checks fail, the chain is rolled back to the previous block.
+///         Just like with all challenges, the challenge window must be open.
 abstract contract ChallengeHeader is ChallengeBase {
+    /// @notice The maximum bundle size.
     uint256 MAX_BUNDLESIZE;
 
+    /// @notice The reasons a header can be invalid.
+    /// @param InvalidEpoch - The epoch is less than or equal to the previous epoch.
+    /// @param InvalidL2Height - The l2Height is less than or equal to the previous l2Height.
+    /// @param InvalidPrevHash - The prevHash is not the previous block hash.
+    /// @param InvalidBundleSize - The bundle size is greater than the max bundle size.
     enum InvalidHeaderReason {
         InvalidEpoch,
         InvalidL2Height,
@@ -32,20 +37,27 @@ abstract contract ChallengeHeader is ChallengeBase {
         InvalidBundleSize
     }
 
+    /// @notice Emitted when a header is invalid.
+    /// @param _blockIndex - The block index of the invalid header.
+    /// @param _hash - The hash of the invalid header.
+    /// @param _reason - The reason the header is invalid.
     event InvalidHeader(
         uint256 indexed _blockIndex,
         bytes32 indexed _hash,
         InvalidHeaderReason indexed _reason
     );
 
+    /// @notice Whether the header challenge is enabled.
+    /// @dev Is disabled by default.
     bool public isHeaderChallengeEnabled;
 
+    /// @notice Initializes the contract.
     function __ChallengeHeader_init() internal {
         MAX_BUNDLESIZE = 20000;
     }
 
-    // invalidateHeader challenges a block header by checking that the header is valid.
-    // It has no payout.
+    /// @notice Invalidate challenges a block header by checking that the header is valid.
+    /// @param _blockIndex - The block index of the header to challenge.
     function invalidateHeader(
         uint256 _blockIndex
     )
@@ -67,6 +79,11 @@ abstract contract ChallengeHeader is ChallengeBase {
         chain.rollback(_blockIndex - 1);
     }
 
+    /// @notice Checks if a header is valid.
+    /// @param _header - The header to check.
+    /// @param _hash - The hash of the header.
+    /// @param _blockIndex - The block index of the header.
+    /// @return True if the header is valid.
     function _isHeaderValid(
         ICanonicalStateChain.Header memory _header,
         bytes32 _hash,
@@ -120,11 +137,11 @@ abstract contract ChallengeHeader is ChallengeBase {
         return true;
     }
 
-    // toggleHeaderChallenge enables or disables the header challenge.
+    /// @notice Enables or disables the header challenge.
+    /// @param _status - The status to set.
     function toggleHeaderChallenge(bool _status) external onlyOwner {
         isHeaderChallengeEnabled = _status;
     }
 
-    // gap
     uint256[50] private __gap;
 }

@@ -1,19 +1,29 @@
 // SPDX-License-Identifier: MIT
-// LightLink Hummingbird v0.2.0
-
 pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
 
-// ChallengeL2Header is a two party challenge game where the defender must provide
-// a valid L2 header to defend against a challenge.
-//
-// The Challenge goes through the following steps:
-// 1. A challenger initiates a challenge by calling challengeL2Header with the rblock number and the number of the L2 block it should contain.
-// 2. The defending block publisher must provide valid L2 headers to the chainOracle for both the challenged block and the previous block.
-// 3. If the headers are valid, the defender wins the challenge and receives the challenge fee.
-// 4. Otherwise the challenge expires and the challenger wins the challenge and the block is rolled back.
+/// @title  ChallengeL2Header
+/// @author LightLink Hummingbird
+/// @custom:version v1.0.0-alpha
+/// @notice ChallengeL2Header is a two party challenge game where the defender must provide
+///         a valid L2 header to defend against a challenge.
+///
+///         The Challenge goes through the following steps:
+///         1. A challenger initiates a challenge by calling challengeL2Header with the rblock
+///            number and the number of the L2 block it should contain.
+///         2. The defending block publisher must provide valid L2 headers to the chainOracle
+///            for both the challenged block and the previous block.
+///         3. If the headers are valid, the defender wins the challenge and receives the
+///            challenge fee.
+///         4. Otherwise the challenge expires and the challenger wins the challenge and the
+///            block is rolled back.
 contract ChallengeL2Header is ChallengeBase {
+    /// @notice The different states a L2 header challenge can be in.
+    /// @param None - The L2 header challenge has not been initiated.
+    /// @param Initiated - The L2 header challenge has been initiated by the challenger.
+    /// @param ChallengerWon - The L2 header challenge has been won by the challenger.
+    /// @param DefenderWon - The L2 header challenge has been won by the defender.
     enum L2HeaderChallengeStatus {
         None,
         Initiated,
@@ -21,19 +31,34 @@ contract ChallengeL2Header is ChallengeBase {
         DefenderWon
     }
 
+    /// @notice The pointer to an L2 header.
+    /// @param rblock - The rblock hash of the L2 header.
+    /// @param number - The number of the L2 header.
     struct L2HeaderPointer {
         bytes32 rblock;
         uint256 number;
     }
 
+    /// @notice The data structure for an L2 header challenge.
+    /// @param header - The header being challenged.
+    /// @param prevHeader - The previous header.
+    /// @param challengeEnd - The end of the challenge period.
+    /// @param challenger - The address of the challenger.
+    /// @param status - The status of the challenge.
     struct L2HeaderChallenge {
-        L2HeaderPointer header; // The header being challenged.
-        L2HeaderPointer prevHeader; // The previous header.
-        uint256 challengeEnd; // The end of the challenge period.
-        address challenger; // The address of the challenger.
-        L2HeaderChallengeStatus status; // The status of the challenge.
+        L2HeaderPointer header;
+        L2HeaderPointer prevHeader;
+        uint256 challengeEnd;
+        address challenger;
+        L2HeaderChallengeStatus status;
     }
 
+    /// @notice Emitted when an L2 header challenge is updated.
+    /// @param challengeHash - The hash of the challenge.
+    /// @param l2Number - The number of the L2 header being challenged.
+    /// @param rblock - The rblock hash of the L2 header.
+    /// @param expiry - The expiry time of the challenge.
+    /// @param status - The status of the challenge.
     event L2HeaderChallengeUpdate(
         bytes32 indexed challengeHash,
         uint256 indexed l2Number,
@@ -42,9 +67,17 @@ contract ChallengeL2Header is ChallengeBase {
         L2HeaderChallengeStatus indexed status
     );
 
+    /// @notice Stores the L2 header challenges.
     mapping(bytes32 => L2HeaderChallenge) public l2HeaderChallenges;
+
+    /// @notice Whether the L2 header challenge is enabled.
+    /// @dev Is disabled by default.
     bool public isL2HeaderChallengeEnabled;
 
+    /// @notice Challenges an L2 header by providing the rblock number and the L2 number.
+    /// @param _rblockNum - The rblock number of the L2 header.
+    /// @param _l2Num - The number of the L2 header.
+    /// @return The hash of the challenge.
     function challengeL2Header(
         uint256 _rblockNum,
         uint256 _l2Num
@@ -119,6 +152,10 @@ contract ChallengeL2Header is ChallengeBase {
         return challengeHash;
     }
 
+    /// @notice Defends an L2 header challenge by providing the L2 header and the previous L2 header.
+    /// @param _challengeHash - The hash of the challenge.
+    /// @param _headerHash - The hash of the L2 header.
+    /// @param _headerPrevHash - The hash of the previous L2 header.
     function defendL2Header(
         bytes32 _challengeHash,
         bytes32 _headerHash,
@@ -199,6 +236,10 @@ contract ChallengeL2Header is ChallengeBase {
         );
     }
 
+    /// @notice Settles an L2 header challenge by paying out the challenger.
+    /// @param _challengeHash - The hash of the challenge.
+    /// @dev Can only be called after the challenge period has ended and a
+    ///      defender has not responded.
     function settleL2HeaderChallenge(bytes32 _challengeHash) external {
         L2HeaderChallenge storage challenge = l2HeaderChallenges[
             _challengeHash
@@ -227,6 +268,9 @@ contract ChallengeL2Header is ChallengeBase {
         require(success, "failed to pay challenger");
     }
 
+    /// @notice Returns the hash of an L2 header challenge.
+    /// @param _rblockHash - The rblock hash of the L2 header.
+    /// @param _l2Num - The number of the L2 header.
     function l2HeaderChallengeHash(
         bytes32 _rblockHash,
         uint256 _l2Num
@@ -234,7 +278,9 @@ contract ChallengeL2Header is ChallengeBase {
         return keccak256(abi.encodePacked(_rblockHash, _l2Num));
     }
 
-    // toggleL2HeaderChallenge enables or disables the L2 header challenges.
+    /// @notice Toggles the L2 header challenges on or off.
+    /// @param _status - The status of the L2 header challenges.
+    /// @dev Only the owner can call this function.
     function toggleL2HeaderChallenge(bool _status) external onlyOwner {
         isL2HeaderChallengeEnabled = _status;
     }

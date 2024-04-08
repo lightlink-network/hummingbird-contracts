@@ -1,6 +1,4 @@
 // SPDX-License-Identifier: MIT
-// LightLink Hummingbird v0.2.0
-
 pragma solidity ^0.8.0;
 
 interface IRLPReader {
