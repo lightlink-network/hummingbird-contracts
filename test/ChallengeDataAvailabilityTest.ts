@@ -54,7 +54,6 @@ describe("ChallengeDataAvailability", function () {
       [
         await canonicalStateChain.getAddress(),
         await mockDaOracle.getAddress(),
-        ethers.ZeroAddress,
         ethers.ZeroAddress, // chainOracle not needed for this test
       ],
     );

@@ -41,8 +41,6 @@ Challenge
   └ ChallengeBase.sol – Base contract for all challenges, allows getting and setting the challenge window, and the challenge fee.
   └ ChallengeHeader.sol – Challenge a block header for validity.
   └ ChallengeDataAvailability.sol – Claim that block data is unavailable.
-  └ ChallengeExecution.sol – Claim incorrect stateroot using mips.
-  └ mips – Contains MIPS contracts.
 ```
 
 ## Running locally

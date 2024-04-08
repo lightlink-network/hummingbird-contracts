@@ -69,7 +69,6 @@ describe("ChallengeL2Header", function () {
       [
         await chain.getAddress(),
         await mockDaOracle.getAddress(),
-        ethers.ZeroAddress, // mipsChallenge
         await chainOracle.getAddress(),
       ],
     );

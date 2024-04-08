@@ -6,7 +6,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "../interfaces/IChainOracle.sol";
 import "../interfaces/ICanonicalStateChain.sol";
-import "./mips/IMipsChallenge.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 
 /// @title  ChallengeBase
@@ -45,9 +44,6 @@ contract ChallengeBase is
     /// @notice The address of the data availability oracle.
     IDAOracle public daOracle;
 
-    /// @notice The address of the MIPS challenge contract.
-    IMipsChallenge public mipsChallenge;
-
     /// @notice This function is a special internal function that's part of
     ///         the UUPS upgradeable contract's lifecycle. When you want to
     ///         upgrade the contract to a new version, _authorizeUpgrade is
@@ -57,15 +53,13 @@ contract ChallengeBase is
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     /// @notice Initializes the contract with the chain, daOracle,
-    ///         mipsChallenge, and chainOracle addresses.
+    ///         and chainOracle addresses.
     /// @param _chain The address of the canonical state chain.
     /// @param _daOracle The address of the data availability oracle.
-    /// @param _mipsChallenge The address of the MIPS challenge contract.
     /// @param _chainOracle The address of the chain oracle.
     function __ChallengeBase_init(
         address _chain,
         address _daOracle,
-        address _mipsChallenge,
         address _chainOracle
     ) internal {
         __UUPSUpgradeable_init();
@@ -79,7 +73,6 @@ contract ChallengeBase is
 
         chain = ICanonicalStateChain(_chain);
         daOracle = IDAOracle(_daOracle);
-        mipsChallenge = IMipsChallenge(_mipsChallenge);
         chainOracle = IChainOracle(_chainOracle);
     }
 

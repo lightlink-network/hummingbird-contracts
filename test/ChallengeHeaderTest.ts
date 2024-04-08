@@ -54,7 +54,6 @@ describe("ChallengeHeader", function () {
       [
         await canonicalStateChain.getAddress(),
         ethers.ZeroAddress,
-        ethers.ZeroAddress,
         ethers.ZeroAddress, // chain Oracle not needed for this test
       ],
     );

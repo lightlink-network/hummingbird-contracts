@@ -57,12 +57,7 @@ const main = async () => {
   const challenge = await proxyDeployAndInitialize(
     owner,
     await ethers.getContractFactory("Challenge"),
-    [
-      canonicalStateChain.address,
-      blobstreamXAddr,
-      ZeroAddress,
-      chainOracle.address,
-    ],
+    [canonicalStateChain.address, blobstreamXAddr, chainOracle.address],
   );
 
   // Step 7. Deploy CanonicalTransactionChain contract as a proxy
@@ -113,7 +108,6 @@ const main = async () => {
       challenge.implementation.interface.encodeFunctionData("initialize", [
         canonicalStateChain.address,
         blobstreamXAddr,
-        ethers.ZeroAddress,
         chainOracle.address,
       ]),
     ]);
