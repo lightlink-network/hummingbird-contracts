@@ -52,7 +52,6 @@ describe("ChallengeDataAvailability", function () {
       owner,
       await ethers.getContractFactory("Challenge"),
       [
-        ethers.ZeroAddress, // treasury
         await canonicalStateChain.getAddress(),
         await mockDaOracle.getAddress(),
         ethers.ZeroAddress,

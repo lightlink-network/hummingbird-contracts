@@ -58,7 +58,6 @@ const main = async () => {
     owner,
     await ethers.getContractFactory("Challenge"),
     [
-      ZeroAddress, // treasury
       canonicalStateChain.address,
       blobstreamXAddr,
       ZeroAddress,
@@ -112,7 +111,6 @@ const main = async () => {
     await verify(challenge.address, [
       challenge.implementationAddress,
       challenge.implementation.interface.encodeFunctionData("initialize", [
-        ethers.ZeroAddress,
         canonicalStateChain.address,
         blobstreamXAddr,
         ethers.ZeroAddress,

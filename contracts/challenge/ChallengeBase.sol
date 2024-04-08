@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "../interfaces/ITreasury.sol";
 import "../interfaces/IChainOracle.sol";
 import "../interfaces/ICanonicalStateChain.sol";
 import "./mips/IMipsChallenge.sol";
@@ -40,9 +39,6 @@ contract ChallengeBase is
     /// @notice The address of the chain oracle.
     IChainOracle public chainOracle;
 
-    /// @notice The address of the treasury to pay out challenges.
-    ITreasury public treasury;
-
     /// @notice The address of the canonical state chain.
     ICanonicalStateChain public chain;
 
@@ -60,15 +56,13 @@ contract ChallengeBase is
     /// @dev Only the owner can call this function.
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
-    /// @notice Initializes the contract with the treasury, chain, daOracle,
+    /// @notice Initializes the contract with the chain, daOracle,
     ///         mipsChallenge, and chainOracle addresses.
-    /// @param _treasury The address of the treasury.
     /// @param _chain The address of the canonical state chain.
     /// @param _daOracle The address of the data availability oracle.
     /// @param _mipsChallenge The address of the MIPS challenge contract.
     /// @param _chainOracle The address of the chain oracle.
     function __ChallengeBase_init(
-        address _treasury,
         address _chain,
         address _daOracle,
         address _mipsChallenge,
@@ -83,7 +77,6 @@ contract ChallengeBase is
         challengeFee = 1.5 ether;
         challengeReward = 0.2 ether; // unused.
 
-        treasury = ITreasury(_treasury); // TODO: remove
         chain = ICanonicalStateChain(_chain);
         daOracle = IDAOracle(_daOracle);
         mipsChallenge = IMipsChallenge(_mipsChallenge);

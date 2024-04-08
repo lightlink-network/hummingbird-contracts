@@ -36,7 +36,6 @@ npx hardhat run scripts/tools/chain.ts --network <sepolia|localhost> # prints th
 
 ```
 CanonicalStateChain.sol – Where the rollup chain is stored.
-Treasury.sol – Where fees are stored and challenges can be reimbursed.
 Challenge
   └ ChallengeManager.sol – A Collection of the challenges below that can be called to rollback the chain if needed.
   └ ChallengeBase.sol – Base contract for all challenges, allows getting and setting the challenge window, and the challenge fee.
