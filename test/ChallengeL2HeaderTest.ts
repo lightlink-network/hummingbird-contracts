@@ -67,10 +67,8 @@ describe("ChallengeL2Header", function () {
       owner,
       await ethers.getContractFactory("Challenge"),
       [
-        ethers.ZeroAddress, // treasury
         await chain.getAddress(),
         await mockDaOracle.getAddress(),
-        ethers.ZeroAddress, // mipsChallenge
         await chainOracle.getAddress(),
       ],
     );

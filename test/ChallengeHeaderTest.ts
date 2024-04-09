@@ -52,9 +52,7 @@ describe("ChallengeHeader", function () {
       owner,
       await ethers.getContractFactory("Challenge"),
       [
-        ethers.ZeroAddress,
         await canonicalStateChain.getAddress(),
-        ethers.ZeroAddress,
         ethers.ZeroAddress,
         ethers.ZeroAddress, // chain Oracle not needed for this test
       ],
