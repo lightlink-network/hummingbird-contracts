@@ -110,7 +110,7 @@ contract ChallengeL2Header is ChallengeBase {
 
         // 3. Check that the L2 header is within the rblock bundle range
         require(
-            _l2Num > prevRBlock.l2Height && _l2Num < rblock.l2Height,
+            _l2Num > prevRBlock.l2Height && _l2Num <= rblock.l2Height,
             "L2 header must be within the rblock bundle range"
         );
 
