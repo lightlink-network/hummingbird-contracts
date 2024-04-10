@@ -123,12 +123,9 @@ contract ChallengeL2Header is ChallengeBase {
             _l2Num - 1
         );
 
-        if (_l2Num == prevRBlock.l2Height) {
+        if (_l2Num == prevRBlock.l2Height + 1) {
             // If the L2 header is the first in the rblock, then the previous header is in the previous rblock
-            prevHeader = L2HeaderPointer(
-                prevRBlock.prevHash,
-                prevRBlock.l2Height
-            );
+            prevHeader = L2HeaderPointer(rblock.prevHash, prevRBlock.l2Height);
         }
 
         // 6. Create the challenge
