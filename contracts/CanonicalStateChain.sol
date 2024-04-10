@@ -17,9 +17,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 ///         to the chain. The owner of the contract can replace the publisher address, and is expected
 ///         to be the DAO Governance contract.
 contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
-    /// @notice The maximum number of celestia pointers a block can have.
-    uint8 public constant MAX_POINTERS = 20;
-
     /// @notice The header of a L1 rollup block.
     /// @param epoch - Refers to a block number on the Ethereum blockchain
     /// @param l2Height - The index of the Last L2 Block in this bundle.
@@ -80,6 +77,9 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
     /// @notice The index of the last block in the chain.
     uint256 public chainHead;
 
+    /// @notice The maximum number of celestia pointers a block can have.
+    uint8 public maxPointers;
+
     /// @notice The canonical chain of block headers.
     mapping(bytes32 => Header) private headers;
 
@@ -111,6 +111,8 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         bytes32 _hash = calculateHeaderHash(_header);
         headers[_hash] = _header;
         chain[0] = _hash;
+
+        maxPointers = 7;
     }
 
     /// @notice Optimistically pushes block headers to the canonical chain.
@@ -136,7 +138,7 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
             "block must have atleast one celestia pointer"
         );
         require(
-            _header.celestiaPointers.length <= MAX_POINTERS,
+            _header.celestiaPointers.length <= maxPointers,
             "block has too many celestia pointers"
         );
 
@@ -220,6 +222,13 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         bytes32 _hash
     ) public view returns (Header memory) {
         return headers[_hash];
+    }
+
+    /// @notice Sets the maximum number of celestia pointers a block can have.
+    /// @param _maxPointers - The new maximum number of celestia pointers.
+    /// @dev Only the owner can call this function.
+    function setMaxPointers(uint8 _maxPointers) external onlyOwner {
+        maxPointers = _maxPointers;
     }
 
     uint256[50] private __gap;
