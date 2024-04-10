@@ -39,8 +39,9 @@ CanonicalStateChain.sol – Where the rollup chain is stored.
 Challenge
   └ ChallengeManager.sol – A Collection of the challenges below that can be called to rollback the chain if needed.
   └ ChallengeBase.sol – Base contract for all challenges, allows getting and setting the challenge window, and the challenge fee.
-  └ ChallengeHeader.sol – Challenge a block header for validity.
+  └ ChallengeHeader.sol – Challenge a rollup block header for validity.
   └ ChallengeDataAvailability.sol – Claim that block data is unavailable.
+  └ ChallengeL2Header.sol – Challenge the L2 header is not included in a given rollup block.
 ```
 
 ## Running locally
