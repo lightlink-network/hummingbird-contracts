@@ -109,11 +109,13 @@ The Challenge goes through the following steps:
 
 **Incomplete**, but will call the MIPS challenge game to computer the correct stateRoot and compare it to the one in the block header. If the header is incorrect the block will be rolled back.
 
-![Hummingbird](hb.png)
-
 ### TODO
 
 - [ ] ChallengeExecution
 - [ ] MultiChainMessenger
 - [ ] Add TxQueue to CanonicalStateChain.
 - [ ] ChallengeTxInclusion
+
+<p align="center">
+  <img src="hb.png" style="size:50%" alt="HummingBird">
+</p>
