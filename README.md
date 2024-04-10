@@ -32,7 +32,7 @@ npx hardhat run scripts/tools/chain.ts --network <sepolia|localhost> # prints th
 
 ## Overview
 
-![Overview](image.png)
+![Overview](contracts-diagram.png)
 
 ```
 CanonicalStateChain.sol – Where the rollup chain is stored.
