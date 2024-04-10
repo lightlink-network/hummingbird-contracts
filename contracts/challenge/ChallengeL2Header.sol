@@ -114,10 +114,16 @@ contract ChallengeL2Header is ChallengeBase {
             "L2 header must be within the rblock bundle range"
         );
 
-        // 4. Create pointer to the L2 header
+        // 4. Check that the L2 header is not the first in the first rblock
+        require(
+            !(_rblockNum == 1 && _l2Num == prevRBlock.l2Height + 1),
+            "Cannot challenge the first L2 header in the first rblock"
+        );
+
+        // 5. Create pointer to the L2 header
         L2HeaderPointer memory header = L2HeaderPointer(rblockHash, _l2Num);
 
-        // 5. Create a pointer the previous L2 header
+        // 6. Create a pointer the previous L2 header
         L2HeaderPointer memory prevHeader = L2HeaderPointer(
             rblockHash,
             _l2Num - 1
@@ -128,7 +134,7 @@ contract ChallengeL2Header is ChallengeBase {
             prevHeader = L2HeaderPointer(rblock.prevHash, prevRBlock.l2Height);
         }
 
-        // 6. Create the challenge
+        // 7. Create the challenge
         l2HeaderChallenges[challengeHash] = L2HeaderChallenge(
             header,
             prevHeader,
@@ -137,7 +143,7 @@ contract ChallengeL2Header is ChallengeBase {
             L2HeaderChallengeStatus.Initiated
         );
 
-        // 7. Emit the challenge event
+        // 8. Emit the challenge event
         emit L2HeaderChallengeUpdate(
             challengeHash,
             _l2Num,
