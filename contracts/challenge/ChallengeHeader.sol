@@ -22,9 +22,6 @@ import "./ChallengeBase.sol";
 ///         If any of these checks fail, the chain is rolled back to the previous block.
 ///         Just like with all challenges, the challenge window must be open.
 abstract contract ChallengeHeader is ChallengeBase {
-    /// @notice The maximum bundle size.
-    uint256 MAX_BUNDLESIZE;
-
     /// @notice The reasons a header can be invalid.
     /// @param InvalidEpoch - The epoch is less than or equal to the previous epoch.
     /// @param InvalidL2Height - The l2Height is less than or equal to the previous l2Height.
@@ -51,9 +48,12 @@ abstract contract ChallengeHeader is ChallengeBase {
     /// @dev Is disabled by default.
     bool public isHeaderChallengeEnabled;
 
+    /// @notice The maximum bundle size.
+    uint256 public maxBundleSize;
+
     /// @notice Initializes the contract.
     function __ChallengeHeader_init() internal {
-        MAX_BUNDLESIZE = 20000;
+        maxBundleSize = 14000;
     }
 
     /// @notice Invalidate challenges a block header by checking that the header is valid.
@@ -124,7 +124,7 @@ abstract contract ChallengeHeader is ChallengeBase {
         // check that the bundle size is less than the max bundle size.
         if (
             _header.l2Height - chain.getHeaderByNum(_blockIndex - 1).l2Height >
-            MAX_BUNDLESIZE
+            maxBundleSize
         ) {
             emit InvalidHeader(
                 _header.epoch,
@@ -141,6 +141,12 @@ abstract contract ChallengeHeader is ChallengeBase {
     /// @param _status - The status to set.
     function toggleHeaderChallenge(bool _status) external onlyOwner {
         isHeaderChallengeEnabled = _status;
+    }
+
+    /// @notice Sets the maximum bundle size.
+    /// @param _maxBundleSize - The new maximum bundle size.
+    function setMaxBundleSize(uint256 _maxBundleSize) external onlyOwner {
+        maxBundleSize = _maxBundleSize;
     }
 
     uint256[50] private __gap;
