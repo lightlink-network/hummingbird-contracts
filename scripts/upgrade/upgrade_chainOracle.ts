@@ -25,25 +25,27 @@ const main = async () => {
 
   // Deploy new ChainOracle contract implementation
   console.log("Deploying ChainOracle...");
-  const chainOracleFactory: any = await ethers.getContractFactory("ChainOracle");
+  const chainOracleFactory: any =
+    await ethers.getContractFactory("ChainOracle");
   const chainOracleImplementation = await chainOracleFactory.deploy();
   await chainOracleImplementation.waitForDeployment();
   const chainOracleImplementationAddr =
     await chainOracleImplementation.getAddress();
 
   console.log(
-    `→ ChainOracle implementation deployed to ${chainOracleImplementationAddr}`
+    `→ ChainOracle implementation deployed to ${chainOracleImplementationAddr}`,
   );
 
   // Update ChainOracle contract proxy to new implementation
   console.log("Updating ChainOracle proxy to new implementation...");
   const chainOracleProxy = await ethers.getContractAt(
     "ChainOracle",
-    chainOracleContractProxyAddr
+    chainOracleContractProxyAddr,
   );
   await chainOracleProxy.upgradeToAndCall(chainOracleImplementationAddr, "0x");
   console.log(
-    `→ ChainOracle proxy (${chainOracleContractProxyAddr}) updated to ${chainOracleImplementationAddr}` + "\n"
+    `→ ChainOracle proxy (${chainOracleContractProxyAddr}) updated to ${chainOracleImplementationAddr}` +
+      "\n",
   );
 
   console.log("All Contracts deployed successfully! \n");
@@ -60,10 +62,10 @@ const main = async () => {
   await verify(
     chainOracleImplementationAddr,
     [],
-    "contracts/ChainOracle.sol:ChainOracle"
+    "contracts/ChainOracle.sol:ChainOracle",
   );
   console.log(
-    `Verified ChainOracle impl contract at ${chainOracleImplementationAddr}`
+    `Verified ChainOracle impl contract at ${chainOracleImplementationAddr}`,
   );
 };
 

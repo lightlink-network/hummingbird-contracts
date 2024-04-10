@@ -1,43 +1,122 @@
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
+import { ZeroAddress } from "ethers";
 import { verify } from "../../utils/verify";
+import { log } from "../lib/log";
+import { createGenesisHeader, proxyDeployAndInitialize } from "../lib/deploy";
 
-async function main() {
-  // Get deployer/signer account
-  const [deployer] = await ethers.getSigners();
-  const deployerAddr = await deployer.getAddress()
-  console.log("Deploying contracts with the deployer address:", deployerAddr);
+// Set blobstreamX address
+const blobstreamXAddr = "BLOBSTREAMX_ADDRESS";
 
-  // Build genesis header block 62207259
-  const genesisHeader = {
-    epoch: 0,
-    l2Height: 62207259,
-    prevHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
-    txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    blockRoot: "0x3810c405e3789ebee1ffb7ab8d36debdcefb629f129bb9db00d3271148b55f83",
-    stateRoot: "0x491cc7d79299f9569e4bfddef640ade68091ab486d68a08ed1477c678db34103",
-    celestiaHeight: 0,
-    celestiaDataRoot: "0x0000000000000000000000000000000000000000000000000000000000000000",
-  };
+const main = async () => {
+  // Log network name and chain id selected for deployment
+  const chainIdHex = await network.provider.send("eth_chainId");
+  const chainId = parseInt(chainIdHex, 16);
+  log("Network name:", network.name);
+  log("Network chain id:", chainId + "\n");
 
-  // Deploy CanonicalStateChain contract
-  console.log("Deploying CanonicalStateChain...")
-  const csc = await ethers.deployContract("CanonicalStateChain", [deployerAddr, genesisHeader]);
-  await csc.waitForDeployment();
-  console.log(`CanonicalStateChain deployed to ${csc.target}`);
+  // Step 1. Get deployer/signer account
+  const [owner, publisher] = await ethers.getSigners();
+  const [ownerAddr, publisherAddr] = [
+    await owner.getAddress(),
+    await publisher.getAddress(),
+  ];
+  log("Owner address:", ownerAddr);
+  log("Publisher address:", publisherAddr);
+  log("DAOracle address:", blobstreamXAddr + "\n");
 
+  // Step 2. Fetch latests l2 block from Pegasus
+  const genesisHeader = await createGenesisHeader(
+    process.env.PEGASUS_PROVIDER_URL!,
+  );
 
-  // Verify contract (after 3 seconds)
-  console.log("All Contracts deployed successfully!")
-  console.log('Waiting for 3 seconds to verify contract')
+  // Step 3. Deploy CanonicalStateChain contract as proxy
+  log("Deploying CanonicalStateChain...");
+  const canonicalStateChain = await proxyDeployAndInitialize(
+    owner,
+    await ethers.getContractFactory("CanonicalStateChain"),
+    [publisherAddr, genesisHeader],
+  );
 
-  await new Promise(resolve => setTimeout(resolve, 30000));
-  await verify(csc.target.toString(), [deployerAddr, genesisHeader])
-  console.log(`Verify contract at ${csc.target}`)
-}
+  // Step 4. Deploy required RLPReader lib
+  log("Deploying RLPReader...");
+  const RLPReader = await ethers.getContractFactory("RLPReader");
+  const rlpReader = await RLPReader.deploy();
+  await rlpReader.waitForDeployment();
+  const rlpReaderAddr = await rlpReader.getAddress();
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+  // Step 5. Deploying ChainOracle contract as a proxy
+  log("Deploying ChainOracle...");
+  const chainOracle = await proxyDeployAndInitialize(
+    owner,
+    await ethers.getContractFactory("ChainOracle"),
+    [canonicalStateChain.address, blobstreamXAddr, rlpReaderAddr],
+  );
+
+  // Step 6. Deploy Challenge contract as a proxy
+  log("Deploying Challenge...");
+  const challenge = await proxyDeployAndInitialize(
+    owner,
+    await ethers.getContractFactory("Challenge"),
+    [canonicalStateChain.address, blobstreamXAddr, chainOracle.address],
+  );
+
+  // Step 7. Deploy CanonicalTransactionChain contract as a proxy
+  log("Setting challenge contract in CanonicalStateChain...");
+  await canonicalStateChain.contract.setChallengeContract(challenge.address);
+  log("Setting defender in Challenge contract...");
+  await challenge.contract.setDefender(publisherAddr);
+
+  log("DONE\n");
+
+  console.log(" canonicalStateChain:", `"${canonicalStateChain.address}"`);
+  console.log(" challenge:", `"${challenge.address}"`);
+  console.log(" chainOracle:", `"${chainOracle.address}"`);
+  console.log(" blobstreamX:", `"${blobstreamXAddr}"`);
+  console.log(" rlpReader:", `"${rlpReaderAddr}" \n`);
+
+  /// Verify contracts
+  if (chainId !== 31337 && chainId !== 1337) {
+    log("Waiting for 2 min before verifying contracts..");
+    await new Promise((r) => setTimeout(r, 120000));
+
+    // Verify Implementations
+    await verify(canonicalStateChain.implementationAddress);
+    await verify(rlpReaderAddr);
+    await verify(chainOracle.implementationAddress);
+    await verify(challenge.implementationAddress);
+
+    // Verify Proxies
+    await verify(canonicalStateChain.address, [
+      canonicalStateChain.implementationAddress,
+      canonicalStateChain.implementation.interface.encodeFunctionData(
+        "initialize",
+        [publisherAddr, genesisHeader],
+      ),
+    ]);
+
+    await verify(chainOracle.address, [
+      chainOracle.implementationAddress,
+      chainOracle.implementation.interface.encodeFunctionData("initialize", [
+        canonicalStateChain.address,
+        blobstreamXAddr,
+        rlpReaderAddr,
+      ]),
+    ]);
+
+    await verify(challenge.address, [
+      challenge.implementationAddress,
+      challenge.implementation.interface.encodeFunctionData("initialize", [
+        canonicalStateChain.address,
+        blobstreamXAddr,
+        chainOracle.address,
+      ]),
+    ]);
+  }
+};
+
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

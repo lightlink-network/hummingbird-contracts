@@ -1,9 +1,16 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { Contract } from "ethers";
+import { toBigInt } from "ethers";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { makeNextBlock, setupCanonicalStateChain } from "./lib/chain";
-import { Header, hashHeader } from "./lib/header";
+import {
+  CanonicalStateChain,
+  Challenge,
+  Challenge__factory,
+} from "../typechain-types";
+import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
+
+type Header = CanonicalStateChain.HeaderStruct;
 
 describe("ChallengeHeader", function () {
   let owner: HardhatEthersSigner;
@@ -13,8 +20,8 @@ describe("ChallengeHeader", function () {
 
   let genesisHeader: Header;
   let genesisHash: string;
-  let canonicalStateChain: Contract;
-  let challenge: Contract;
+  let canonicalStateChain: CanonicalStateChain;
+  let challenge: Challenge;
 
   beforeEach(async function () {
     [owner, publisher, otherAccount, challengeOwner] =
@@ -26,26 +33,39 @@ describe("ChallengeHeader", function () {
     genesisHash = _chain.genesisHash;
     genesisHeader = _chain.genesisHeader;
 
-    const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
-    const challengeFactory: any = await ethers.getContractFactory("Challenge");
-    const challengeImplementation = await challengeFactory.deploy();
+    // const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
+    // const challengeFactory: any = await ethers.getContractFactory("Challenge");
+    // const challengeImplementation = await challengeFactory.deploy();
 
-    const proxy = await proxyFactory.deploy(
-      await challengeImplementation.getAddress(),
-      challengeImplementation.interface.encodeFunctionData("initialize", [
-        ethers.ZeroAddress,
+    // const proxy = await proxyFactory.deploy(
+    //   await challengeImplementation.getAddress(),
+    //   challengeImplementation.interface.encodeFunctionData("initialize", [
+    //     ethers.ZeroAddress,
+    //     await canonicalStateChain.getAddress(),
+    //     ethers.ZeroAddress,
+    //     ethers.ZeroAddress,
+    //     ethers.ZeroAddress, // chain Oracle not needed for this test
+    //   ]),
+    // );
+
+    const deployment = await proxyDeployAndInitialize(
+      owner,
+      await ethers.getContractFactory("Challenge"),
+      [
         await canonicalStateChain.getAddress(),
         ethers.ZeroAddress,
-        ethers.ZeroAddress,
         ethers.ZeroAddress, // chain Oracle not needed for this test
-      ]),
+      ],
     );
 
-    challenge = challengeFactory.attach(await proxy.getAddress());
+    challenge = Challenge__factory.connect(deployment.address, owner);
 
     _chain.canonicalStateChain
       .getFunction("setChallengeContract")
       .send(await challenge.getAddress());
+
+    // set isHeaderChallengeEnabled to true
+    await challenge.getFunction("toggleHeaderChallenge").send(true);
   });
 
   describe("deployment", function () {
@@ -82,14 +102,10 @@ describe("ChallengeHeader", function () {
     it("should not invalidate a valid header", async function () {
       const validHeader: Header = {
         epoch: BigInt(1),
-        l2Height: genesisHeader.l2Height + BigInt(1),
+        l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
         prevHash: genesisHash,
-        txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaHeight: BigInt(5),
-        celestiaShareStart: BigInt(1),
-        celestiaShareLen: BigInt(1),
+        celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
       };
 
       await canonicalStateChain
@@ -108,14 +124,10 @@ describe("ChallengeHeader", function () {
     it("should invalidate header with incorrect L2 height", async function () {
       const invalidHeader: Header = {
         epoch: BigInt(1),
-        l2Height: genesisHeader.l2Height - BigInt(1),
+        l2Height: toBigInt(genesisHeader.l2Height) - BigInt(1),
         prevHash: genesisHash,
-        txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaHeight: BigInt(1),
-        celestiaShareStart: BigInt(1),
-        celestiaShareLen: BigInt(1),
+        celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
       };
 
       await canonicalStateChain
@@ -134,14 +146,10 @@ describe("ChallengeHeader", function () {
     it("should invalidate header even after a newer block", async function () {
       const invalidHeader: Header = {
         epoch: BigInt(1),
-        l2Height: genesisHeader.l2Height - BigInt(1),
+        l2Height: toBigInt(genesisHeader.l2Height) - BigInt(1),
         prevHash: genesisHash,
-        txRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        blockRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-        celestiaHeight: BigInt(1),
-        celestiaShareStart: BigInt(1),
-        celestiaShareLen: BigInt(1),
+        celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
       };
 
       await canonicalStateChain
@@ -260,6 +268,73 @@ describe("ChallengeHeader", function () {
           .getFunction("invalidateHeader")
           .send(11),
       ).to.emit(challenge, "InvalidHeader");
+    });
+  });
+
+  describe("toggleHeaderChallenge", function () {
+    it("toggleHeaderChallenge should be failed without owner", async function () {
+      await expect(
+        challenge
+          .connect(otherAccount)
+          .getFunction("toggleHeaderChallenge")
+          .send(false),
+      ).to.be.revertedWithCustomError(challenge, "OwnableUnauthorizedAccount");
+    });
+
+    it("toggleHeaderChallenge should be correct", async function () {
+      await challenge.getFunction("toggleHeaderChallenge").send(true);
+      expect(await challenge.isHeaderChallengeEnabled()).to.equal(true);
+
+      await challenge.getFunction("toggleHeaderChallenge").send(false);
+      expect(await challenge.isHeaderChallengeEnabled()).to.equal(false);
+    });
+
+    it("challenge header should revert when disabled", async function () {
+      await challenge.getFunction("toggleHeaderChallenge").send(false);
+
+      const validHeader: Header = {
+        epoch: BigInt(1),
+        l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
+        prevHash: genesisHash,
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
+      };
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(validHeader);
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(1),
+      ).to.be.revertedWith("header challenge is disabled");
+    });
+
+    it("challenge header should not revert when enabled", async function () {
+      await challenge.getFunction("toggleHeaderChallenge").send(true);
+
+      const validHeader: Header = {
+        epoch: BigInt(1),
+        l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
+        prevHash: genesisHash,
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
+      };
+
+      await canonicalStateChain
+        .connect(publisher)
+        .getFunction("pushBlock")
+        .send(validHeader);
+
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .getFunction("invalidateHeader")
+          .send(1),
+      ).to.be.revertedWith("header is valid");
     });
   });
 });

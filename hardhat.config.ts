@@ -3,6 +3,9 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 import "@solarity/hardhat-gobind";
+import "./tasks/rollupHead";
+import "./tasks/challengeL2Header";
+import "./tasks/pushRBlock";
 
 cfg();
 
@@ -33,22 +36,38 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
+    localhost: {
+      chainId: 1337,
+    },
     sepolia: {
       url: process.env.SEPOLIA_PROVIDER_URL || "",
       accounts: [
-        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
-        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     ethereum: {
       url: process.env.ETHEREUM_PROVIDER_URL || "",
       accounts: [
-        process.env.SEPOLIA_OWNER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
-        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ?? "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     pegasus: {
       url: process.env.PEGASUS_PROVIDER_URL || "",
+    },
+    arbSepolia: {
+      url: process.env.ARBITRUM_SEPOLIA_PROVIDER_URL || "",
+      accounts: [
+        process.env.ARBITRUM_SEPOLIA_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.ARBITRUM_SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+      ],
     },
   },
   mocha: {
@@ -63,7 +82,18 @@ const config: HardhatUserConfig = {
       hardhat: "123456",
       mainnet: process.env.ETHERSCAN_API_KEY || "",
       sepolia: process.env.ETHERSCAN_API_KEY || "",
+      arbSepolia: process.env.ETHERSCAN_API_KEY || "",
     },
+    customChains: [
+      {
+        network: "arbSepolia",
+        chainId: 421614,
+        urls: {
+          apiURL: "https://api-sepolia.arbiscan.io/api",
+          browserURL: "https://sepolia.arbiscan.io",
+        },
+      },
+    ],
   },
   gobind: {
     outdir: "./generated-types/bindings",
@@ -74,8 +104,9 @@ const config: HardhatUserConfig = {
       "contracts/CanonicalStateChain.sol",
       "contracts/challenge/Challenge.sol",
       "contracts/ChainOracle.sol",
+      "contracts/interfaces/IBlobstreamX.sol",
     ],
-    skipFiles: ["contracts/interfaces", "@openzeppelin", "@solarity"],
+    skipFiles: ["@openzeppelin", "@solarity"],
   },
 };
 

@@ -43,6 +43,12 @@ type ChallengeDataAvailabilityChallengeDAProof struct {
 	Proof         BinaryMerkleProof
 }
 
+// ChallengeL2HeaderL2HeaderPointer is an auto generated low-level Go binding around an user-defined struct.
+type ChallengeL2HeaderL2HeaderPointer struct {
+	Rblock [32]byte
+	Number *big.Int
+}
+
 // DataRootTuple is an auto generated low-level Go binding around an user-defined struct.
 type DataRootTuple struct {
 	Height   *big.Int
@@ -51,7 +57,7 @@ type DataRootTuple struct {
 
 // ChallengeMetaData contains all meta data concerning the Challenge contract.
 var ChallengeMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"ERC1967InvalidImplementation\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC1967NonPayable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UUPSUnauthorizedCallContext\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"}],\"name\":\"UUPSUnsupportedProxiableUUID\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_expiry\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"_status\",\"type\":\"uint8\"}],\"name\":\"ChallengeDAUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"enumChallengeHeader.InvalidHeaderReason\",\"name\":\"_reason\",\"type\":\"uint8\"}],\"name\":\"InvalidHeader\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"UPGRADE_INTERFACE_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"contractICanonicalStateChain\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chainOracle\",\"outputs\":[{\"internalType\":\"contractIChainOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"challengeDataRootInclusion\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengePeriod\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeWindow\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"daChallenges\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"challenger\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"daOracle\",\"outputs\":[{\"internalType\":\"contractIDAOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"rootNonce\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"dataRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structDataRootTuple\",\"name\":\"dataRootTuple\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32[]\",\"name\":\"sideNodes\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint256\",\"name\":\"key\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"numLeaves\",\"type\":\"uint256\"}],\"internalType\":\"structBinaryMerkleProof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"structChallengeDataAvailability.ChallengeDAProof\",\"name\":\"_proof\",\"type\":\"tuple\"}],\"name\":\"defendDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defender\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_treasury\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chain\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_daOracle\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_mipsChallenge\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chainOracle\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"invalidateHeader\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"mipsChallenge\",\"outputs\":[{\"internalType\":\"contractIMipsChallenge\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeFee\",\"type\":\"uint256\"}],\"name\":\"setChallengeFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengePeriod\",\"type\":\"uint256\"}],\"name\":\"setChallengePeriod\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeReward\",\"type\":\"uint256\"}],\"name\":\"setChallengeReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeWindow\",\"type\":\"uint256\"}],\"name\":\"setChallengeWindow\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_defender\",\"type\":\"address\"}],\"name\":\"setDefender\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockhash\",\"type\":\"bytes32\"}],\"name\":\"settleDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"treasury\",\"outputs\":[{\"internalType\":\"contractITreasury\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"ERC1967InvalidImplementation\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC1967NonPayable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UUPSUnauthorizedCallContext\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"}],\"name\":\"UUPSUnsupportedProxiableUUID\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_pointerIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_expiry\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"_status\",\"type\":\"uint8\"}],\"name\":\"ChallengeDAUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"enumChallengeHeader.InvalidHeaderReason\",\"name\":\"_reason\",\"type\":\"uint8\"}],\"name\":\"InvalidHeader\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"challengeHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"l2Number\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"rblock\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"enumChallengeL2Header.L2HeaderChallengeStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"name\":\"L2HeaderChallengeUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"UPGRADE_INTERFACE_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"contractICanonicalStateChain\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chainOracle\",\"outputs\":[{\"internalType\":\"contractIChainOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"_pointerIndex\",\"type\":\"uint8\"}],\"name\":\"challengeDataRootInclusion\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_rblockNum\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_l2Num\",\"type\":\"uint256\"}],\"name\":\"challengeL2Header\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengePeriod\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challengeWindow\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"daChallenges\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"blockIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"pointerIndex\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"challenger\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"},{\"internalType\":\"enumChallengeDataAvailability.ChallengeDAStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"daOracle\",\"outputs\":[{\"internalType\":\"contractIDAOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint8\",\"name\":\"_pointerIndex\",\"type\":\"uint8\"}],\"name\":\"dataRootInclusionChallengeKey\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeKey\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"rootNonce\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"dataRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structDataRootTuple\",\"name\":\"dataRootTuple\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32[]\",\"name\":\"sideNodes\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint256\",\"name\":\"key\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"numLeaves\",\"type\":\"uint256\"}],\"internalType\":\"structBinaryMerkleProof\",\"name\":\"proof\",\"type\":\"tuple\"}],\"internalType\":\"structChallengeDataAvailability.ChallengeDAProof\",\"name\":\"_proof\",\"type\":\"tuple\"}],\"name\":\"defendDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_headerHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_headerPrevHash\",\"type\":\"bytes32\"}],\"name\":\"defendL2Header\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defender\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_chain\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_daOracle\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_chainOracle\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockIndex\",\"type\":\"uint256\"}],\"name\":\"invalidateHeader\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isDAChallengeEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isHeaderChallengeEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isL2HeaderChallengeEnabled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_rblockHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_l2Num\",\"type\":\"uint256\"}],\"name\":\"l2HeaderChallengeHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"l2HeaderChallenges\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"rblock\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"internalType\":\"structChallengeL2Header.L2HeaderPointer\",\"name\":\"header\",\"type\":\"tuple\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"rblock\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"internalType\":\"structChallengeL2Header.L2HeaderPointer\",\"name\":\"prevHeader\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"challengeEnd\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"challenger\",\"type\":\"address\"},{\"internalType\":\"enumChallengeL2Header.L2HeaderChallengeStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"maxBundleSize\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeFee\",\"type\":\"uint256\"}],\"name\":\"setChallengeFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengePeriod\",\"type\":\"uint256\"}],\"name\":\"setChallengePeriod\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeReward\",\"type\":\"uint256\"}],\"name\":\"setChallengeReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_challengeWindow\",\"type\":\"uint256\"}],\"name\":\"setChallengeWindow\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_defender\",\"type\":\"address\"}],\"name\":\"setDefender\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_maxBundleSize\",\"type\":\"uint256\"}],\"name\":\"setMaxBundleSize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeKey\",\"type\":\"bytes32\"}],\"name\":\"settleDataRootInclusion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_challengeHash\",\"type\":\"bytes32\"}],\"name\":\"settleL2HeaderChallenge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"_status\",\"type\":\"bool\"}],\"name\":\"toggleDAChallenge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"_status\",\"type\":\"bool\"}],\"name\":\"toggleHeaderChallenge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"_status\",\"type\":\"bool\"}],\"name\":\"toggleL2HeaderChallenge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
 }
 
 // ChallengeABI is the input ABI used to generate the binding from.
@@ -419,30 +425,36 @@ func (_Challenge *ChallengeCallerSession) ChallengeWindow() (*big.Int, error) {
 
 // DaChallenges is a free data retrieval call binding the contract method 0x113e70fb.
 //
-// Solidity: function daChallenges(bytes32 ) view returns(uint256 blockIndex, address challenger, uint256 expiry, uint8 status)
+// Solidity: function daChallenges(bytes32 ) view returns(bytes32 blockHash, uint256 blockIndex, uint8 pointerIndex, address challenger, uint256 expiry, uint8 status)
 func (_Challenge *ChallengeCaller) DaChallenges(opts *bind.CallOpts, arg0 [32]byte) (struct {
-	BlockIndex *big.Int
-	Challenger common.Address
-	Expiry     *big.Int
-	Status     uint8
+	BlockHash    [32]byte
+	BlockIndex   *big.Int
+	PointerIndex uint8
+	Challenger   common.Address
+	Expiry       *big.Int
+	Status       uint8
 }, error) {
 	var out []interface{}
 	err := _Challenge.contract.Call(opts, &out, "daChallenges", arg0)
 
 	outstruct := new(struct {
-		BlockIndex *big.Int
-		Challenger common.Address
-		Expiry     *big.Int
-		Status     uint8
+		BlockHash    [32]byte
+		BlockIndex   *big.Int
+		PointerIndex uint8
+		Challenger   common.Address
+		Expiry       *big.Int
+		Status       uint8
 	})
 	if err != nil {
 		return *outstruct, err
 	}
 
-	outstruct.BlockIndex = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-	outstruct.Challenger = *abi.ConvertType(out[1], new(common.Address)).(*common.Address)
-	outstruct.Expiry = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
-	outstruct.Status = *abi.ConvertType(out[3], new(uint8)).(*uint8)
+	outstruct.BlockHash = *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+	outstruct.BlockIndex = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	outstruct.PointerIndex = *abi.ConvertType(out[2], new(uint8)).(*uint8)
+	outstruct.Challenger = *abi.ConvertType(out[3], new(common.Address)).(*common.Address)
+	outstruct.Expiry = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
+	outstruct.Status = *abi.ConvertType(out[5], new(uint8)).(*uint8)
 
 	return *outstruct, err
 
@@ -450,24 +462,28 @@ func (_Challenge *ChallengeCaller) DaChallenges(opts *bind.CallOpts, arg0 [32]by
 
 // DaChallenges is a free data retrieval call binding the contract method 0x113e70fb.
 //
-// Solidity: function daChallenges(bytes32 ) view returns(uint256 blockIndex, address challenger, uint256 expiry, uint8 status)
+// Solidity: function daChallenges(bytes32 ) view returns(bytes32 blockHash, uint256 blockIndex, uint8 pointerIndex, address challenger, uint256 expiry, uint8 status)
 func (_Challenge *ChallengeSession) DaChallenges(arg0 [32]byte) (struct {
-	BlockIndex *big.Int
-	Challenger common.Address
-	Expiry     *big.Int
-	Status     uint8
+	BlockHash    [32]byte
+	BlockIndex   *big.Int
+	PointerIndex uint8
+	Challenger   common.Address
+	Expiry       *big.Int
+	Status       uint8
 }, error) {
 	return _Challenge.Contract.DaChallenges(&_Challenge.CallOpts, arg0)
 }
 
 // DaChallenges is a free data retrieval call binding the contract method 0x113e70fb.
 //
-// Solidity: function daChallenges(bytes32 ) view returns(uint256 blockIndex, address challenger, uint256 expiry, uint8 status)
+// Solidity: function daChallenges(bytes32 ) view returns(bytes32 blockHash, uint256 blockIndex, uint8 pointerIndex, address challenger, uint256 expiry, uint8 status)
 func (_Challenge *ChallengeCallerSession) DaChallenges(arg0 [32]byte) (struct {
-	BlockIndex *big.Int
-	Challenger common.Address
-	Expiry     *big.Int
-	Status     uint8
+	BlockHash    [32]byte
+	BlockIndex   *big.Int
+	PointerIndex uint8
+	Challenger   common.Address
+	Expiry       *big.Int
+	Status       uint8
 }, error) {
 	return _Challenge.Contract.DaChallenges(&_Challenge.CallOpts, arg0)
 }
@@ -503,6 +519,37 @@ func (_Challenge *ChallengeCallerSession) DaOracle() (common.Address, error) {
 	return _Challenge.Contract.DaOracle(&_Challenge.CallOpts)
 }
 
+// DataRootInclusionChallengeKey is a free data retrieval call binding the contract method 0x4374a47b.
+//
+// Solidity: function dataRootInclusionChallengeKey(bytes32 _blockHash, uint8 _pointerIndex) pure returns(bytes32)
+func (_Challenge *ChallengeCaller) DataRootInclusionChallengeKey(opts *bind.CallOpts, _blockHash [32]byte, _pointerIndex uint8) ([32]byte, error) {
+	var out []interface{}
+	err := _Challenge.contract.Call(opts, &out, "dataRootInclusionChallengeKey", _blockHash, _pointerIndex)
+
+	if err != nil {
+		return *new([32]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+
+	return out0, err
+
+}
+
+// DataRootInclusionChallengeKey is a free data retrieval call binding the contract method 0x4374a47b.
+//
+// Solidity: function dataRootInclusionChallengeKey(bytes32 _blockHash, uint8 _pointerIndex) pure returns(bytes32)
+func (_Challenge *ChallengeSession) DataRootInclusionChallengeKey(_blockHash [32]byte, _pointerIndex uint8) ([32]byte, error) {
+	return _Challenge.Contract.DataRootInclusionChallengeKey(&_Challenge.CallOpts, _blockHash, _pointerIndex)
+}
+
+// DataRootInclusionChallengeKey is a free data retrieval call binding the contract method 0x4374a47b.
+//
+// Solidity: function dataRootInclusionChallengeKey(bytes32 _blockHash, uint8 _pointerIndex) pure returns(bytes32)
+func (_Challenge *ChallengeCallerSession) DataRootInclusionChallengeKey(_blockHash [32]byte, _pointerIndex uint8) ([32]byte, error) {
+	return _Challenge.Contract.DataRootInclusionChallengeKey(&_Challenge.CallOpts, _blockHash, _pointerIndex)
+}
+
 // Defender is a free data retrieval call binding the contract method 0x7f4c91c5.
 //
 // Solidity: function defender() view returns(address)
@@ -534,35 +581,219 @@ func (_Challenge *ChallengeCallerSession) Defender() (common.Address, error) {
 	return _Challenge.Contract.Defender(&_Challenge.CallOpts)
 }
 
-// MipsChallenge is a free data retrieval call binding the contract method 0xdca384be.
+// IsDAChallengeEnabled is a free data retrieval call binding the contract method 0x80a2558a.
 //
-// Solidity: function mipsChallenge() view returns(address)
-func (_Challenge *ChallengeCaller) MipsChallenge(opts *bind.CallOpts) (common.Address, error) {
+// Solidity: function isDAChallengeEnabled() view returns(bool)
+func (_Challenge *ChallengeCaller) IsDAChallengeEnabled(opts *bind.CallOpts) (bool, error) {
 	var out []interface{}
-	err := _Challenge.contract.Call(opts, &out, "mipsChallenge")
+	err := _Challenge.contract.Call(opts, &out, "isDAChallengeEnabled")
 
 	if err != nil {
-		return *new(common.Address), err
+		return *new(bool), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
 
 	return out0, err
 
 }
 
-// MipsChallenge is a free data retrieval call binding the contract method 0xdca384be.
+// IsDAChallengeEnabled is a free data retrieval call binding the contract method 0x80a2558a.
 //
-// Solidity: function mipsChallenge() view returns(address)
-func (_Challenge *ChallengeSession) MipsChallenge() (common.Address, error) {
-	return _Challenge.Contract.MipsChallenge(&_Challenge.CallOpts)
+// Solidity: function isDAChallengeEnabled() view returns(bool)
+func (_Challenge *ChallengeSession) IsDAChallengeEnabled() (bool, error) {
+	return _Challenge.Contract.IsDAChallengeEnabled(&_Challenge.CallOpts)
 }
 
-// MipsChallenge is a free data retrieval call binding the contract method 0xdca384be.
+// IsDAChallengeEnabled is a free data retrieval call binding the contract method 0x80a2558a.
 //
-// Solidity: function mipsChallenge() view returns(address)
-func (_Challenge *ChallengeCallerSession) MipsChallenge() (common.Address, error) {
-	return _Challenge.Contract.MipsChallenge(&_Challenge.CallOpts)
+// Solidity: function isDAChallengeEnabled() view returns(bool)
+func (_Challenge *ChallengeCallerSession) IsDAChallengeEnabled() (bool, error) {
+	return _Challenge.Contract.IsDAChallengeEnabled(&_Challenge.CallOpts)
+}
+
+// IsHeaderChallengeEnabled is a free data retrieval call binding the contract method 0x325898b1.
+//
+// Solidity: function isHeaderChallengeEnabled() view returns(bool)
+func (_Challenge *ChallengeCaller) IsHeaderChallengeEnabled(opts *bind.CallOpts) (bool, error) {
+	var out []interface{}
+	err := _Challenge.contract.Call(opts, &out, "isHeaderChallengeEnabled")
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// IsHeaderChallengeEnabled is a free data retrieval call binding the contract method 0x325898b1.
+//
+// Solidity: function isHeaderChallengeEnabled() view returns(bool)
+func (_Challenge *ChallengeSession) IsHeaderChallengeEnabled() (bool, error) {
+	return _Challenge.Contract.IsHeaderChallengeEnabled(&_Challenge.CallOpts)
+}
+
+// IsHeaderChallengeEnabled is a free data retrieval call binding the contract method 0x325898b1.
+//
+// Solidity: function isHeaderChallengeEnabled() view returns(bool)
+func (_Challenge *ChallengeCallerSession) IsHeaderChallengeEnabled() (bool, error) {
+	return _Challenge.Contract.IsHeaderChallengeEnabled(&_Challenge.CallOpts)
+}
+
+// IsL2HeaderChallengeEnabled is a free data retrieval call binding the contract method 0x39e87c22.
+//
+// Solidity: function isL2HeaderChallengeEnabled() view returns(bool)
+func (_Challenge *ChallengeCaller) IsL2HeaderChallengeEnabled(opts *bind.CallOpts) (bool, error) {
+	var out []interface{}
+	err := _Challenge.contract.Call(opts, &out, "isL2HeaderChallengeEnabled")
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// IsL2HeaderChallengeEnabled is a free data retrieval call binding the contract method 0x39e87c22.
+//
+// Solidity: function isL2HeaderChallengeEnabled() view returns(bool)
+func (_Challenge *ChallengeSession) IsL2HeaderChallengeEnabled() (bool, error) {
+	return _Challenge.Contract.IsL2HeaderChallengeEnabled(&_Challenge.CallOpts)
+}
+
+// IsL2HeaderChallengeEnabled is a free data retrieval call binding the contract method 0x39e87c22.
+//
+// Solidity: function isL2HeaderChallengeEnabled() view returns(bool)
+func (_Challenge *ChallengeCallerSession) IsL2HeaderChallengeEnabled() (bool, error) {
+	return _Challenge.Contract.IsL2HeaderChallengeEnabled(&_Challenge.CallOpts)
+}
+
+// L2HeaderChallengeHash is a free data retrieval call binding the contract method 0xfa8e8de2.
+//
+// Solidity: function l2HeaderChallengeHash(bytes32 _rblockHash, uint256 _l2Num) pure returns(bytes32)
+func (_Challenge *ChallengeCaller) L2HeaderChallengeHash(opts *bind.CallOpts, _rblockHash [32]byte, _l2Num *big.Int) ([32]byte, error) {
+	var out []interface{}
+	err := _Challenge.contract.Call(opts, &out, "l2HeaderChallengeHash", _rblockHash, _l2Num)
+
+	if err != nil {
+		return *new([32]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+
+	return out0, err
+
+}
+
+// L2HeaderChallengeHash is a free data retrieval call binding the contract method 0xfa8e8de2.
+//
+// Solidity: function l2HeaderChallengeHash(bytes32 _rblockHash, uint256 _l2Num) pure returns(bytes32)
+func (_Challenge *ChallengeSession) L2HeaderChallengeHash(_rblockHash [32]byte, _l2Num *big.Int) ([32]byte, error) {
+	return _Challenge.Contract.L2HeaderChallengeHash(&_Challenge.CallOpts, _rblockHash, _l2Num)
+}
+
+// L2HeaderChallengeHash is a free data retrieval call binding the contract method 0xfa8e8de2.
+//
+// Solidity: function l2HeaderChallengeHash(bytes32 _rblockHash, uint256 _l2Num) pure returns(bytes32)
+func (_Challenge *ChallengeCallerSession) L2HeaderChallengeHash(_rblockHash [32]byte, _l2Num *big.Int) ([32]byte, error) {
+	return _Challenge.Contract.L2HeaderChallengeHash(&_Challenge.CallOpts, _rblockHash, _l2Num)
+}
+
+// L2HeaderChallenges is a free data retrieval call binding the contract method 0x6da802c8.
+//
+// Solidity: function l2HeaderChallenges(bytes32 ) view returns((bytes32,uint256) header, (bytes32,uint256) prevHeader, uint256 challengeEnd, address challenger, uint8 status)
+func (_Challenge *ChallengeCaller) L2HeaderChallenges(opts *bind.CallOpts, arg0 [32]byte) (struct {
+	Header       ChallengeL2HeaderL2HeaderPointer
+	PrevHeader   ChallengeL2HeaderL2HeaderPointer
+	ChallengeEnd *big.Int
+	Challenger   common.Address
+	Status       uint8
+}, error) {
+	var out []interface{}
+	err := _Challenge.contract.Call(opts, &out, "l2HeaderChallenges", arg0)
+
+	outstruct := new(struct {
+		Header       ChallengeL2HeaderL2HeaderPointer
+		PrevHeader   ChallengeL2HeaderL2HeaderPointer
+		ChallengeEnd *big.Int
+		Challenger   common.Address
+		Status       uint8
+	})
+	if err != nil {
+		return *outstruct, err
+	}
+
+	outstruct.Header = *abi.ConvertType(out[0], new(ChallengeL2HeaderL2HeaderPointer)).(*ChallengeL2HeaderL2HeaderPointer)
+	outstruct.PrevHeader = *abi.ConvertType(out[1], new(ChallengeL2HeaderL2HeaderPointer)).(*ChallengeL2HeaderL2HeaderPointer)
+	outstruct.ChallengeEnd = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+	outstruct.Challenger = *abi.ConvertType(out[3], new(common.Address)).(*common.Address)
+	outstruct.Status = *abi.ConvertType(out[4], new(uint8)).(*uint8)
+
+	return *outstruct, err
+
+}
+
+// L2HeaderChallenges is a free data retrieval call binding the contract method 0x6da802c8.
+//
+// Solidity: function l2HeaderChallenges(bytes32 ) view returns((bytes32,uint256) header, (bytes32,uint256) prevHeader, uint256 challengeEnd, address challenger, uint8 status)
+func (_Challenge *ChallengeSession) L2HeaderChallenges(arg0 [32]byte) (struct {
+	Header       ChallengeL2HeaderL2HeaderPointer
+	PrevHeader   ChallengeL2HeaderL2HeaderPointer
+	ChallengeEnd *big.Int
+	Challenger   common.Address
+	Status       uint8
+}, error) {
+	return _Challenge.Contract.L2HeaderChallenges(&_Challenge.CallOpts, arg0)
+}
+
+// L2HeaderChallenges is a free data retrieval call binding the contract method 0x6da802c8.
+//
+// Solidity: function l2HeaderChallenges(bytes32 ) view returns((bytes32,uint256) header, (bytes32,uint256) prevHeader, uint256 challengeEnd, address challenger, uint8 status)
+func (_Challenge *ChallengeCallerSession) L2HeaderChallenges(arg0 [32]byte) (struct {
+	Header       ChallengeL2HeaderL2HeaderPointer
+	PrevHeader   ChallengeL2HeaderL2HeaderPointer
+	ChallengeEnd *big.Int
+	Challenger   common.Address
+	Status       uint8
+}, error) {
+	return _Challenge.Contract.L2HeaderChallenges(&_Challenge.CallOpts, arg0)
+}
+
+// MaxBundleSize is a free data retrieval call binding the contract method 0x4c1b6e4b.
+//
+// Solidity: function maxBundleSize() view returns(uint256)
+func (_Challenge *ChallengeCaller) MaxBundleSize(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _Challenge.contract.Call(opts, &out, "maxBundleSize")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// MaxBundleSize is a free data retrieval call binding the contract method 0x4c1b6e4b.
+//
+// Solidity: function maxBundleSize() view returns(uint256)
+func (_Challenge *ChallengeSession) MaxBundleSize() (*big.Int, error) {
+	return _Challenge.Contract.MaxBundleSize(&_Challenge.CallOpts)
+}
+
+// MaxBundleSize is a free data retrieval call binding the contract method 0x4c1b6e4b.
+//
+// Solidity: function maxBundleSize() view returns(uint256)
+func (_Challenge *ChallengeCallerSession) MaxBundleSize() (*big.Int, error) {
+	return _Challenge.Contract.MaxBundleSize(&_Challenge.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -627,98 +858,109 @@ func (_Challenge *ChallengeCallerSession) ProxiableUUID() ([32]byte, error) {
 	return _Challenge.Contract.ProxiableUUID(&_Challenge.CallOpts)
 }
 
-// Treasury is a free data retrieval call binding the contract method 0x61d027b3.
+// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x1c6bb9ba.
 //
-// Solidity: function treasury() view returns(address)
-func (_Challenge *ChallengeCaller) Treasury(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _Challenge.contract.Call(opts, &out, "treasury")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
+// Solidity: function challengeDataRootInclusion(uint256 _blockIndex, uint8 _pointerIndex) payable returns(uint256)
+func (_Challenge *ChallengeTransactor) ChallengeDataRootInclusion(opts *bind.TransactOpts, _blockIndex *big.Int, _pointerIndex uint8) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "challengeDataRootInclusion", _blockIndex, _pointerIndex)
 }
 
-// Treasury is a free data retrieval call binding the contract method 0x61d027b3.
+// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x1c6bb9ba.
 //
-// Solidity: function treasury() view returns(address)
-func (_Challenge *ChallengeSession) Treasury() (common.Address, error) {
-	return _Challenge.Contract.Treasury(&_Challenge.CallOpts)
+// Solidity: function challengeDataRootInclusion(uint256 _blockIndex, uint8 _pointerIndex) payable returns(uint256)
+func (_Challenge *ChallengeSession) ChallengeDataRootInclusion(_blockIndex *big.Int, _pointerIndex uint8) (*types.Transaction, error) {
+	return _Challenge.Contract.ChallengeDataRootInclusion(&_Challenge.TransactOpts, _blockIndex, _pointerIndex)
 }
 
-// Treasury is a free data retrieval call binding the contract method 0x61d027b3.
+// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x1c6bb9ba.
 //
-// Solidity: function treasury() view returns(address)
-func (_Challenge *ChallengeCallerSession) Treasury() (common.Address, error) {
-	return _Challenge.Contract.Treasury(&_Challenge.CallOpts)
+// Solidity: function challengeDataRootInclusion(uint256 _blockIndex, uint8 _pointerIndex) payable returns(uint256)
+func (_Challenge *ChallengeTransactorSession) ChallengeDataRootInclusion(_blockIndex *big.Int, _pointerIndex uint8) (*types.Transaction, error) {
+	return _Challenge.Contract.ChallengeDataRootInclusion(&_Challenge.TransactOpts, _blockIndex, _pointerIndex)
 }
 
-// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x7739f135.
+// ChallengeL2Header is a paid mutator transaction binding the contract method 0x5ae45d8b.
 //
-// Solidity: function challengeDataRootInclusion(uint256 _blockIndex) payable returns(uint256)
-func (_Challenge *ChallengeTransactor) ChallengeDataRootInclusion(opts *bind.TransactOpts, _blockIndex *big.Int) (*types.Transaction, error) {
-	return _Challenge.contract.Transact(opts, "challengeDataRootInclusion", _blockIndex)
+// Solidity: function challengeL2Header(uint256 _rblockNum, uint256 _l2Num) payable returns(bytes32)
+func (_Challenge *ChallengeTransactor) ChallengeL2Header(opts *bind.TransactOpts, _rblockNum *big.Int, _l2Num *big.Int) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "challengeL2Header", _rblockNum, _l2Num)
 }
 
-// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x7739f135.
+// ChallengeL2Header is a paid mutator transaction binding the contract method 0x5ae45d8b.
 //
-// Solidity: function challengeDataRootInclusion(uint256 _blockIndex) payable returns(uint256)
-func (_Challenge *ChallengeSession) ChallengeDataRootInclusion(_blockIndex *big.Int) (*types.Transaction, error) {
-	return _Challenge.Contract.ChallengeDataRootInclusion(&_Challenge.TransactOpts, _blockIndex)
+// Solidity: function challengeL2Header(uint256 _rblockNum, uint256 _l2Num) payable returns(bytes32)
+func (_Challenge *ChallengeSession) ChallengeL2Header(_rblockNum *big.Int, _l2Num *big.Int) (*types.Transaction, error) {
+	return _Challenge.Contract.ChallengeL2Header(&_Challenge.TransactOpts, _rblockNum, _l2Num)
 }
 
-// ChallengeDataRootInclusion is a paid mutator transaction binding the contract method 0x7739f135.
+// ChallengeL2Header is a paid mutator transaction binding the contract method 0x5ae45d8b.
 //
-// Solidity: function challengeDataRootInclusion(uint256 _blockIndex) payable returns(uint256)
-func (_Challenge *ChallengeTransactorSession) ChallengeDataRootInclusion(_blockIndex *big.Int) (*types.Transaction, error) {
-	return _Challenge.Contract.ChallengeDataRootInclusion(&_Challenge.TransactOpts, _blockIndex)
+// Solidity: function challengeL2Header(uint256 _rblockNum, uint256 _l2Num) payable returns(bytes32)
+func (_Challenge *ChallengeTransactorSession) ChallengeL2Header(_rblockNum *big.Int, _l2Num *big.Int) (*types.Transaction, error) {
+	return _Challenge.Contract.ChallengeL2Header(&_Challenge.TransactOpts, _rblockNum, _l2Num)
 }
 
 // DefendDataRootInclusion is a paid mutator transaction binding the contract method 0x2fc72885.
 //
-// Solidity: function defendDataRootInclusion(bytes32 _blockHash, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
-func (_Challenge *ChallengeTransactor) DefendDataRootInclusion(opts *bind.TransactOpts, _blockHash [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
-	return _Challenge.contract.Transact(opts, "defendDataRootInclusion", _blockHash, _proof)
+// Solidity: function defendDataRootInclusion(bytes32 _challengeKey, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
+func (_Challenge *ChallengeTransactor) DefendDataRootInclusion(opts *bind.TransactOpts, _challengeKey [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "defendDataRootInclusion", _challengeKey, _proof)
 }
 
 // DefendDataRootInclusion is a paid mutator transaction binding the contract method 0x2fc72885.
 //
-// Solidity: function defendDataRootInclusion(bytes32 _blockHash, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
-func (_Challenge *ChallengeSession) DefendDataRootInclusion(_blockHash [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
-	return _Challenge.Contract.DefendDataRootInclusion(&_Challenge.TransactOpts, _blockHash, _proof)
+// Solidity: function defendDataRootInclusion(bytes32 _challengeKey, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
+func (_Challenge *ChallengeSession) DefendDataRootInclusion(_challengeKey [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
+	return _Challenge.Contract.DefendDataRootInclusion(&_Challenge.TransactOpts, _challengeKey, _proof)
 }
 
 // DefendDataRootInclusion is a paid mutator transaction binding the contract method 0x2fc72885.
 //
-// Solidity: function defendDataRootInclusion(bytes32 _blockHash, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
-func (_Challenge *ChallengeTransactorSession) DefendDataRootInclusion(_blockHash [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
-	return _Challenge.Contract.DefendDataRootInclusion(&_Challenge.TransactOpts, _blockHash, _proof)
+// Solidity: function defendDataRootInclusion(bytes32 _challengeKey, (uint256,(uint256,bytes32),(bytes32[],uint256,uint256)) _proof) returns()
+func (_Challenge *ChallengeTransactorSession) DefendDataRootInclusion(_challengeKey [32]byte, _proof ChallengeDataAvailabilityChallengeDAProof) (*types.Transaction, error) {
+	return _Challenge.Contract.DefendDataRootInclusion(&_Challenge.TransactOpts, _challengeKey, _proof)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x1459457a.
+// DefendL2Header is a paid mutator transaction binding the contract method 0x0200501d.
 //
-// Solidity: function initialize(address _treasury, address _chain, address _daOracle, address _mipsChallenge, address _chainOracle) returns()
-func (_Challenge *ChallengeTransactor) Initialize(opts *bind.TransactOpts, _treasury common.Address, _chain common.Address, _daOracle common.Address, _mipsChallenge common.Address, _chainOracle common.Address) (*types.Transaction, error) {
-	return _Challenge.contract.Transact(opts, "initialize", _treasury, _chain, _daOracle, _mipsChallenge, _chainOracle)
+// Solidity: function defendL2Header(bytes32 _challengeHash, bytes32 _headerHash, bytes32 _headerPrevHash) returns()
+func (_Challenge *ChallengeTransactor) DefendL2Header(opts *bind.TransactOpts, _challengeHash [32]byte, _headerHash [32]byte, _headerPrevHash [32]byte) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "defendL2Header", _challengeHash, _headerHash, _headerPrevHash)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x1459457a.
+// DefendL2Header is a paid mutator transaction binding the contract method 0x0200501d.
 //
-// Solidity: function initialize(address _treasury, address _chain, address _daOracle, address _mipsChallenge, address _chainOracle) returns()
-func (_Challenge *ChallengeSession) Initialize(_treasury common.Address, _chain common.Address, _daOracle common.Address, _mipsChallenge common.Address, _chainOracle common.Address) (*types.Transaction, error) {
-	return _Challenge.Contract.Initialize(&_Challenge.TransactOpts, _treasury, _chain, _daOracle, _mipsChallenge, _chainOracle)
+// Solidity: function defendL2Header(bytes32 _challengeHash, bytes32 _headerHash, bytes32 _headerPrevHash) returns()
+func (_Challenge *ChallengeSession) DefendL2Header(_challengeHash [32]byte, _headerHash [32]byte, _headerPrevHash [32]byte) (*types.Transaction, error) {
+	return _Challenge.Contract.DefendL2Header(&_Challenge.TransactOpts, _challengeHash, _headerHash, _headerPrevHash)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x1459457a.
+// DefendL2Header is a paid mutator transaction binding the contract method 0x0200501d.
 //
-// Solidity: function initialize(address _treasury, address _chain, address _daOracle, address _mipsChallenge, address _chainOracle) returns()
-func (_Challenge *ChallengeTransactorSession) Initialize(_treasury common.Address, _chain common.Address, _daOracle common.Address, _mipsChallenge common.Address, _chainOracle common.Address) (*types.Transaction, error) {
-	return _Challenge.Contract.Initialize(&_Challenge.TransactOpts, _treasury, _chain, _daOracle, _mipsChallenge, _chainOracle)
+// Solidity: function defendL2Header(bytes32 _challengeHash, bytes32 _headerHash, bytes32 _headerPrevHash) returns()
+func (_Challenge *ChallengeTransactorSession) DefendL2Header(_challengeHash [32]byte, _headerHash [32]byte, _headerPrevHash [32]byte) (*types.Transaction, error) {
+	return _Challenge.Contract.DefendL2Header(&_Challenge.TransactOpts, _challengeHash, _headerHash, _headerPrevHash)
+}
+
+// Initialize is a paid mutator transaction binding the contract method 0xc0c53b8b.
+//
+// Solidity: function initialize(address _chain, address _daOracle, address _chainOracle) returns()
+func (_Challenge *ChallengeTransactor) Initialize(opts *bind.TransactOpts, _chain common.Address, _daOracle common.Address, _chainOracle common.Address) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "initialize", _chain, _daOracle, _chainOracle)
+}
+
+// Initialize is a paid mutator transaction binding the contract method 0xc0c53b8b.
+//
+// Solidity: function initialize(address _chain, address _daOracle, address _chainOracle) returns()
+func (_Challenge *ChallengeSession) Initialize(_chain common.Address, _daOracle common.Address, _chainOracle common.Address) (*types.Transaction, error) {
+	return _Challenge.Contract.Initialize(&_Challenge.TransactOpts, _chain, _daOracle, _chainOracle)
+}
+
+// Initialize is a paid mutator transaction binding the contract method 0xc0c53b8b.
+//
+// Solidity: function initialize(address _chain, address _daOracle, address _chainOracle) returns()
+func (_Challenge *ChallengeTransactorSession) Initialize(_chain common.Address, _daOracle common.Address, _chainOracle common.Address) (*types.Transaction, error) {
+	return _Challenge.Contract.Initialize(&_Challenge.TransactOpts, _chain, _daOracle, _chainOracle)
 }
 
 // InvalidateHeader is a paid mutator transaction binding the contract method 0x5dade412.
@@ -868,25 +1110,130 @@ func (_Challenge *ChallengeTransactorSession) SetDefender(_defender common.Addre
 	return _Challenge.Contract.SetDefender(&_Challenge.TransactOpts, _defender)
 }
 
-// SettleDataRootInclusion is a paid mutator transaction binding the contract method 0x5bba0ea9.
+// SetMaxBundleSize is a paid mutator transaction binding the contract method 0xbc677451.
 //
-// Solidity: function settleDataRootInclusion(bytes32 _blockhash) returns()
-func (_Challenge *ChallengeTransactor) SettleDataRootInclusion(opts *bind.TransactOpts, _blockhash [32]byte) (*types.Transaction, error) {
-	return _Challenge.contract.Transact(opts, "settleDataRootInclusion", _blockhash)
+// Solidity: function setMaxBundleSize(uint256 _maxBundleSize) returns()
+func (_Challenge *ChallengeTransactor) SetMaxBundleSize(opts *bind.TransactOpts, _maxBundleSize *big.Int) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "setMaxBundleSize", _maxBundleSize)
+}
+
+// SetMaxBundleSize is a paid mutator transaction binding the contract method 0xbc677451.
+//
+// Solidity: function setMaxBundleSize(uint256 _maxBundleSize) returns()
+func (_Challenge *ChallengeSession) SetMaxBundleSize(_maxBundleSize *big.Int) (*types.Transaction, error) {
+	return _Challenge.Contract.SetMaxBundleSize(&_Challenge.TransactOpts, _maxBundleSize)
+}
+
+// SetMaxBundleSize is a paid mutator transaction binding the contract method 0xbc677451.
+//
+// Solidity: function setMaxBundleSize(uint256 _maxBundleSize) returns()
+func (_Challenge *ChallengeTransactorSession) SetMaxBundleSize(_maxBundleSize *big.Int) (*types.Transaction, error) {
+	return _Challenge.Contract.SetMaxBundleSize(&_Challenge.TransactOpts, _maxBundleSize)
 }
 
 // SettleDataRootInclusion is a paid mutator transaction binding the contract method 0x5bba0ea9.
 //
-// Solidity: function settleDataRootInclusion(bytes32 _blockhash) returns()
-func (_Challenge *ChallengeSession) SettleDataRootInclusion(_blockhash [32]byte) (*types.Transaction, error) {
-	return _Challenge.Contract.SettleDataRootInclusion(&_Challenge.TransactOpts, _blockhash)
+// Solidity: function settleDataRootInclusion(bytes32 _challengeKey) returns()
+func (_Challenge *ChallengeTransactor) SettleDataRootInclusion(opts *bind.TransactOpts, _challengeKey [32]byte) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "settleDataRootInclusion", _challengeKey)
 }
 
 // SettleDataRootInclusion is a paid mutator transaction binding the contract method 0x5bba0ea9.
 //
-// Solidity: function settleDataRootInclusion(bytes32 _blockhash) returns()
-func (_Challenge *ChallengeTransactorSession) SettleDataRootInclusion(_blockhash [32]byte) (*types.Transaction, error) {
-	return _Challenge.Contract.SettleDataRootInclusion(&_Challenge.TransactOpts, _blockhash)
+// Solidity: function settleDataRootInclusion(bytes32 _challengeKey) returns()
+func (_Challenge *ChallengeSession) SettleDataRootInclusion(_challengeKey [32]byte) (*types.Transaction, error) {
+	return _Challenge.Contract.SettleDataRootInclusion(&_Challenge.TransactOpts, _challengeKey)
+}
+
+// SettleDataRootInclusion is a paid mutator transaction binding the contract method 0x5bba0ea9.
+//
+// Solidity: function settleDataRootInclusion(bytes32 _challengeKey) returns()
+func (_Challenge *ChallengeTransactorSession) SettleDataRootInclusion(_challengeKey [32]byte) (*types.Transaction, error) {
+	return _Challenge.Contract.SettleDataRootInclusion(&_Challenge.TransactOpts, _challengeKey)
+}
+
+// SettleL2HeaderChallenge is a paid mutator transaction binding the contract method 0xf8a22c6c.
+//
+// Solidity: function settleL2HeaderChallenge(bytes32 _challengeHash) returns()
+func (_Challenge *ChallengeTransactor) SettleL2HeaderChallenge(opts *bind.TransactOpts, _challengeHash [32]byte) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "settleL2HeaderChallenge", _challengeHash)
+}
+
+// SettleL2HeaderChallenge is a paid mutator transaction binding the contract method 0xf8a22c6c.
+//
+// Solidity: function settleL2HeaderChallenge(bytes32 _challengeHash) returns()
+func (_Challenge *ChallengeSession) SettleL2HeaderChallenge(_challengeHash [32]byte) (*types.Transaction, error) {
+	return _Challenge.Contract.SettleL2HeaderChallenge(&_Challenge.TransactOpts, _challengeHash)
+}
+
+// SettleL2HeaderChallenge is a paid mutator transaction binding the contract method 0xf8a22c6c.
+//
+// Solidity: function settleL2HeaderChallenge(bytes32 _challengeHash) returns()
+func (_Challenge *ChallengeTransactorSession) SettleL2HeaderChallenge(_challengeHash [32]byte) (*types.Transaction, error) {
+	return _Challenge.Contract.SettleL2HeaderChallenge(&_Challenge.TransactOpts, _challengeHash)
+}
+
+// ToggleDAChallenge is a paid mutator transaction binding the contract method 0x485bc239.
+//
+// Solidity: function toggleDAChallenge(bool _status) returns()
+func (_Challenge *ChallengeTransactor) ToggleDAChallenge(opts *bind.TransactOpts, _status bool) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "toggleDAChallenge", _status)
+}
+
+// ToggleDAChallenge is a paid mutator transaction binding the contract method 0x485bc239.
+//
+// Solidity: function toggleDAChallenge(bool _status) returns()
+func (_Challenge *ChallengeSession) ToggleDAChallenge(_status bool) (*types.Transaction, error) {
+	return _Challenge.Contract.ToggleDAChallenge(&_Challenge.TransactOpts, _status)
+}
+
+// ToggleDAChallenge is a paid mutator transaction binding the contract method 0x485bc239.
+//
+// Solidity: function toggleDAChallenge(bool _status) returns()
+func (_Challenge *ChallengeTransactorSession) ToggleDAChallenge(_status bool) (*types.Transaction, error) {
+	return _Challenge.Contract.ToggleDAChallenge(&_Challenge.TransactOpts, _status)
+}
+
+// ToggleHeaderChallenge is a paid mutator transaction binding the contract method 0x988c6671.
+//
+// Solidity: function toggleHeaderChallenge(bool _status) returns()
+func (_Challenge *ChallengeTransactor) ToggleHeaderChallenge(opts *bind.TransactOpts, _status bool) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "toggleHeaderChallenge", _status)
+}
+
+// ToggleHeaderChallenge is a paid mutator transaction binding the contract method 0x988c6671.
+//
+// Solidity: function toggleHeaderChallenge(bool _status) returns()
+func (_Challenge *ChallengeSession) ToggleHeaderChallenge(_status bool) (*types.Transaction, error) {
+	return _Challenge.Contract.ToggleHeaderChallenge(&_Challenge.TransactOpts, _status)
+}
+
+// ToggleHeaderChallenge is a paid mutator transaction binding the contract method 0x988c6671.
+//
+// Solidity: function toggleHeaderChallenge(bool _status) returns()
+func (_Challenge *ChallengeTransactorSession) ToggleHeaderChallenge(_status bool) (*types.Transaction, error) {
+	return _Challenge.Contract.ToggleHeaderChallenge(&_Challenge.TransactOpts, _status)
+}
+
+// ToggleL2HeaderChallenge is a paid mutator transaction binding the contract method 0x95618a28.
+//
+// Solidity: function toggleL2HeaderChallenge(bool _status) returns()
+func (_Challenge *ChallengeTransactor) ToggleL2HeaderChallenge(opts *bind.TransactOpts, _status bool) (*types.Transaction, error) {
+	return _Challenge.contract.Transact(opts, "toggleL2HeaderChallenge", _status)
+}
+
+// ToggleL2HeaderChallenge is a paid mutator transaction binding the contract method 0x95618a28.
+//
+// Solidity: function toggleL2HeaderChallenge(bool _status) returns()
+func (_Challenge *ChallengeSession) ToggleL2HeaderChallenge(_status bool) (*types.Transaction, error) {
+	return _Challenge.Contract.ToggleL2HeaderChallenge(&_Challenge.TransactOpts, _status)
+}
+
+// ToggleL2HeaderChallenge is a paid mutator transaction binding the contract method 0x95618a28.
+//
+// Solidity: function toggleL2HeaderChallenge(bool _status) returns()
+func (_Challenge *ChallengeTransactorSession) ToggleL2HeaderChallenge(_status bool) (*types.Transaction, error) {
+	return _Challenge.Contract.ToggleL2HeaderChallenge(&_Challenge.TransactOpts, _status)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
@@ -1000,25 +1347,26 @@ func (it *ChallengeChallengeDAUpdateIterator) Close() error {
 
 // ChallengeChallengeDAUpdate represents a ChallengeDAUpdate event raised by the Challenge contract.
 type ChallengeChallengeDAUpdate struct {
-	BlockHash  [32]byte
-	BlockIndex *big.Int
-	Expiry     *big.Int
-	Status     uint8
-	Raw        types.Log // Blockchain specific contextual infos
+	BlockHash    [32]byte
+	PointerIndex *big.Int
+	BlockIndex   *big.Int
+	Expiry       *big.Int
+	Status       uint8
+	Raw          types.Log // Blockchain specific contextual infos
 }
 
-// FilterChallengeDAUpdate is a free log retrieval operation binding the contract event 0xcdbf857f75b46d9b94fe7c990b2b0457f168aef7b089a0cb5d4e88074f2d88e8.
+// FilterChallengeDAUpdate is a free log retrieval operation binding the contract event 0x53e4985042ec205f5e57d94bfa2804bdf33e6a9c8aa09d50549fadfde81b00ba.
 //
-// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _blockIndex, uint256 _expiry, uint8 indexed _status)
-func (_Challenge *ChallengeFilterer) FilterChallengeDAUpdate(opts *bind.FilterOpts, _blockHash [][32]byte, _blockIndex []*big.Int, _status []uint8) (*ChallengeChallengeDAUpdateIterator, error) {
+// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _pointerIndex, uint256 _blockIndex, uint256 _expiry, uint8 indexed _status)
+func (_Challenge *ChallengeFilterer) FilterChallengeDAUpdate(opts *bind.FilterOpts, _blockHash [][32]byte, _pointerIndex []*big.Int, _status []uint8) (*ChallengeChallengeDAUpdateIterator, error) {
 
 	var _blockHashRule []interface{}
 	for _, _blockHashItem := range _blockHash {
 		_blockHashRule = append(_blockHashRule, _blockHashItem)
 	}
-	var _blockIndexRule []interface{}
-	for _, _blockIndexItem := range _blockIndex {
-		_blockIndexRule = append(_blockIndexRule, _blockIndexItem)
+	var _pointerIndexRule []interface{}
+	for _, _pointerIndexItem := range _pointerIndex {
+		_pointerIndexRule = append(_pointerIndexRule, _pointerIndexItem)
 	}
 
 	var _statusRule []interface{}
@@ -1026,25 +1374,25 @@ func (_Challenge *ChallengeFilterer) FilterChallengeDAUpdate(opts *bind.FilterOp
 		_statusRule = append(_statusRule, _statusItem)
 	}
 
-	logs, sub, err := _Challenge.contract.FilterLogs(opts, "ChallengeDAUpdate", _blockHashRule, _blockIndexRule, _statusRule)
+	logs, sub, err := _Challenge.contract.FilterLogs(opts, "ChallengeDAUpdate", _blockHashRule, _pointerIndexRule, _statusRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ChallengeChallengeDAUpdateIterator{contract: _Challenge.contract, event: "ChallengeDAUpdate", logs: logs, sub: sub}, nil
 }
 
-// WatchChallengeDAUpdate is a free log subscription operation binding the contract event 0xcdbf857f75b46d9b94fe7c990b2b0457f168aef7b089a0cb5d4e88074f2d88e8.
+// WatchChallengeDAUpdate is a free log subscription operation binding the contract event 0x53e4985042ec205f5e57d94bfa2804bdf33e6a9c8aa09d50549fadfde81b00ba.
 //
-// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _blockIndex, uint256 _expiry, uint8 indexed _status)
-func (_Challenge *ChallengeFilterer) WatchChallengeDAUpdate(opts *bind.WatchOpts, sink chan<- *ChallengeChallengeDAUpdate, _blockHash [][32]byte, _blockIndex []*big.Int, _status []uint8) (event.Subscription, error) {
+// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _pointerIndex, uint256 _blockIndex, uint256 _expiry, uint8 indexed _status)
+func (_Challenge *ChallengeFilterer) WatchChallengeDAUpdate(opts *bind.WatchOpts, sink chan<- *ChallengeChallengeDAUpdate, _blockHash [][32]byte, _pointerIndex []*big.Int, _status []uint8) (event.Subscription, error) {
 
 	var _blockHashRule []interface{}
 	for _, _blockHashItem := range _blockHash {
 		_blockHashRule = append(_blockHashRule, _blockHashItem)
 	}
-	var _blockIndexRule []interface{}
-	for _, _blockIndexItem := range _blockIndex {
-		_blockIndexRule = append(_blockIndexRule, _blockIndexItem)
+	var _pointerIndexRule []interface{}
+	for _, _pointerIndexItem := range _pointerIndex {
+		_pointerIndexRule = append(_pointerIndexRule, _pointerIndexItem)
 	}
 
 	var _statusRule []interface{}
@@ -1052,7 +1400,7 @@ func (_Challenge *ChallengeFilterer) WatchChallengeDAUpdate(opts *bind.WatchOpts
 		_statusRule = append(_statusRule, _statusItem)
 	}
 
-	logs, sub, err := _Challenge.contract.WatchLogs(opts, "ChallengeDAUpdate", _blockHashRule, _blockIndexRule, _statusRule)
+	logs, sub, err := _Challenge.contract.WatchLogs(opts, "ChallengeDAUpdate", _blockHashRule, _pointerIndexRule, _statusRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1084,9 +1432,9 @@ func (_Challenge *ChallengeFilterer) WatchChallengeDAUpdate(opts *bind.WatchOpts
 	}), nil
 }
 
-// ParseChallengeDAUpdate is a log parse operation binding the contract event 0xcdbf857f75b46d9b94fe7c990b2b0457f168aef7b089a0cb5d4e88074f2d88e8.
+// ParseChallengeDAUpdate is a log parse operation binding the contract event 0x53e4985042ec205f5e57d94bfa2804bdf33e6a9c8aa09d50549fadfde81b00ba.
 //
-// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _blockIndex, uint256 _expiry, uint8 indexed _status)
+// Solidity: event ChallengeDAUpdate(bytes32 indexed _blockHash, uint256 indexed _pointerIndex, uint256 _blockIndex, uint256 _expiry, uint8 indexed _status)
 func (_Challenge *ChallengeFilterer) ParseChallengeDAUpdate(log types.Log) (*ChallengeChallengeDAUpdate, error) {
 	event := new(ChallengeChallengeDAUpdate)
 	if err := _Challenge.contract.UnpackLog(event, "ChallengeDAUpdate", log); err != nil {
@@ -1386,6 +1734,172 @@ func (_Challenge *ChallengeFilterer) WatchInvalidHeader(opts *bind.WatchOpts, si
 func (_Challenge *ChallengeFilterer) ParseInvalidHeader(log types.Log) (*ChallengeInvalidHeader, error) {
 	event := new(ChallengeInvalidHeader)
 	if err := _Challenge.contract.UnpackLog(event, "InvalidHeader", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ChallengeL2HeaderChallengeUpdateIterator is returned from FilterL2HeaderChallengeUpdate and is used to iterate over the raw logs and unpacked data for L2HeaderChallengeUpdate events raised by the Challenge contract.
+type ChallengeL2HeaderChallengeUpdateIterator struct {
+	Event *ChallengeL2HeaderChallengeUpdate // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ChallengeL2HeaderChallengeUpdateIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ChallengeL2HeaderChallengeUpdate)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ChallengeL2HeaderChallengeUpdate)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ChallengeL2HeaderChallengeUpdateIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ChallengeL2HeaderChallengeUpdateIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ChallengeL2HeaderChallengeUpdate represents a L2HeaderChallengeUpdate event raised by the Challenge contract.
+type ChallengeL2HeaderChallengeUpdate struct {
+	ChallengeHash [32]byte
+	L2Number      *big.Int
+	Rblock        [32]byte
+	Expiry        *big.Int
+	Status        uint8
+	Raw           types.Log // Blockchain specific contextual infos
+}
+
+// FilterL2HeaderChallengeUpdate is a free log retrieval operation binding the contract event 0x89389219f04af163105506312f99d6ca034af96d3ee1128efc6a9619ee2aeec2.
+//
+// Solidity: event L2HeaderChallengeUpdate(bytes32 indexed challengeHash, uint256 indexed l2Number, bytes32 rblock, uint256 expiry, uint8 indexed status)
+func (_Challenge *ChallengeFilterer) FilterL2HeaderChallengeUpdate(opts *bind.FilterOpts, challengeHash [][32]byte, l2Number []*big.Int, status []uint8) (*ChallengeL2HeaderChallengeUpdateIterator, error) {
+
+	var challengeHashRule []interface{}
+	for _, challengeHashItem := range challengeHash {
+		challengeHashRule = append(challengeHashRule, challengeHashItem)
+	}
+	var l2NumberRule []interface{}
+	for _, l2NumberItem := range l2Number {
+		l2NumberRule = append(l2NumberRule, l2NumberItem)
+	}
+
+	var statusRule []interface{}
+	for _, statusItem := range status {
+		statusRule = append(statusRule, statusItem)
+	}
+
+	logs, sub, err := _Challenge.contract.FilterLogs(opts, "L2HeaderChallengeUpdate", challengeHashRule, l2NumberRule, statusRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ChallengeL2HeaderChallengeUpdateIterator{contract: _Challenge.contract, event: "L2HeaderChallengeUpdate", logs: logs, sub: sub}, nil
+}
+
+// WatchL2HeaderChallengeUpdate is a free log subscription operation binding the contract event 0x89389219f04af163105506312f99d6ca034af96d3ee1128efc6a9619ee2aeec2.
+//
+// Solidity: event L2HeaderChallengeUpdate(bytes32 indexed challengeHash, uint256 indexed l2Number, bytes32 rblock, uint256 expiry, uint8 indexed status)
+func (_Challenge *ChallengeFilterer) WatchL2HeaderChallengeUpdate(opts *bind.WatchOpts, sink chan<- *ChallengeL2HeaderChallengeUpdate, challengeHash [][32]byte, l2Number []*big.Int, status []uint8) (event.Subscription, error) {
+
+	var challengeHashRule []interface{}
+	for _, challengeHashItem := range challengeHash {
+		challengeHashRule = append(challengeHashRule, challengeHashItem)
+	}
+	var l2NumberRule []interface{}
+	for _, l2NumberItem := range l2Number {
+		l2NumberRule = append(l2NumberRule, l2NumberItem)
+	}
+
+	var statusRule []interface{}
+	for _, statusItem := range status {
+		statusRule = append(statusRule, statusItem)
+	}
+
+	logs, sub, err := _Challenge.contract.WatchLogs(opts, "L2HeaderChallengeUpdate", challengeHashRule, l2NumberRule, statusRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ChallengeL2HeaderChallengeUpdate)
+				if err := _Challenge.contract.UnpackLog(event, "L2HeaderChallengeUpdate", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseL2HeaderChallengeUpdate is a log parse operation binding the contract event 0x89389219f04af163105506312f99d6ca034af96d3ee1128efc6a9619ee2aeec2.
+//
+// Solidity: event L2HeaderChallengeUpdate(bytes32 indexed challengeHash, uint256 indexed l2Number, bytes32 rblock, uint256 expiry, uint8 indexed status)
+func (_Challenge *ChallengeFilterer) ParseL2HeaderChallengeUpdate(log types.Log) (*ChallengeL2HeaderChallengeUpdate, error) {
+	event := new(ChallengeL2HeaderChallengeUpdate)
+	if err := _Challenge.contract.UnpackLog(event, "L2HeaderChallengeUpdate", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
