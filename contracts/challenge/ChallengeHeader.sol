@@ -53,7 +53,7 @@ abstract contract ChallengeHeader is ChallengeBase {
 
     /// @notice Initializes the contract.
     function __ChallengeHeader_init() internal {
-        maxBundleSize = 2000;
+        maxBundleSize = 14000;
     }
 
     /// @notice Invalidate challenges a block header by checking that the header is valid.
