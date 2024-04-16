@@ -6,6 +6,7 @@ import "@solarity/hardhat-gobind";
 import "./tasks/rollupHead";
 import "./tasks/challengeL2Header";
 import "./tasks/pushRBlock";
+import "solidity-coverage";
 
 cfg();
 
