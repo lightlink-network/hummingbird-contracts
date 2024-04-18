@@ -1,6 +1,5 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { Contract } from "ethers";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { pushRandomHeader, setupCanonicalStateChain } from "./lib/chain";
 import { CanonicalStateChain } from "../typechain-types";
@@ -34,6 +33,26 @@ describe("CanonicalStateChain", function () {
 
     it("maxPointers var should be 7 by default", async function () {
       expect(await canonicalStateChain.maxPointers()).to.eq(7);
+    });
+
+    it("Should not be allowed to initialize twice", async function () {
+      let genesisHeader: CanonicalStateChain.HeaderStruct = {
+        epoch: BigInt(0),
+        l2Height: BigInt(1),
+        prevHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [],
+      };
+
+      await expect(
+        canonicalStateChain
+          .connect(otherAccount)
+          .getFunction("initialize")
+          .send(owner, genesisHeader),
+      ).to.be.revertedWithCustomError(
+        canonicalStateChain,
+        "InvalidInitialization",
+      );
     });
   });
 
@@ -276,6 +295,7 @@ describe("CanonicalStateChain", function () {
       );
       expect(await canonicalStateChain.maxPointers()).to.equal(1);
     });
+
     it("setMaxPointers should revert for non owner", async function () {
       await expect(
         canonicalStateChain
