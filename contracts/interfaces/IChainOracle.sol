@@ -96,13 +96,17 @@ interface IChainOracle {
     ///         Availability layer. It verifies the shares are included in a
     ///         given rblock (bundle) and stores them in the contract.
     /// @param _rblock - The rblock (bundle) that the shares are related to.
-    /// @param _proof - The proof that the shares are available and part of the
-    ///               rblocks dataroot commitment.
+    /// @param _pointer - The pointer to the share in the rblock.
+    /// @param _blobstreamProof - The proof that the shares are available and
+    ///                           part of the rblocks dataroot commitment.
+    /// @param _pointerProof - The proof that the shares are part of the share
+    ///                        root within the pointer.
     /// @return The share key that the shares are stored under.
     function provideShares(
         bytes32 _rblock,
         uint8 _pointer,
-        SharesProof memory _proof
+        SharesProof memory _blobstreamProof,
+        BinaryMerkleProof[] memory _pointerProof
     ) external returns (bytes32);
 
     /// @notice Decodes the shares into an L2 header and stores it

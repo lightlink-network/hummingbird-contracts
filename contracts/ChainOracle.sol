@@ -164,13 +164,17 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     ///         Availability layer. It verifies the shares are included in a
     ///         given rblock (bundle) and stores them in the contract.
     /// @param _rblock - The rblock (bundle) that the shares are related to.
-    /// @param _proof - The proof that the shares are available and part of the
-    ///               rblocks dataroot commitment.
+    /// @param _pointer - The pointer to the share in the rblock.
+    /// @param _blobstreamProof - The proof that the shares are available and
+    ///                           part of the rblocks dataroot commitment.
+    /// @param _pointerProof - The proof that the shares are part of the share
+    ///                        root within the pointer.
     /// @return The share key that the shares are stored under.
     function provideShares(
         bytes32 _rblock,
         uint8 _pointer,
-        SharesProof memory _proof
+        SharesProof memory _blobstreamProof,
+        BinaryMerkleProof[] memory _pointerProof
     ) public returns (bytes32) {
         // 1. Load the rblock (bundle) from the canonical state chain.
         ICanonicalStateChain.Header memory rHead = canonicalStateChain
@@ -178,25 +182,34 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         require(rHead.epoch > 0, "rblock not found");
         require(
             rHead.celestiaPointers[_pointer].height ==
-                _proof.attestationProof.tuple.height,
+                _blobstreamProof.attestationProof.tuple.height,
             "rblock height mismatch"
         );
 
-        // 2. verify shares are valid
+        // 2. Verify these share are the onces that were committed to in
+        //    the rblock by verifying they are part of the share root.
+        bool verifiedShareRoot = verifyShareRoot(
+            rHead.celestiaPointers[_pointer].shareRoot,
+            _blobstreamProof.data,
+            _pointerProof
+        );
+        require(verifiedShareRoot, "invalid pointer proof");
+
+        // 3. verify shares are valid
         (bool verified, ) = DAVerifier.verifySharesToDataRootTupleRoot(
             daOracle,
-            _proof,
-            _proof.attestationProof.tuple.dataRoot
+            _blobstreamProof,
+            _blobstreamProof.attestationProof.tuple.dataRoot
         );
         require(verified, "shares not verified");
 
-        // 3. create a share by hashing the rblock and shares
-        bytes32 shareKey = ShareKey(_rblock, _proof.data);
+        // 4. create a share by hashing the rblock and shares
+        bytes32 shareKey = ShareKey(_rblock, _blobstreamProof.data);
 
-        // 4. store the shares
-        shares[shareKey] = _proof.data;
+        // 5. store the shares
+        shares[shareKey] = _blobstreamProof.data;
 
-        // 5. store the sharekey to rblock
+        // 6. store the sharekey to rblock
         _sharekeyToRblock[shareKey] = _rblock;
 
         return shareKey;
@@ -281,6 +294,30 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         bytes[] memory _shareData
     ) public pure returns (bytes32) {
         return keccak256(abi.encode(_rblock, _shareData));
+    }
+
+    /// @notice Verifies the share root using the shares and pointer proof.
+    /// @param _shareRoot - The share root to verify.
+    /// @param _shares - The shares to verify.
+    /// @param _merkleProofs - The merkle proofs for each share.
+    function verifyShareRoot(
+        bytes32 _shareRoot,
+        bytes[] memory _shares,
+        BinaryMerkleProof[] memory _merkleProofs
+    ) public view returns (bool) {
+        // ensure correct length of pointer proof
+        if (_merkleProofs.length != _shares.length) return false;
+
+        // verify each pointer proof
+        for (uint i = 0; i < _shares.length; i++) {
+            if (
+                !BinaryMerkleTree.verify(
+                    _shareRoot,
+                    _merkleProofs[i],
+                    _shares[i]
+                )
+            ) return false;
+        }
     }
 
     /// TODO: Move to a library
