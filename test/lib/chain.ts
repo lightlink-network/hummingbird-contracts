@@ -77,8 +77,7 @@ export const makeNextBlock = async (
     celestiaPointers: [
       {
         height: lastPointerHeight + 1n,
-        shareStart: 1n,
-        shareLen: 1n,
+        shareRoot: ethers.ZeroHash,
       },
     ],
   };
