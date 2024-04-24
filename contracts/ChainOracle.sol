@@ -304,7 +304,7 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         bytes32 _shareRoot,
         bytes[] memory _shares,
         BinaryMerkleProof[] memory _merkleProofs
-    ) public view returns (bool) {
+    ) public pure returns (bool) {
         // ensure correct length of pointer proof
         if (_merkleProofs.length != _shares.length) return false;
 
@@ -318,6 +318,8 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
                 )
             ) return false;
         }
+
+        return true;
     }
 
     /// TODO: Move to a library
