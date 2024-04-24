@@ -3,11 +3,11 @@ import { expect } from "chai";
 import { Contract } from "ethers";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { makeNextBlock, setupCanonicalStateChain } from "./lib/chain";
-import { Header, hashHeader } from "./lib/header";
-import { ChainOracle } from "../typechain-types";
+import { ChainOracle, ChainOracle__factory } from "../typechain-types";
+import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
 
 describe("ChainOracle", function () {
-  let chainOracle: Contract;
+  let chainOracle: ChainOracle;
   let owner: HardhatEthersSigner;
   let publisher: HardhatEthersSigner;
 
@@ -22,20 +22,17 @@ describe("ChainOracle", function () {
     const RLPReaderFactory = await ethers.getContractFactory("RLPReader");
     const rlpReader = await RLPReaderFactory.deploy();
 
-    const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
-    const chainOracleFactory = await ethers.getContractFactory("ChainOracle");
-    const chainOracleImplementation = await chainOracleFactory.deploy();
-
-    const proxy = await proxyFactory.deploy(
-      await chainOracleImplementation.getAddress(),
-      chainOracleImplementation.interface.encodeFunctionData("initialize", [
+    const deployed = await proxyDeployAndInitialize(
+      owner,
+      await ethers.getContractFactory("ChainOracle"),
+      [
         await canonicalStateChain.getAddress(),
         await mockDaOracle.getAddress(),
         await rlpReader.getAddress(),
-      ])
+      ],
     );
 
-    chainOracle = chainOracleFactory.attach(await proxy.getAddress()) as any;
+    chainOracle = ChainOracle__factory.connect(deployed.address, owner);
   });
 
   it("should be able to extract data from the share", async function () {
@@ -64,95 +61,95 @@ describe("ChainOracle", function () {
     expect(header).to.not.be.undefined;
     expect(header[0]).to.be.equal(
       // parentHash
-      "0xce095cb5cd4725f71278ce79cb4589e5a87147fcc148fdf587292a540ee15acc"
+      "0xce095cb5cd4725f71278ce79cb4589e5a87147fcc148fdf587292a540ee15acc",
     );
     expect(header[1]).to.be.equal(
       // uncleHash
-      "0x0000000000000000000000000000000000000000000000000000000000000000"
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
     );
     expect(header[2]).to.be.equal(
       // coinbase
-      "0xdFaD157B8D4e58c26Bf9b947f8e75b5AdbC7822B"
+      "0xdFaD157B8D4e58c26Bf9b947f8e75b5AdbC7822B",
     );
     expect(header[3]).to.be.equal(
       // stateRoot
-      "0x3903de7f5290e9ef5974c2789c47778c69bff45299b10c2c2046774a6baec48f"
+      "0x3903de7f5290e9ef5974c2789c47778c69bff45299b10c2c2046774a6baec48f",
     );
     expect(header[4]).to.be.equal(
       // transactionsRoot
-      "0x0000000000000000000000000000000000000000000000000000000000000000"
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
     );
     expect(header[5]).to.be.equal(
       // receiptsRoot
-      "0x0000000000000000000000000000000000000000000000000000000000000000"
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
     );
     expect(header[6]).to.be.equal(
       // logsBloom
-      "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
     );
     expect(header[7]).to.be.equal(
       // difficulty
-      500n
+      500n,
     );
     expect(header[8]).to.be.equal(
       // timestamp
-      62207261n
+      62207261n,
     );
     expect(header[9]).to.be.equal(
       // gasLimit
-      15000000n
+      15000000n,
     );
     expect(header[10]).to.be.equal(
       // gasUsed
-      0n
+      0n,
     );
     expect(header[11]).to.be.equal(
       // timestamp
-      1704720488n
+      1704720488n,
     );
     expect(header[12]).to.be.equal(
       // extraData
-      "0x"
+      "0x",
     );
     expect(header[13]).to.be.equal(
       // mixHash
-      "0x0000000000000000000000000000000000000000000000000000000000000000"
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
     );
     expect(header[14]).to.be.equal(
       // nonce
-      14547783457063351210n
+      14547783457063351210n,
     );
   });
 
   it("should be able to decode legacy tx", async function () {
-    const TestRLPTx = "0xf8630182271082520894dfae45f5d42d7d893e15c3f55e947905c0bdec038227108026a00cc9626084e648b362f3358a10f74a9dd7928b262bb233ed9761172508592955a071a3904730383cc844e19ed819e90483493f93ed4db02225c899fe1e"
+    const TestRLPTx =
+      "0xf8630182271082520894dfae45f5d42d7d893e15c3f55e947905c0bdec038227108026a00cc9626084e648b362f3358a10f74a9dd7928b262bb233ed9761172508592955a071a3904730383cc844e19ed819e90483493f93ed4db02225c899fe1e";
 
     const tx = await chainOracle.decodeLegacyTx(TestRLPTx);
     expect(tx).to.not.be.undefined;
     expect(tx[0]).to.be.equal(
       // nonce
-      1n
+      1n,
     );
     expect(tx[1]).to.be.equal(
       // gasPrice
-      10000n
+      10000n,
     );
     expect(tx[2]).to.be.equal(
       // gasLimit
-      21000n
+      21000n,
     );
     expect(tx[3].toLowerCase()).to.be.equal(
       // to
-      "0xdfae45f5d42d7d893e15c3f55e947905c0bdec03".toLowerCase()
+      "0xdfae45f5d42d7d893e15c3f55e947905c0bdec03".toLowerCase(),
     );
     expect(tx[4]).to.be.equal(
       // value
-      10000n
+      10000n,
     );
     expect(tx[5]).to.be.equal(
       // data
-      "0x"
+      "0x",
     );
-
   });
 });
