@@ -17,14 +17,12 @@ interface ICanonicalStateChain {
         CelestiaPointer[] celestiaPointers;
     }
 
-    /// @notice A pointer to a shares on Celestia.
+    /// @notice A pointer to a block on Celestia.
     /// @param height - The height of the block on Celestia.
-    /// @param shareStart - The start index of shares in block on Celestia.
-    /// @param shareLen - The length of the shares in block on Celestia.
+    /// @param shareRoot – The merkle root of the shares we committed to.
     struct CelestiaPointer {
         uint64 height;
-        uint24 shareStart;
-        uint16 shareLen;
+        bytes32 shareRoot;
     }
 
     /// @notice The metadata of a block header.
