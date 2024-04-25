@@ -6,7 +6,7 @@ import {
   setupCanonicalStateChain,
   makeNextBlock,
 } from "./lib/chain";
-import { MOCK_DATA } from "./mock/mock_chainOracle";
+import { chainOracleMockData as MOCK_DATA } from "./mock/mock_chainOracle";
 import {
   CanonicalStateChain,
   ChainOracle,
@@ -23,10 +23,12 @@ describe("ChainOracle", function () {
   let mockDaOracle: MockDAOracle;
   let rlpReader: RLPReader;
 
+  let chain: any;
+
   beforeEach(async function () {
     [owner, publisher] = await ethers.getSigners();
-    const _chain = await setupCanonicalStateChain(owner, publisher.address);
-    canonicalStateChain = _chain.canonicalStateChain as any;
+    chain = await setupCanonicalStateChain(owner, publisher.address);
+    canonicalStateChain = chain.canonicalStateChain as any;
 
     const _MockDaOracle = await ethers.getContractFactory("MockDAOracle");
     mockDaOracle = (await _MockDaOracle.deploy()) as any;
@@ -48,10 +50,14 @@ describe("ChainOracle", function () {
     );
 
     chainOracle = chainOracleFactory.attach(await proxy.getAddress()) as any;
+
+    const nextBlock = { ...MOCK_DATA[0].rollupHeader };
+    nextBlock.prevHash = chain.genesisHash;
+    await canonicalStateChain.connect(publisher).pushBlock(nextBlock);
   });
 
   describe("Deployment", function () {
-    it("Should not be allowed to initialize twice", async function () {
+    it("should not be allowed to initialize twice", async function () {
       await expect(
         chainOracle
           .connect(owner)
@@ -66,65 +72,158 @@ describe("ChainOracle", function () {
   });
 
   describe("provideShares", function () {
-    it("Should not be allowed to provide shares for unknown rblock", async function () {
+    it("happy path", async function () {
+      const rblockHash = await canonicalStateChain.chain(1);
+      const shareProof = MOCK_DATA[0].headers[0].shareProofs;
+
+      await expect(
+        chainOracle.connect(owner).provideShares(rblockHash, 0, shareProof),
+      ).to.not.be.reverted;
+    });
+
+    it("should not be allowed to provide shares for unknown rblock", async function () {
       await expect(
         chainOracle
           .connect(publisher)
           .getFunction("provideShares")
           .send(
             "0x0000000000000000000000000000000000000000000000000000000000000000",
-            "0x1",
-            MOCK_DATA.l2HeaderProof,
+            1,
+            MOCK_DATA[0].headers[0].shareProofs,
           ),
       ).to.be.revertedWith("rblock not found");
     });
 
-    it("Should not be allowed to provide shares if rblock pointer height not equal proof height", async function () {
-      const [hash, header] = await pushRandomHeader(
-        publisher,
-        canonicalStateChain,
-      );
+    it("should not be allowed to provide shares if rblock pointer height not equal proof height", async function () {
+      // push a new random header to the chain who's height is not the same as the mock proof height
+      const [hash] = await pushRandomHeader(publisher, canonicalStateChain);
       await expect(
         chainOracle
           .connect(publisher)
           .getFunction("provideShares")
-          .send(hash, 0, MOCK_DATA.l2HeaderProof),
+          .send(hash, 0, MOCK_DATA[0].headers[0].shareProofs),
       ).to.be.revertedWith("rblock height mismatch");
     });
 
-    it("Should revert if shares cannot be verified", async function () {
-      // create next rblock and set pointer 0 height to 1286533
-      const [header] = await makeNextBlock(publisher, canonicalStateChain);
-      header.celestiaPointers[0].height = 1286533n; // 1286533n is the height of the proof
+    it("should revert if shares cannot be verified", async function () {
+      const rblockHash = await canonicalStateChain.chain(1);
+      const shareProof = MOCK_DATA[0].headers[0].shareProofs;
 
-      // get header hash
-      const headerHash = await canonicalStateChain.calculateHeaderHash(header);
-
-      // push header
-      await canonicalStateChain
-        .connect(publisher)
-        .getFunction("pushBlock")
-        .send(header);
+      await mockDaOracle.setResult(false);
 
       await expect(
-        chainOracle
-          .connect(publisher)
-          .getFunction("provideShares")
-          .send(headerHash, 0, MOCK_DATA.l2HeaderProof),
+        chainOracle.connect(owner).provideShares(rblockHash, 0, shareProof),
       ).to.be.revertedWith("shares not verified");
     });
   });
 
   describe("provideHeader", function () {
-    it("Should not be allowed to provide header if its shares are not found", async function () {
+    it("happy Path", async function () {
+      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
+      const headerRanges = MOCK_DATA[0].headers[0].shareRanges;
+      const rblockHash = await canonicalStateChain.chain(1);
+
+      // load prev header
+      await expect(
+        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
+      ).to.not.be.reverted;
+      const shareKey = await chainOracle.ShareKey(
+        rblockHash,
+        headerShares.data,
+      );
+      await expect(
+        chainOracle.connect(owner).provideHeader(shareKey, headerRanges),
+      ).to.not.be.reverted;
+    });
+
+    it("should not be allowed to provide header if its shares are not found", async function () {
       await expect(
         chainOracle
           .connect(publisher)
           .getFunction("provideHeader")
           .send(
             "0x0000000000000000000000000000000000000000000000000000000000000000",
-            MOCK_DATA.l2HeaderRange,
+            MOCK_DATA[0].headers[0].shareRanges,
           ),
+      ).to.be.revertedWith("share not found");
+    });
+
+    // todo: fix this test by adding mock l2 header with index 0
+    //   it("Should not be allowed to provide header if its index is 0", async function () {
+    //     // first we need to provide shares to the chainOracle for the header
+    //     const rblockHash = await canonicalStateChain.chain(1);
+    //     const shareProof = MOCK_DATA[0].headers[0].shareProofs;
+    //     await chainOracle
+    //       .connect(owner)
+    //       .provideShares(rblockHash, 0, shareProof);
+
+    //     // then we can provide the header
+    //     await expect(
+    //       chainOracle
+    //         .connect(publisher)
+    //         .getFunction("provideHeader")
+    //         .send(
+    //           "0x0000000000000000000000000000000000000000000000000000000000000000",
+    //           MOCK_DATA[0].headers[0].shareRanges,
+    //         ),
+    //     ).to.be.revertedWith("share not found");
+    //   });
+    // });
+
+    it("should not be allowed to provide header if it already exists", async function () {
+      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
+      const headerRanges = MOCK_DATA[0].headers[0].shareRanges;
+      const rblockHash = await canonicalStateChain.chain(1);
+
+      await expect(
+        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
+      ).to.not.be.reverted;
+      const prevShareKey = await chainOracle.ShareKey(
+        rblockHash,
+        headerShares.data,
+      );
+      await expect(
+        chainOracle.connect(owner).provideHeader(prevShareKey, headerRanges),
+      ).to.not.be.reverted;
+      await expect(
+        chainOracle.connect(owner).provideHeader(prevShareKey, headerRanges),
+      ).to.be.revertedWith("header already exists");
+    });
+  });
+
+  describe("provideLegacyTx", function () {
+    // TODO: fix this test with correct mock data
+    it("happy Path", async function () {
+      const headerShares = MOCK_DATA[0].headers[1].shareProofs;
+      const headerRanges = MOCK_DATA[0].headers[1].shareRanges;
+      const rblockHash = await canonicalStateChain.chain(1);
+
+      await expect(
+        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
+      ).to.not.be.reverted;
+
+      const shareKey = await chainOracle.ShareKey(
+        rblockHash,
+        headerShares.data,
+      );
+
+      await expect(
+        chainOracle.connect(publisher).provideLegacyTx(shareKey, headerRanges),
+      ).to.be.revertedWithoutReason();
+    });
+
+    it("should revert if shares are not found via shareKey", async function () {
+      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
+      const headerRanges = MOCK_DATA[0].headers[0].shareRanges;
+      const rblockHash = await canonicalStateChain.chain(1);
+
+      const shareKey = await chainOracle.ShareKey(
+        rblockHash,
+        headerShares.data,
+      );
+
+      await expect(
+        chainOracle.connect(publisher).provideLegacyTx(shareKey, headerRanges),
       ).to.be.revertedWith("share not found");
     });
   });
@@ -146,6 +245,21 @@ describe("ChainOracle", function () {
 
       const res = await chainOracle.extractData(TestShares, TestRanges);
       expect(res).to.equal(ExpectedData);
+    });
+    it("should revert if range is not valid for the corresponding raw data", async function () {
+      const TestShares = [
+        "0x00000000000000000000000000000000000000006c696768746c696e6b00000000000000000000000000000000000000000000000000000000000000000000000000000000008201f48403b5351c83e4e1c08084659bf867a00000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000088c9e41bfa0b90b3aac0c0f9021ff9021aa0ce095cb5cd4725f71278ce79cb4589e5a87147fcc148fdf587292a540ee15acca0000000000000000000000000000000000000000000000000000000000000000094dfad157b8d4e58c26bf9b947f8e75b5adbc7822ba03903de7f5290e9ef5974c2789c47778c69bff45299b10c2c2046774a6baec48fa00000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000b901000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "0x00000000000000000000000000000000000000006c696768746c696e6b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008201f48403b5351d83e4e1c08084659bf868a00000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000088c9e41bfa0b90b3aac0c0f9021ff9021aa029c3662fab6869f5192737b6ea4676d1e5c6dc8d417e1cadc6aa6bc54ad6f7eba0000000000000000000000000000000000000000000000000000000000000000094dfad157b8d4e58c26bf9b947f8e75b5adbc7822ba03903de7f5290e9ef5974c2789c47778c69bff45299b10c2c2046774a6baec48fa00000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000b9010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      ];
+
+      const TestRanges = [
+        { start: 168, end: 1027 },
+        { start: 30, end: 227 },
+      ];
+
+      await expect(
+        chainOracle.extractData(TestShares, TestRanges),
+      ).to.be.revertedWith("Invalid range");
     });
   });
 
@@ -249,6 +363,47 @@ describe("ChainOracle", function () {
       expect(tx[5]).to.be.equal(
         // data
         "0x",
+      );
+    });
+  });
+
+  describe("getTransaction", function () {
+    it("Should return an empty tx as not found", async function () {
+      const txn = await chainOracle
+        .connect(publisher)
+        .getTransaction(
+          "0x0000000000000000000000000000000000000000000000000000000000000001",
+        );
+
+      expect(txn[0]).to.be.equal(0);
+    });
+  });
+
+  describe("setRLPReader", function () {
+    it("happy path", async function () {
+      const RLPReaderFactory = await ethers.getContractFactory("RLPReader");
+      const rlpReader = (await RLPReaderFactory.deploy()) as any;
+
+      await expect(
+        chainOracle.connect(owner).setRLPReader(await rlpReader.getAddress()),
+      ).to.not.be.reverted;
+
+      const _rlpReader = await chainOracle.rlpReader();
+      expect(_rlpReader).to.equal(await rlpReader.getAddress());
+    });
+
+    it("should revert as non owner", async function () {
+      const RLPReaderFactory = await ethers.getContractFactory("RLPReader");
+      const rlpReader = (await RLPReaderFactory.deploy()) as any;
+
+      await expect(
+        chainOracle
+          .connect(publisher)
+          .getFunction("setRLPReader")
+          .send(await rlpReader.getAddress()),
+      ).to.be.revertedWithCustomError(
+        canonicalStateChain,
+        "OwnableUnauthorizedAccount",
       );
     });
   });
