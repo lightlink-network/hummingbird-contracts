@@ -1,4 +1,5 @@
 import {
+  BinaryMerkleProofStruct,
   ChainOracle,
   SharesProofStruct,
 } from "../../typechain-types/contracts/ChainOracle";
@@ -6,21 +7,25 @@ import {
 export const provideHeader = async (
   oracle: ChainOracle,
   rblockHash: string,
+  pointerIndex: number,
   proof: SharesProofStruct,
   ranges: ChainOracle.ShareRangeStruct[],
+  pointerProof: BinaryMerkleProofStruct[],
 ) => {
   const shareKey = await oracle.ShareKey(rblockHash, proof.data);
-  await oracle.provideShares(rblockHash, proof);
+  await oracle.provideShares(rblockHash, pointerIndex, proof, pointerProof);
   await oracle.provideHeader(shareKey, ranges);
 };
 
 export const provideLegacyTx = async (
   oracle: ChainOracle,
   rblockHash: string,
+  pointerIndex: number,
   proof: SharesProofStruct,
   ranges: ChainOracle.ShareRangeStruct[],
+  pointerProof: BinaryMerkleProofStruct[],
 ) => {
   const shareKey = await oracle.ShareKey(rblockHash, proof.data);
-  await oracle.provideShares(rblockHash, proof);
+  await oracle.provideShares(rblockHash, pointerIndex, proof, pointerProof);
   await oracle.provideLegacyTx(shareKey, ranges);
 };

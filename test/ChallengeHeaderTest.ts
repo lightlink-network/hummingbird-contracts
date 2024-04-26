@@ -105,6 +105,7 @@ describe("ChallengeHeader", function () {
         l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
         prevHash: genesisHash,
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
       };
 
@@ -127,6 +128,7 @@ describe("ChallengeHeader", function () {
         l2Height: toBigInt(genesisHeader.l2Height) - BigInt(1),
         prevHash: genesisHash,
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
       };
 
@@ -149,6 +151,7 @@ describe("ChallengeHeader", function () {
         l2Height: toBigInt(genesisHeader.l2Height) - BigInt(1),
         prevHash: genesisHash,
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
       };
 
@@ -297,6 +300,7 @@ describe("ChallengeHeader", function () {
         l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
         prevHash: genesisHash,
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
       };
 
@@ -321,6 +325,7 @@ describe("ChallengeHeader", function () {
         l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
         prevHash: genesisHash,
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
       };
 
