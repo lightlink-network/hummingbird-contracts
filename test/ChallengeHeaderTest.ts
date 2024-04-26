@@ -342,4 +342,20 @@ describe("ChallengeHeader", function () {
       ).to.be.revertedWith("header is valid");
     });
   });
+
+  describe("setMaxBundleSize", function () {
+    it("setMaxBundleSize should be failed without owner", async function () {
+      await expect(
+        challenge.connect(otherAccount).getFunction("setMaxBundleSize").send(1),
+      ).to.be.revertedWithCustomError(challenge, "OwnableUnauthorizedAccount");
+    });
+
+    it("setMaxBundleSize should be correct", async function () {
+      await challenge.getFunction("setMaxBundleSize").send(1);
+      expect(await challenge.maxBundleSize()).to.equal(1);
+
+      await challenge.getFunction("setMaxBundleSize").send(2);
+      expect(await challenge.maxBundleSize()).to.equal(2);
+    });
+  });
 });

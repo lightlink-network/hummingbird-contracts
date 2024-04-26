@@ -1,9 +1,6 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { pushRandomHeader, setupCanonicalStateChain } from "./lib/chain";
-import { CanonicalStateChain } from "../typechain-types";
-import { RLPReader } from "../typechain-types/contracts/L1";
+import { RLPReader } from "../typechain-types";
 
 describe("RLPReader", function () {
   let rlpReader: RLPReader;

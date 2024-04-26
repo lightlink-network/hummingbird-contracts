@@ -7,6 +7,7 @@ import {
   makeNextBlock,
 } from "./lib/chain";
 import { chainOracleMockData as MOCK_DATA } from "./mock/mock_chainOracle";
+import { challengeL2TxMockData as MOCK_DATA2 } from "./mock/mock_challengeL2Tx";
 import {
   CanonicalStateChain,
   ChainOracle,
@@ -75,9 +76,12 @@ describe("ChainOracle", function () {
     it("happy path", async function () {
       const rblockHash = await canonicalStateChain.chain(1);
       const shareProof = MOCK_DATA[0].headers[0].shareProofs;
+      const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
 
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, 0, shareProof),
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, shareProof, pointerProofs),
       ).to.not.be.reverted;
     });
 
@@ -90,6 +94,7 @@ describe("ChainOracle", function () {
             "0x0000000000000000000000000000000000000000000000000000000000000000",
             1,
             MOCK_DATA[0].headers[0].shareProofs,
+            MOCK_DATA[0].headers[0].pointerProofs,
           ),
       ).to.be.revertedWith("rblock not found");
     });
@@ -101,31 +106,87 @@ describe("ChainOracle", function () {
         chainOracle
           .connect(publisher)
           .getFunction("provideShares")
-          .send(hash, 0, MOCK_DATA[0].headers[0].shareProofs),
+          .send(
+            hash,
+            0,
+            MOCK_DATA[0].headers[0].shareProofs,
+            MOCK_DATA[0].headers[0].pointerProofs,
+          ),
       ).to.be.revertedWith("rblock height mismatch");
+    });
+
+    it("should not be allowed to provide shares if they are not included in the block", async function () {
+      // push a new random header to the chain who's height is not the same as the mock proof height
+      const rblockHash = await canonicalStateChain.chain(1);
+
+      let pointerProofs = [
+        {
+          key: "2",
+          numLeaves: "12",
+          sideNodes: [
+            "0x7883b8d72ca485e77dc0fde8a83bf6e4d6878126248ef54cb25d8d928662e1fa",
+            "0xb2919060511b691b77e3921c43cc620acd57cf543f52f98d6e457e23a85ed86b",
+            "0x625e4380aa7a1271004c9e6152c9a24c5a52937132d9b52ba039160ff3fb81d5",
+            "0xac481ea0797cbc58f473593efee9f059a658e5766ea9b8040b5435bbe963edc3",
+          ],
+        },
+        {
+          key: "3",
+          numLeaves: "12",
+          sideNodes: [
+            "0x465aa459fd06b6c78b472481ca7df40f9231a904115aff486aede673a7e7b06a",
+            "0xb2919060511b691b77e3921c43cc620acd57cf543f52f98d6e457e23a85ed86b",
+            "0x625e4380aa7a1271004c9e6152c9a24c5a52937132d9b52ba039160ff3fb81d5",
+            "0xac481ea0797cbc58f473593efee9f059a658e5766ea9b8040b5435bbe963edc3",
+          ],
+        },
+      ];
+
+      await expect(
+        chainOracle
+          .connect(publisher)
+          .getFunction("provideShares")
+          .send(
+            rblockHash,
+            0,
+            MOCK_DATA[0].headers[0].shareProofs,
+            pointerProofs,
+          ),
+      ).to.be.revertedWith("invalid share root");
     });
 
     it("should revert if shares cannot be verified", async function () {
       const rblockHash = await canonicalStateChain.chain(1);
       const shareProof = MOCK_DATA[0].headers[0].shareProofs;
+      const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
 
       await mockDaOracle.setResult(false);
 
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, 0, shareProof),
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, shareProof, pointerProofs),
       ).to.be.revertedWith("shares not verified");
     });
   });
 
   describe("provideHeader", function () {
     it("happy Path", async function () {
-      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
-      const headerRanges = MOCK_DATA[0].headers[0].shareRanges;
-      const rblockHash = await canonicalStateChain.chain(1);
+      const nextBlock = { ...MOCK_DATA2.rollupHeader };
+      const prevRblockHash = await canonicalStateChain.chain(1);
+      nextBlock.prevHash = prevRblockHash;
+      await canonicalStateChain.connect(publisher).pushBlock(nextBlock);
+
+      const headerShares = MOCK_DATA2.headers[0].shareProofs;
+      const headerRanges = MOCK_DATA2.headers[0].shareRanges;
+      const pointerProofs = MOCK_DATA2.headers[0].pointerProofs;
+      const rblockHash = await canonicalStateChain.chain(2);
 
       // load prev header
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, headerShares, pointerProofs),
       ).to.not.be.reverted;
       const shareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -173,10 +234,13 @@ describe("ChainOracle", function () {
     it("should not be allowed to provide header if it already exists", async function () {
       const headerShares = MOCK_DATA[0].headers[0].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[0].shareRanges;
+      const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
       const rblockHash = await canonicalStateChain.chain(1);
 
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, headerShares, pointerProofs),
       ).to.not.be.reverted;
       const prevShareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -192,24 +256,28 @@ describe("ChainOracle", function () {
   });
 
   describe("provideLegacyTx", function () {
-    // TODO: fix this test with correct mock data
     it("happy Path", async function () {
-      const headerShares = MOCK_DATA[0].headers[1].shareProofs;
-      const headerRanges = MOCK_DATA[0].headers[1].shareRanges;
-      const rblockHash = await canonicalStateChain.chain(1);
+      const nextBlock = { ...MOCK_DATA2.rollupHeader };
+      const prevRblockHash = await canonicalStateChain.chain(1);
+      nextBlock.prevHash = prevRblockHash;
+      await canonicalStateChain.connect(publisher).pushBlock(nextBlock);
+
+      const txShares = MOCK_DATA2.transactions[0][0].shareProofs;
+      const txRanges = MOCK_DATA2.transactions[0][0].shareRanges;
+      const pointerProofs = MOCK_DATA2.transactions[0][0].pointerProofs;
+      const rblockHash = await canonicalStateChain.chain(2);
 
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, txShares, pointerProofs),
       ).to.not.be.reverted;
 
-      const shareKey = await chainOracle.ShareKey(
-        rblockHash,
-        headerShares.data,
-      );
+      const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
 
       await expect(
-        chainOracle.connect(publisher).provideLegacyTx(shareKey, headerRanges),
-      ).to.be.revertedWithoutReason();
+        chainOracle.connect(publisher).provideLegacyTx(shareKey, txRanges),
+      ).to.not.be.reverted;
     });
 
     it("should revert if shares are not found via shareKey", async function () {
@@ -225,6 +293,34 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle.connect(publisher).provideLegacyTx(shareKey, headerRanges),
       ).to.be.revertedWith("share not found");
+    });
+
+    it("should revert as transaction exists", async function () {
+      const nextBlock = { ...MOCK_DATA2.rollupHeader };
+      const prevRblockHash = await canonicalStateChain.chain(1);
+      nextBlock.prevHash = prevRblockHash;
+      await canonicalStateChain.connect(publisher).pushBlock(nextBlock);
+
+      const txShares = MOCK_DATA2.transactions[0][0].shareProofs;
+      const txRanges = MOCK_DATA2.transactions[0][0].shareRanges;
+      const pointerProofs = MOCK_DATA2.transactions[0][0].pointerProofs;
+      const rblockHash = await canonicalStateChain.chain(2);
+
+      await expect(
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, txShares, pointerProofs),
+      ).to.not.be.reverted;
+
+      const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
+
+      await expect(
+        chainOracle.connect(publisher).provideLegacyTx(shareKey, txRanges),
+      ).to.not.be.reverted;
+
+      await expect(
+        chainOracle.connect(publisher).provideLegacyTx(shareKey, txRanges),
+      ).to.be.revertedWith("transaction already exists");
     });
   });
 
@@ -260,6 +356,37 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle.extractData(TestShares, TestRanges),
       ).to.be.revertedWith("Invalid range");
+    });
+  });
+
+  describe("verifyShareRoot", function () {
+    it("happy path", async function () {
+      const shareRoot = MOCK_DATA[0].rollupHeader.shareRoot;
+      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
+      const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
+
+      await expect(
+        chainOracle.verifyShareRoot(
+          shareRoot,
+          headerShares.data,
+          pointerProofs,
+        ),
+      ).to.not.be.reverted;
+    });
+
+    it("should return false as proofs length not equal share length", async function () {
+      const shareRoot = MOCK_DATA[0].rollupHeader.shareRoot;
+      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
+      const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
+      pointerProofs.pop();
+
+      expect(
+        await chainOracle.verifyShareRoot(
+          shareRoot,
+          headerShares.data,
+          pointerProofs,
+        ),
+      ).to.equal(false);
     });
   });
 
@@ -363,6 +490,57 @@ describe("ChainOracle", function () {
       expect(tx[5]).to.be.equal(
         // data
         "0x",
+      );
+    });
+  });
+
+  describe("decodeDepositTx", function () {
+    it("happy path", async function () {
+      // remove the first byte 7e
+      const depositTxRLP =
+        "0xf9043482076235843b9aca0083989680947f17a74942c5b22b340688f099c99a79426447e18718de76816d8000b903c4c450bc1f000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000002e000000000000000000000000000000000000000000000000000000000000000030000000000000000000000001146405759e2a20682d9840f19edb93c2d1da0bb000000000000000000000000733910eee5eaba8ae90da5526fdd212d9a3f3ead00000000000000000000000021c184892ca64f5e4f8388970e8696e9a2927cdd0000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000041c7f444c528db9a2c293882224564441355a1272480ec16f0d0f5bb45f5bc55b33effd9a430a93f5dddbb99ceeebe1ea1ca7639a2f182b17769bcd70db17448551c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004111b29824cbf7bdb2ca6cd0caa67b2084adc60b276865b6b46ed32585d6c18a58289e484c419ec8d010b36c90f4a0e3de375d0c74dd16cfe832635ac68abf12c81b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000418f374b365beb74f555701a0a3b17162245924ad06726e5012b8b5c3bc297e55f5a96672da276effcd2bb1b390ece1abd2d46ad6155d09922a9a9dc97f4ea835f1c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000003a3c3a5115bc299fe4e03664c9bccf43bc252a7d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f99cebba649f375f1877a76112b109dc79fa04b80000000000000000000000003a3c3a5115bc299fe4e03664c9bccf43bc252a7d0000000000000000000000000000000000000000000000000018de76816d800080a0920ac370c3a042f97ff76b637a0a1f15a900d645a89617cac9101546d4c35cc8a0587d594286b222024649202920726e51bb75d2cef54ff59a2a6e6a5e9bf725bb";
+
+      const tx = await chainOracle.decodeDepositTx(depositTxRLP);
+      expect(tx).to.not.be.undefined;
+      expect(tx[0]).to.be.equal(
+        // chainId
+        1890n,
+      );
+      expect(tx[1]).to.be.equal(
+        // nonce
+        53,
+      );
+      expect(tx[2]).to.be.equal(
+        // gasPrice
+        1000000000n,
+      );
+      expect(tx[3]).to.be.equal(
+        // gasLimit
+        10000000n,
+      );
+      expect(tx[4].toLowerCase()).to.be.equal(
+        // to
+        "0x7F17A74942c5b22b340688f099c99A79426447e1".toLowerCase(),
+      );
+      expect(tx[5]).to.be.equal(
+        // value
+        7000000000000000n,
+      );
+      expect(tx[6]).to.be.equal(
+        // data
+        "0xc450bc1f000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000002e000000000000000000000000000000000000000000000000000000000000000030000000000000000000000001146405759e2a20682d9840f19edb93c2d1da0bb000000000000000000000000733910eee5eaba8ae90da5526fdd212d9a3f3ead00000000000000000000000021c184892ca64f5e4f8388970e8696e9a2927cdd0000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000041c7f444c528db9a2c293882224564441355a1272480ec16f0d0f5bb45f5bc55b33effd9a430a93f5dddbb99ceeebe1ea1ca7639a2f182b17769bcd70db17448551c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004111b29824cbf7bdb2ca6cd0caa67b2084adc60b276865b6b46ed32585d6c18a58289e484c419ec8d010b36c90f4a0e3de375d0c74dd16cfe832635ac68abf12c81b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000418f374b365beb74f555701a0a3b17162245924ad06726e5012b8b5c3bc297e55f5a96672da276effcd2bb1b390ece1abd2d46ad6155d09922a9a9dc97f4ea835f1c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000003a3c3a5115bc299fe4e03664c9bccf43bc252a7d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f99cebba649f375f1877a76112b109dc79fa04b80000000000000000000000003a3c3a5115bc299fe4e03664c9bccf43bc252a7d0000000000000000000000000000000000000000000000000018de76816d8000",
+      );
+      expect(tx[7]).to.be.equal(
+        // r
+        66056693244458152108319849013085333301746989274264430192031517319879043800264n,
+      );
+      expect(tx[8]).to.be.equal(
+        // s
+        40025002607391211296728310437866929214603074978161800677031384171519115994555n,
+      );
+      expect(tx[9]).to.be.equal(
+        // v
+        0,
       );
     });
   });
