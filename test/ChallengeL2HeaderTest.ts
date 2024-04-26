@@ -205,9 +205,12 @@ describe("ChallengeL2Header", function () {
       const headerHash = MOCK_DATA[0].headers[CURR_HEADER].headerHash;
       const shareProof = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const shareRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
+      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
 
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, 0, shareProof),
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, shareProof, pointerProofs),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, shareProof.data);
@@ -229,15 +232,17 @@ describe("ChallengeL2Header", function () {
     it("should be able to defend", async function () {
       const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
       const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
+      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
       const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
+      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
       // load prev header
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, prevHeaderShares),
+          .provideShares(rblockHash, 0, prevHeaderShares, prevPointerProofs),
       ).to.not.be.reverted;
       const prevShareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -251,7 +256,9 @@ describe("ChallengeL2Header", function () {
 
       // load header
       await expect(
-        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, headerShares, pointerProofs),
       ).to.not.be.reverted;
       const shareKey = await chainOracle.ShareKey(
         rblockHash,
