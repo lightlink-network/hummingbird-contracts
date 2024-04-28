@@ -76,18 +76,6 @@ contract ChallengeBase is
         chainOracle = IChainOracle(_chainOracle);
     }
 
-    /// @notice Returns true if the target block is within the challenge window.
-    /// @param _index The index of the block to check.
-    /// @return True if the block is within the challenge window.
-    function _isTargetWithinChallengeWindow(
-        uint256 _index
-    ) internal view returns (bool) {
-        return
-            block.timestamp <=
-            chain.headerMetadata(chain.chain(_index)).timestamp +
-                challengeWindow;
-    }
-
     /// @notice Ensures that the block is within the challenge window. It
     ///         is used to prevent challenges on blocks that are too old.
     /// @param index The index of the block to check.
