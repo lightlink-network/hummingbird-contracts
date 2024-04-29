@@ -276,9 +276,9 @@ describe("ChainOracle", function () {
       const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
 
       // TODO: fix this test
-      // await expect(
-      //   chainOracle.connect(publisher).provideLegacyTx(shareKey, txRanges),
-      // ).to.not.be.reverted;
+      await expect(
+        chainOracle.connect(publisher).provideLegacyTx(shareKey, txRanges),
+      ).to.not.be.reverted;
     });
 
     it("should revert if shares are not found via shareKey", async function () {
@@ -316,13 +316,13 @@ describe("ChainOracle", function () {
       const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
 
       // TODO: fix this test
-      // await expect(
-      //   chainOracle.connect(publisher).provideLegacyTx(shareKey, txRanges),
-      // ).to.not.be.reverted;
+      await expect(
+        chainOracle.connect(publisher).provideLegacyTx(shareKey, txRanges),
+      ).to.not.be.reverted;
 
-      // await expect(
-      //   chainOracle.connect(publisher).provideLegacyTx(shareKey, txRanges),
-      // ).to.be.revertedWith("transaction already exists");
+      await expect(
+        chainOracle.connect(publisher).provideLegacyTx(shareKey, txRanges),
+      ).to.be.revertedWith("transaction already exists");
     });
   });
 
