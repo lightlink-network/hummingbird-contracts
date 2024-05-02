@@ -170,7 +170,8 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     function provideShares(
         bytes32 _rblock,
         uint8 _pointer,
-        SharesProof memory _proof
+        SharesProof memory _proof,
+        BinaryMerkleProof[] memory _blockProof
     ) public returns (bytes32) {
         // 1. Load the rblock (bundle) from the canonical state chain.
         ICanonicalStateChain.Header memory rHead = canonicalStateChain
@@ -180,6 +181,12 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             rHead.celestiaPointers[_pointer].height ==
                 _proof.attestationProof.tuple.height,
             "rblock height mismatch"
+        );
+
+        // 2. Check that the shares are included in the rblock.
+        require(
+            verifyShareRoot(rHead.shareRoot, _proof.data, _blockProof),
+            "invalid share root"
         );
 
         // 2. verify shares are valid
@@ -307,6 +314,32 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         }
 
         return data;
+    }
+
+    /// @notice Verifies the share root using the shares and pointer proof.
+    /// @param _shareRoot - The share root to verify.
+    /// @param _shares - The shares to verify.
+    /// @param _merkleProofs - The merkle proofs for each share.
+    function verifyShareRoot(
+        bytes32 _shareRoot,
+        bytes[] memory _shares,
+        BinaryMerkleProof[] memory _merkleProofs
+    ) public pure returns (bool) {
+        // ensure correct length of pointer proof
+        if (_merkleProofs.length != _shares.length) return false;
+
+        // verify each pointer proof
+        for (uint i = 0; i < _shares.length; i++) {
+            if (
+                !BinaryMerkleTree.verify(
+                    _shareRoot,
+                    _merkleProofs[i],
+                    _shares[i]
+                )
+            ) return false;
+        }
+
+        return true;
     }
 
     /// @notice Decodes an RLP header into the Header struct.

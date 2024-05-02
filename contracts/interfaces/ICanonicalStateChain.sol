@@ -14,6 +14,7 @@ interface ICanonicalStateChain {
         uint64 l2Height;
         bytes32 prevHash;
         bytes32 stateRoot;
+        bytes32 shareRoot;
         CelestiaPointer[] celestiaPointers;
     }
 

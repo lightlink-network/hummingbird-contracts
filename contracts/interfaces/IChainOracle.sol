@@ -102,7 +102,8 @@ interface IChainOracle {
     function provideShares(
         bytes32 _rblock,
         uint8 _pointer,
-        SharesProof memory _proof
+        SharesProof memory _proof,
+        BinaryMerkleProof[] memory _blockProof
     ) external returns (bytes32);
 
     /// @notice Decodes the shares into an L2 header and stores it

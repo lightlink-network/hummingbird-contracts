@@ -42,12 +42,13 @@ type CanonicalStateChainHeader struct {
 	L2Height         uint64
 	PrevHash         [32]byte
 	StateRoot        [32]byte
+	ShareRoot        [32]byte
 	CelestiaPointers []CanonicalStateChainCelestiaPointer
 }
 
 // CanonicalStateChainMetaData contains all meta data concerning the CanonicalStateChain contract.
 var CanonicalStateChainMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"ERC1967InvalidImplementation\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC1967NonPayable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UUPSUnauthorizedCallContext\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"}],\"name\":\"UUPSUnsupportedProxiableUUID\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"BlockAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"challenge\",\"type\":\"address\"}],\"name\":\"ChallengeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"publisher\",\"type\":\"address\"}],\"name\":\"PublisherChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"RolledBack\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"UPGRADE_INTERFACE_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"name\":\"calculateHeaderHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chainHead\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challenge\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getHead\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"getHeaderByHash\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getHeaderByNum\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"headerMetadata\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"timestamp\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"publisher\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_publisher\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"maxPointers\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"publisher\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"name\":\"pushBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockNumber\",\"type\":\"uint256\"}],\"name\":\"rollback\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_challenge\",\"type\":\"address\"}],\"name\":\"setChallengeContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_maxPointers\",\"type\":\"uint8\"}],\"name\":\"setMaxPointers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_publisher\",\"type\":\"address\"}],\"name\":\"setPublisher\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"AddressEmptyCode\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"ERC1967InvalidImplementation\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ERC1967NonPayable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"FailedInnerCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UUPSUnauthorizedCallContext\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"slot\",\"type\":\"bytes32\"}],\"name\":\"UUPSUnsupportedProxiableUUID\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"BlockAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"challenge\",\"type\":\"address\"}],\"name\":\"ChallengeChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"publisher\",\"type\":\"address\"}],\"name\":\"PublisherChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"RolledBack\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"UPGRADE_INTERFACE_VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"shareRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"name\":\"calculateHeaderHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"chain\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"chainHead\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"challenge\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getHead\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"shareRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_hash\",\"type\":\"bytes32\"}],\"name\":\"getHeaderByHash\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"shareRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getHeaderByNum\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"shareRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"headerMetadata\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"timestamp\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"publisher\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_publisher\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"shareRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"maxPointers\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"proxiableUUID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"publisher\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"epoch\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"l2Height\",\"type\":\"uint64\"},{\"internalType\":\"bytes32\",\"name\":\"prevHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"shareRoot\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint24\",\"name\":\"shareStart\",\"type\":\"uint24\"},{\"internalType\":\"uint16\",\"name\":\"shareLen\",\"type\":\"uint16\"}],\"internalType\":\"structCanonicalStateChain.CelestiaPointer[]\",\"name\":\"celestiaPointers\",\"type\":\"tuple[]\"}],\"internalType\":\"structCanonicalStateChain.Header\",\"name\":\"_header\",\"type\":\"tuple\"}],\"name\":\"pushBlock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_blockNumber\",\"type\":\"uint256\"}],\"name\":\"rollback\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_challenge\",\"type\":\"address\"}],\"name\":\"setChallengeContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_maxPointers\",\"type\":\"uint8\"}],\"name\":\"setMaxPointers\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_publisher\",\"type\":\"address\"}],\"name\":\"setPublisher\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}]",
 }
 
 // CanonicalStateChainABI is the input ABI used to generate the binding from.
@@ -227,9 +228,9 @@ func (_CanonicalStateChain *CanonicalStateChainCallerSession) UPGRADEINTERFACEVE
 	return _CanonicalStateChain.Contract.UPGRADEINTERFACEVERSION(&_CanonicalStateChain.CallOpts)
 }
 
-// CalculateHeaderHash is a free data retrieval call binding the contract method 0x44114703.
+// CalculateHeaderHash is a free data retrieval call binding the contract method 0x828dbaad.
 //
-// Solidity: function calculateHeaderHash((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) pure returns(bytes32)
+// Solidity: function calculateHeaderHash((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) pure returns(bytes32)
 func (_CanonicalStateChain *CanonicalStateChainCaller) CalculateHeaderHash(opts *bind.CallOpts, _header CanonicalStateChainHeader) ([32]byte, error) {
 	var out []interface{}
 	err := _CanonicalStateChain.contract.Call(opts, &out, "calculateHeaderHash", _header)
@@ -244,16 +245,16 @@ func (_CanonicalStateChain *CanonicalStateChainCaller) CalculateHeaderHash(opts 
 
 }
 
-// CalculateHeaderHash is a free data retrieval call binding the contract method 0x44114703.
+// CalculateHeaderHash is a free data retrieval call binding the contract method 0x828dbaad.
 //
-// Solidity: function calculateHeaderHash((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) pure returns(bytes32)
+// Solidity: function calculateHeaderHash((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) pure returns(bytes32)
 func (_CanonicalStateChain *CanonicalStateChainSession) CalculateHeaderHash(_header CanonicalStateChainHeader) ([32]byte, error) {
 	return _CanonicalStateChain.Contract.CalculateHeaderHash(&_CanonicalStateChain.CallOpts, _header)
 }
 
-// CalculateHeaderHash is a free data retrieval call binding the contract method 0x44114703.
+// CalculateHeaderHash is a free data retrieval call binding the contract method 0x828dbaad.
 //
-// Solidity: function calculateHeaderHash((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) pure returns(bytes32)
+// Solidity: function calculateHeaderHash((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) pure returns(bytes32)
 func (_CanonicalStateChain *CanonicalStateChainCallerSession) CalculateHeaderHash(_header CanonicalStateChainHeader) ([32]byte, error) {
 	return _CanonicalStateChain.Contract.CalculateHeaderHash(&_CanonicalStateChain.CallOpts, _header)
 }
@@ -353,7 +354,7 @@ func (_CanonicalStateChain *CanonicalStateChainCallerSession) Challenge() (commo
 
 // GetHead is a free data retrieval call binding the contract method 0xdc281aff.
 //
-// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]))
+// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]))
 func (_CanonicalStateChain *CanonicalStateChainCaller) GetHead(opts *bind.CallOpts) (CanonicalStateChainHeader, error) {
 	var out []interface{}
 	err := _CanonicalStateChain.contract.Call(opts, &out, "getHead")
@@ -370,21 +371,21 @@ func (_CanonicalStateChain *CanonicalStateChainCaller) GetHead(opts *bind.CallOp
 
 // GetHead is a free data retrieval call binding the contract method 0xdc281aff.
 //
-// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]))
+// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]))
 func (_CanonicalStateChain *CanonicalStateChainSession) GetHead() (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetHead(&_CanonicalStateChain.CallOpts)
 }
 
 // GetHead is a free data retrieval call binding the contract method 0xdc281aff.
 //
-// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]))
+// Solidity: function getHead() view returns((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]))
 func (_CanonicalStateChain *CanonicalStateChainCallerSession) GetHead() (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetHead(&_CanonicalStateChain.CallOpts)
 }
 
 // GetHeaderByHash is a free data retrieval call binding the contract method 0xb76971ce.
 //
-// Solidity: function getHeaderByHash(bytes32 _hash) view returns((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]))
+// Solidity: function getHeaderByHash(bytes32 _hash) view returns((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]))
 func (_CanonicalStateChain *CanonicalStateChainCaller) GetHeaderByHash(opts *bind.CallOpts, _hash [32]byte) (CanonicalStateChainHeader, error) {
 	var out []interface{}
 	err := _CanonicalStateChain.contract.Call(opts, &out, "getHeaderByHash", _hash)
@@ -401,21 +402,21 @@ func (_CanonicalStateChain *CanonicalStateChainCaller) GetHeaderByHash(opts *bin
 
 // GetHeaderByHash is a free data retrieval call binding the contract method 0xb76971ce.
 //
-// Solidity: function getHeaderByHash(bytes32 _hash) view returns((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]))
+// Solidity: function getHeaderByHash(bytes32 _hash) view returns((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]))
 func (_CanonicalStateChain *CanonicalStateChainSession) GetHeaderByHash(_hash [32]byte) (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetHeaderByHash(&_CanonicalStateChain.CallOpts, _hash)
 }
 
 // GetHeaderByHash is a free data retrieval call binding the contract method 0xb76971ce.
 //
-// Solidity: function getHeaderByHash(bytes32 _hash) view returns((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]))
+// Solidity: function getHeaderByHash(bytes32 _hash) view returns((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]))
 func (_CanonicalStateChain *CanonicalStateChainCallerSession) GetHeaderByHash(_hash [32]byte) (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetHeaderByHash(&_CanonicalStateChain.CallOpts, _hash)
 }
 
 // GetHeaderByNum is a free data retrieval call binding the contract method 0x7255f37e.
 //
-// Solidity: function getHeaderByNum(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]))
+// Solidity: function getHeaderByNum(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]))
 func (_CanonicalStateChain *CanonicalStateChainCaller) GetHeaderByNum(opts *bind.CallOpts, _index *big.Int) (CanonicalStateChainHeader, error) {
 	var out []interface{}
 	err := _CanonicalStateChain.contract.Call(opts, &out, "getHeaderByNum", _index)
@@ -432,14 +433,14 @@ func (_CanonicalStateChain *CanonicalStateChainCaller) GetHeaderByNum(opts *bind
 
 // GetHeaderByNum is a free data retrieval call binding the contract method 0x7255f37e.
 //
-// Solidity: function getHeaderByNum(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]))
+// Solidity: function getHeaderByNum(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]))
 func (_CanonicalStateChain *CanonicalStateChainSession) GetHeaderByNum(_index *big.Int) (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetHeaderByNum(&_CanonicalStateChain.CallOpts, _index)
 }
 
 // GetHeaderByNum is a free data retrieval call binding the contract method 0x7255f37e.
 //
-// Solidity: function getHeaderByNum(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]))
+// Solidity: function getHeaderByNum(uint256 _index) view returns((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]))
 func (_CanonicalStateChain *CanonicalStateChainCallerSession) GetHeaderByNum(_index *big.Int) (CanonicalStateChainHeader, error) {
 	return _CanonicalStateChain.Contract.GetHeaderByNum(&_CanonicalStateChain.CallOpts, _index)
 }
@@ -613,44 +614,44 @@ func (_CanonicalStateChain *CanonicalStateChainCallerSession) Publisher() (commo
 	return _CanonicalStateChain.Contract.Publisher(&_CanonicalStateChain.CallOpts)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x41d3ecd8.
+// Initialize is a paid mutator transaction binding the contract method 0xefe275b2.
 //
-// Solidity: function initialize(address _publisher, (uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
+// Solidity: function initialize(address _publisher, (uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
 func (_CanonicalStateChain *CanonicalStateChainTransactor) Initialize(opts *bind.TransactOpts, _publisher common.Address, _header CanonicalStateChainHeader) (*types.Transaction, error) {
 	return _CanonicalStateChain.contract.Transact(opts, "initialize", _publisher, _header)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x41d3ecd8.
+// Initialize is a paid mutator transaction binding the contract method 0xefe275b2.
 //
-// Solidity: function initialize(address _publisher, (uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
+// Solidity: function initialize(address _publisher, (uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
 func (_CanonicalStateChain *CanonicalStateChainSession) Initialize(_publisher common.Address, _header CanonicalStateChainHeader) (*types.Transaction, error) {
 	return _CanonicalStateChain.Contract.Initialize(&_CanonicalStateChain.TransactOpts, _publisher, _header)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x41d3ecd8.
+// Initialize is a paid mutator transaction binding the contract method 0xefe275b2.
 //
-// Solidity: function initialize(address _publisher, (uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
+// Solidity: function initialize(address _publisher, (uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
 func (_CanonicalStateChain *CanonicalStateChainTransactorSession) Initialize(_publisher common.Address, _header CanonicalStateChainHeader) (*types.Transaction, error) {
 	return _CanonicalStateChain.Contract.Initialize(&_CanonicalStateChain.TransactOpts, _publisher, _header)
 }
 
-// PushBlock is a paid mutator transaction binding the contract method 0x8f74b739.
+// PushBlock is a paid mutator transaction binding the contract method 0xfc062483.
 //
-// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
+// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
 func (_CanonicalStateChain *CanonicalStateChainTransactor) PushBlock(opts *bind.TransactOpts, _header CanonicalStateChainHeader) (*types.Transaction, error) {
 	return _CanonicalStateChain.contract.Transact(opts, "pushBlock", _header)
 }
 
-// PushBlock is a paid mutator transaction binding the contract method 0x8f74b739.
+// PushBlock is a paid mutator transaction binding the contract method 0xfc062483.
 //
-// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
+// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
 func (_CanonicalStateChain *CanonicalStateChainSession) PushBlock(_header CanonicalStateChainHeader) (*types.Transaction, error) {
 	return _CanonicalStateChain.Contract.PushBlock(&_CanonicalStateChain.TransactOpts, _header)
 }
 
-// PushBlock is a paid mutator transaction binding the contract method 0x8f74b739.
+// PushBlock is a paid mutator transaction binding the contract method 0xfc062483.
 //
-// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
+// Solidity: function pushBlock((uint64,uint64,bytes32,bytes32,bytes32,(uint64,uint24,uint16)[]) _header) returns()
 func (_CanonicalStateChain *CanonicalStateChainTransactorSession) PushBlock(_header CanonicalStateChainHeader) (*types.Transaction, error) {
 	return _CanonicalStateChain.Contract.PushBlock(&_CanonicalStateChain.TransactOpts, _header)
 }
