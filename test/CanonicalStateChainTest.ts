@@ -1,6 +1,5 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { Contract } from "ethers";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { pushRandomHeader, setupCanonicalStateChain } from "./lib/chain";
 import { CanonicalStateChain } from "../typechain-types";
@@ -30,6 +29,31 @@ describe("CanonicalStateChain", function () {
 
     it("Should have the correct genesis hash", async function () {
       expect(await canonicalStateChain.chain(0)).to.equal(_chain.genesisHash);
+    });
+
+    it("maxPointers var should be 7 by default", async function () {
+      expect(await canonicalStateChain.maxPointers()).to.eq(7);
+    });
+
+    it("Should not be allowed to initialize twice", async function () {
+      let genesisHeader: CanonicalStateChain.HeaderStruct = {
+        epoch: BigInt(0),
+        l2Height: BigInt(1),
+        prevHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [],
+      };
+
+      await expect(
+        canonicalStateChain
+          .connect(otherAccount)
+          .getFunction("initialize")
+          .send(owner, genesisHeader),
+      ).to.be.revertedWithCustomError(
+        canonicalStateChain,
+        "InvalidInitialization",
+      );
     });
   });
 
@@ -70,6 +94,88 @@ describe("CanonicalStateChain", function () {
       )
         .to.emit(canonicalStateChain, "BlockAdded")
         .withArgs(1);
+    });
+
+    it("Should revert as epoch is too low", async function () {
+      const header: CanonicalStateChain.HeaderStruct = {
+        epoch: 0,
+        l2Height: 1,
+        prevHash: _chain.genesisHash,
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1, shareStart: 1, shareLen: 1 }],
+      };
+
+      await expect(
+        canonicalStateChain
+          .connect(publisher)
+          .getFunction("pushBlock")
+          .send(header),
+      ).to.be.revertedWith("epoch must be greater than previous epoch");
+    });
+
+    it("Should revert as the prevHash is not correct", async function () {
+      const header: CanonicalStateChain.HeaderStruct = {
+        epoch: 1,
+        l2Height: 1,
+        prevHash:
+          "0x55eb99d77b0e1ed261c0a8d11f026f811b8af01455a2b45189bcc87b93dfbbb7",
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1, shareStart: 1, shareLen: 1 }],
+      };
+
+      await expect(
+        canonicalStateChain
+          .connect(publisher)
+          .getFunction("pushBlock")
+          .send(header),
+      ).to.be.revertedWith("prevHash must be the previous block hash");
+    });
+
+    it("Should revert as < 1 celestia pointers", async function () {
+      const header: CanonicalStateChain.HeaderStruct = {
+        epoch: 1,
+        l2Height: 1,
+        prevHash: _chain.genesisHash,
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [],
+      };
+
+      await expect(
+        canonicalStateChain
+          .connect(publisher)
+          .getFunction("pushBlock")
+          .send(header),
+      ).to.be.revertedWith("block must have atleast one celestia pointer");
+    });
+
+    it("Should revert as > 7 (maxPointers) celestia pointers", async function () {
+      const header: CanonicalStateChain.HeaderStruct = {
+        epoch: 1,
+        l2Height: 1,
+        prevHash: _chain.genesisHash,
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+        ],
+      };
+
+      await expect(
+        canonicalStateChain
+          .connect(publisher)
+          .getFunction("pushBlock")
+          .send(header),
+      ).to.be.revertedWith("block has too many celestia pointers");
     });
   });
 
@@ -185,6 +291,29 @@ describe("CanonicalStateChain", function () {
           .getFunction("rollback")
           .send(0),
       ).to.emit(canonicalStateChain, "RolledBack");
+    });
+  });
+  describe("setMaxPointers", function () {
+    it("setMaxPointers should update maxPointers var", async function () {
+      expect(
+        await canonicalStateChain
+          .connect(owner)
+          .getFunction("setMaxPointers")
+          .send(1),
+      );
+      expect(await canonicalStateChain.maxPointers()).to.equal(1);
+    });
+
+    it("setMaxPointers should revert for non owner", async function () {
+      await expect(
+        canonicalStateChain
+          .connect(publisher)
+          .getFunction("setMaxPointers")
+          .send(1),
+      ).to.be.revertedWithCustomError(
+        canonicalStateChain,
+        "OwnableUnauthorizedAccount",
+      );
     });
   });
 });

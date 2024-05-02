@@ -11,6 +11,7 @@ import {
 import { makeNextBlock, setupCanonicalStateChain } from "./lib/chain";
 import { challengeL2HeaderMockData as MOCK_DATA } from "./mock/mock_challengeL2Header";
 import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
+import { provideHeader } from "./lib/oracle";
 
 type Header = CanonicalStateChain.HeaderStruct;
 
@@ -137,6 +138,62 @@ describe("ChallengeL2Header", function () {
         "invalid prev number on challenge data",
       );
     });
+
+    it("should not able to challenge if rblockNum not canonical (rblock not in chain yet)", async function () {
+      const l2Header = MOCK_DATA[0].headers[1].header;
+
+      await expect(
+        challenge.connect(owner).challengeL2Header(2, l2Header.number, {
+          value: challengeFee,
+        }),
+      ).to.be.revertedWith("block not in the chain yet");
+    });
+    it("should not able to challenge if not in challenge window", async function () {
+      const l2Header = MOCK_DATA[0].headers[1].header;
+
+      await challenge.connect(owner).connect(owner).setChallengeWindow(0);
+
+      await expect(
+        challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+          value: challengeFee,
+        }),
+      ).to.be.revertedWith("block is too old to challenge");
+    });
+
+    it("should not able to challenge if challenge already exists", async function () {
+      const l2Header = MOCK_DATA[0].headers[1].header;
+
+      await challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+        value: challengeFee,
+      });
+
+      await expect(
+        challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+          value: challengeFee,
+        }),
+      ).to.be.revertedWith("challenge already exists");
+    });
+
+    it("should not able to challenge if l2 header not within rblock bundle range", async function () {
+      await expect(
+        challenge.connect(owner).challengeL2Header(1, 1, {
+          value: challengeFee,
+        }),
+      ).to.be.revertedWith("L2 header must be within the rblock bundle range");
+    });
+
+    it("should not able to challenge the first l2 header in the first bundle", async function () {
+      const firstRblock = await chain.getHeaderByNum(0);
+      await expect(
+        challenge
+          .connect(owner)
+          .challengeL2Header(1, firstRblock[1] + BigInt(1), {
+            value: challengeFee,
+          }),
+      ).to.be.revertedWith(
+        "Cannot challenge the first L2 header in the first rblock",
+      );
+    });
   });
 
   describe("defendL2Header", function () {
@@ -156,6 +213,55 @@ describe("ChallengeL2Header", function () {
           .connect(owner)
           .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash),
       ).to.be.revertedWith("challenge is not in the correct state");
+    });
+
+    it("should not be able to defend if data of previous l2 header not pre-submitted to chainOracle", async function () {
+      const l2Header = MOCK_DATA[0].headers[CURR_HEADER].header;
+      const l2HeaderHash = MOCK_DATA[0].headers[CURR_HEADER].headerHash;
+      const l2PrevHeaderHash =
+        MOCK_DATA[0].headers[CURR_HEADER].header.parentHash;
+
+      const rblockHash = await chain.chain(1);
+      const shareProof = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
+      const shareRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
+      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
+
+      // load shares for the current header
+      await expect(
+        chainOracle
+          .connect(owner)
+          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+      ).to.not.be.reverted;
+
+      // load header for the current header
+      await expect(
+        chainOracle
+          .connect(owner)
+          .provideHeader(
+            await chainOracle.ShareKey(rblockHash, shareProof.data),
+            shareRanges,
+          ),
+      ).to.not.be.reverted;
+
+      // pre compute the challenge hash
+      const challengeHash = await challenge.l2HeaderChallengeHash(
+        await chain.chain(1),
+        l2Header.number,
+      );
+
+      // challenge the current header
+      await challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+        value: challengeFee,
+      });
+
+      // defend the current header, but the previous header is not loaded
+      await expect(
+        challenge
+          .connect(owner)
+          .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash),
+      ).to.be.revertedWith(
+        "previous l2 header not loaded for the given rblock",
+      );
     });
 
     it("should not be able to defend if data not pre-submitted to chainOracle", async function () {
@@ -288,6 +394,159 @@ describe("ChallengeL2Header", function () {
         .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash);
       // await expect(
       // ).to.not.be.reverted;
+    });
+  });
+
+  describe("settleL2HeaderChallenge", function () {
+    it("happy path", async function () {
+      const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
+      const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
+      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
+      const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
+      const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
+      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
+      const rblockHash = await chain.chain(1);
+
+      // load prev header to chainOracle
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        0,
+        prevHeaderShares,
+        prevHeaderRanges,
+        prevPointerProofs,
+      );
+
+      // load current header to chainOracle
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        0,
+        headerShares,
+        headerRanges,
+        pointerProofs,
+      );
+
+      // reduce challenge period
+      await challenge.connect(owner).setChallengePeriod(0);
+
+      // challenge the current header
+      const l2Header = MOCK_DATA[0].headers[CURR_HEADER].header;
+      await challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+        value: challengeFee,
+      });
+
+      const challengeHash = await challenge.l2HeaderChallengeHash(
+        rblockHash,
+        l2Header.number,
+      );
+
+      // settle
+      await challenge.connect(owner).settleL2HeaderChallenge(challengeHash);
+
+      const challengeData = await challenge.l2HeaderChallenges(challengeHash);
+      expect(challengeData[4]).to.be.equal(2);
+    });
+
+    it("should revert if challenge period has not ended", async function () {
+      const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
+      const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
+      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
+      const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
+      const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
+      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
+      const rblockHash = await chain.chain(1);
+
+      // load prev header
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        0,
+        prevHeaderShares,
+        prevHeaderRanges,
+        prevPointerProofs,
+      );
+
+      // load current header
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        0,
+        headerShares,
+        headerRanges,
+        pointerProofs,
+      );
+
+      // challenge
+      const l2Header = MOCK_DATA[0].headers[CURR_HEADER].header;
+      await challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+        value: challengeFee,
+      });
+
+      const challengeHash = await challenge.l2HeaderChallengeHash(
+        rblockHash,
+        l2Header.number,
+      );
+
+      // settle
+      await expect(
+        challenge.connect(owner).settleL2HeaderChallenge(challengeHash),
+      ).to.be.revertedWith("challenge period has not ended");
+    });
+
+    it("should revert if challenge is not in the correct state", async function () {
+      const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
+      const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
+      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
+      const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
+      const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
+      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
+      const rblockHash = await chain.chain(1);
+
+      // load prev header to chainOracle
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        0,
+        prevHeaderShares,
+        prevHeaderRanges,
+        prevPointerProofs,
+      );
+
+      // load current header to chainOracle
+      await provideHeader(
+        chainOracle,
+        rblockHash,
+        0,
+        headerShares,
+        headerRanges,
+        pointerProofs,
+      );
+
+      // reduce challenge period
+      await challenge.connect(owner).setChallengePeriod(0);
+
+      // challenge the current header
+      const l2Header = MOCK_DATA[0].headers[CURR_HEADER].header;
+      await challenge.connect(owner).challengeL2Header(1, l2Header.number, {
+        value: challengeFee,
+      });
+
+      const challengeHash = await challenge.l2HeaderChallengeHash(
+        rblockHash,
+        l2Header.number,
+      );
+
+      // settle
+      await challenge.connect(owner).settleL2HeaderChallenge(challengeHash);
+
+      // settle
+      await expect(
+        challenge.connect(owner).settleL2HeaderChallenge(challengeHash),
+      ).to.be.revertedWith("challenge is not in the correct state");
+
+      const challengeData = await challenge.l2HeaderChallenges(challengeHash);
+      expect(challengeData[4]).to.be.equal(2);
     });
   });
 

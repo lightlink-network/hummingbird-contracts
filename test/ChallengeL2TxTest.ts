@@ -6,7 +6,7 @@ import {
   Challenge,
 } from "../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { MOCK_DATA } from "./mock/mock_challengeL2Tx";
+// import { MOCK_DATA } from "./mock/mock_challengeL2Tx";
 import { setupCanonicalStateChain } from "./lib/chain";
 import { provideHeader, provideLegacyTx } from "./lib/oracle";
 

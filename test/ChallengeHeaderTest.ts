@@ -7,6 +7,7 @@ import {
   CanonicalStateChain,
   Challenge,
   Challenge__factory,
+  ChallengeTest,
 } from "../typechain-types";
 import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
 
@@ -22,6 +23,7 @@ describe("ChallengeHeader", function () {
   let genesisHash: string;
   let canonicalStateChain: CanonicalStateChain;
   let challenge: Challenge;
+  let challengeTest: ChallengeTest;
 
   beforeEach(async function () {
     [owner, publisher, otherAccount, challengeOwner] =
@@ -32,21 +34,6 @@ describe("ChallengeHeader", function () {
     canonicalStateChain = _chain.canonicalStateChain as any;
     genesisHash = _chain.genesisHash;
     genesisHeader = _chain.genesisHeader;
-
-    // const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
-    // const challengeFactory: any = await ethers.getContractFactory("Challenge");
-    // const challengeImplementation = await challengeFactory.deploy();
-
-    // const proxy = await proxyFactory.deploy(
-    //   await challengeImplementation.getAddress(),
-    //   challengeImplementation.interface.encodeFunctionData("initialize", [
-    //     ethers.ZeroAddress,
-    //     await canonicalStateChain.getAddress(),
-    //     ethers.ZeroAddress,
-    //     ethers.ZeroAddress,
-    //     ethers.ZeroAddress, // chain Oracle not needed for this test
-    //   ]),
-    // );
 
     const deployment = await proxyDeployAndInitialize(
       owner,
@@ -63,6 +50,19 @@ describe("ChallengeHeader", function () {
     _chain.canonicalStateChain
       .getFunction("setChallengeContract")
       .send(await challenge.getAddress());
+
+    // Setup challenge test contract allowing to test internal functions
+    const challengeTestFactory =
+      await ethers.getContractFactory("ChallengeTest");
+
+    challengeTest = await challengeTestFactory.deploy();
+    await challengeTest.waitForDeployment();
+
+    await challengeTest.initialize(
+      await canonicalStateChain.getAddress(),
+      ethers.ZeroAddress,
+      ethers.ZeroAddress, // chain Oracle not needed for this test
+    );
 
     // set isHeaderChallengeEnabled to true
     await challenge.getFunction("toggleHeaderChallenge").send(true);
@@ -340,6 +340,107 @@ describe("ChallengeHeader", function () {
           .getFunction("invalidateHeader")
           .send(1),
       ).to.be.revertedWith("header is valid");
+    });
+  });
+
+  describe("setMaxBundleSize", function () {
+    it("setMaxBundleSize should be failed without owner", async function () {
+      await expect(
+        challenge.connect(otherAccount).getFunction("setMaxBundleSize").send(1),
+      ).to.be.revertedWithCustomError(challenge, "OwnableUnauthorizedAccount");
+    });
+
+    it("setMaxBundleSize should be correct", async function () {
+      await challenge.getFunction("setMaxBundleSize").send(1);
+      expect(await challenge.maxBundleSize()).to.equal(1);
+
+      await challenge.getFunction("setMaxBundleSize").send(2);
+      expect(await challenge.maxBundleSize()).to.equal(2);
+    });
+  });
+
+  describe("_isHeaderValid", function () {
+    it("test should fail with invalid epoch", async function () {
+      const header: Header = {
+        epoch: BigInt(0), // epoch same as genesis
+        l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
+        prevHash: genesisHash,
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
+      };
+
+      // expect event emit InvalidHeader reason to be "Invalid Epoch"
+      await expect(
+        await challengeTest.isHeaderValid(
+          header,
+          await canonicalStateChain.calculateHeaderHash(header),
+          1,
+        ),
+      )
+        .to.emit(challengeTest, "InvalidHeader")
+        .withArgs(
+          header.epoch,
+          await canonicalStateChain.calculateHeaderHash(header),
+          0, // Invalid Epoch
+        );
+    });
+
+    it("test should fail with invalid previous hash", async function () {
+      const header: Header = {
+        epoch: BigInt(1),
+        l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
+        prevHash: ethers.ZeroHash, // invalid previous hash
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1n, shareStart: 1n, shareLen: 1n }],
+      };
+
+      // expect event emit InvalidHeader reason to be "Invalid Epoch"
+      await expect(
+        await challengeTest.isHeaderValid(
+          header,
+          await canonicalStateChain.calculateHeaderHash(header),
+          1,
+        ),
+      )
+        .to.emit(challengeTest, "InvalidHeader")
+        .withArgs(
+          header.epoch,
+          await canonicalStateChain.calculateHeaderHash(header),
+          2, // Invalid Previous Hash
+        );
+    });
+
+    it("test should fail if bundle size > max bundle size", async function () {
+      await challengeTest.getFunction("setMaxBundleSize").send(0);
+
+      const header: Header = {
+        epoch: BigInt(1),
+        l2Height: toBigInt(genesisHeader.l2Height) + BigInt(1),
+        prevHash: genesisHash,
+        stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        shareRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [
+          { height: 1n, shareStart: 1n, shareLen: 1n },
+          { height: 2n, shareStart: 1n, shareLen: 1n },
+        ],
+      };
+
+      // expect event emit InvalidHeader reason to be "Invalid Epoch"
+      await expect(
+        await challengeTest.isHeaderValid(
+          header,
+          await canonicalStateChain.calculateHeaderHash(header),
+          1,
+        ),
+      )
+        .to.emit(challengeTest, "InvalidHeader")
+        .withArgs(
+          header.epoch,
+          await canonicalStateChain.calculateHeaderHash(header),
+          3, // Invalid Bundle Size
+        );
     });
   });
 });

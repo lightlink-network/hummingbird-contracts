@@ -299,17 +299,25 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         bytes[] memory raw,
         ShareRange[] memory ranges
     ) public pure returns (bytes memory) {
-        bytes memory data;
+        // figure out the length of the data
+        uint256 length = 0;
+        for (uint i = 0; i < ranges.length; i++) {
+            ShareRange memory r = ranges[i];
+            length += r.end - r.start;
+        }
 
+        // copy the data using the ranges
+        bytes memory data = new bytes(length);
+        uint256 index = 0;
         for (uint i = 0; i < ranges.length; i++) {
             ShareRange memory r = ranges[i];
 
             // Ensure that the range is valid for the corresponding raw data
             require(r.end <= raw[i].length, "Invalid range");
 
-            // Concatenating the specified range of bytes
             for (uint j = r.start; j < r.end; j++) {
-                data = abi.encodePacked(data, raw[i][j]);
+                data[index] = raw[i][j];
+                index++;
             }
         }
 

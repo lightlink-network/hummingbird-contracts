@@ -16,6 +16,7 @@ Documentation & deployed contract addresses can be found [here](https://docs.lig
 npx hardhat gobind # updates go bindings
 npx hardhat compile # compiles the contracts
 npx hardhat test # runs the tests
+npx hardhat coverage # view test coverage
 ```
 
 We've also included some scripts for interacting with the contracts:
