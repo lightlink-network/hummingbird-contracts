@@ -72,9 +72,21 @@ describe("ChallengeDataAvailability", function () {
 
   describe("setChallengeWindow", function () {
     it("should set the challenge window", async function () {
-      const window = 10;
+      const window = 12 * 60 * 60; // 12 hours
       await challenge.setChallengeWindow(window);
       expect(await challenge.challengeWindow()).to.be.equal(window);
+    });
+    it("should revert as window < minimum threshold (12 hours)", async function () {
+      const window = 12 * 60 * 60 - 1; // 12 hours - 1 second
+      await expect(challenge.setChallengeWindow(window)).to.be.revertedWith(
+        "challenge window must be between 12 hours and 3 weeks",
+      );
+    });
+    it("should revert as window > maximum threshold (3 weeks)", async function () {
+      const window = 3 * 7 * 24 * 60 * 60 + 1; // 3 weeks + 1 second
+      await expect(challenge.setChallengeWindow(window)).to.be.revertedWith(
+        "challenge window must be between 12 hours and 3 weeks",
+      );
     });
     it("should revert if not called by owner", async function () {
       await expect(
@@ -85,9 +97,21 @@ describe("ChallengeDataAvailability", function () {
 
   describe("setChallengePeriod", function () {
     it("should set the challenge period", async function () {
-      const period = 10;
+      const period = 12 * 60 * 60; // 12 hours
       await challenge.setChallengePeriod(period);
       expect(await challenge.challengePeriod()).to.be.equal(period);
+    });
+    it("should revert as period < minimum threshold (12 hours)", async function () {
+      const period = 12 * 60 * 60 - 1; // 12 hours - 1 second
+      await expect(challenge.setChallengePeriod(period)).to.be.revertedWith(
+        "challenge period must be between 12 hours and 3 weeks",
+      );
+    });
+    it("should revert as period > maximum threshold (3 weeks)", async function () {
+      const period = 3 * 7 * 24 * 60 * 60 + 1; // 3 weeks + 1 second
+      await expect(challenge.setChallengePeriod(period)).to.be.revertedWith(
+        "challenge period must be between 12 hours and 3 weeks",
+      );
     });
     it("should revert if not called by owner", async function () {
       await expect(

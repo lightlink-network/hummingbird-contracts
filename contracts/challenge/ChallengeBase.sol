@@ -107,6 +107,10 @@ contract ChallengeBase is
     /// @param _challengeWindow The new challenge window time.
     /// @dev Only the owner can call this function.
     function setChallengeWindow(uint256 _challengeWindow) external onlyOwner {
+        require(
+            _challengeWindow >= 12 hours && _challengeWindow <= 3 weeks,
+            "challenge window must be between 12 hours and 3 weeks"
+        );
         challengeWindow = _challengeWindow;
     }
 
@@ -114,6 +118,10 @@ contract ChallengeBase is
     /// @param _challengePeriod The new challenge period time.
     /// @dev Only the owner can call this function.
     function setChallengePeriod(uint256 _challengePeriod) external onlyOwner {
+        require(
+            _challengePeriod >= 12 hours && _challengePeriod <= 3 weeks,
+            "challenge period must be between 12 hours and 3 weeks"
+        );
         challengePeriod = _challengePeriod;
     }
 
