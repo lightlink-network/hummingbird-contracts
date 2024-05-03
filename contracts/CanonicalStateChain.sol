@@ -113,6 +113,12 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         headers[_hash] = _header;
         chain[0] = _hash;
 
+        // Save the genesis block metadata.
+        headerMetadata[_hash] = HeaderMetadata(
+            uint64(block.timestamp),
+            msg.sender
+        );
+
         maxPointers = 7;
     }
 

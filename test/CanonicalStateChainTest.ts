@@ -55,6 +55,12 @@ describe("CanonicalStateChain", function () {
         "InvalidInitialization",
       );
     });
+
+    it("genesis block metaData should be set", async function () {
+      const genesisBlockHash = await canonicalStateChain.chain(0);
+      const header = await canonicalStateChain.headerMetadata(genesisBlockHash);
+      expect(header[1]).to.equal(owner.address);
+    });
   });
 
   describe("pushBlock", function () {
