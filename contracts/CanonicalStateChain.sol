@@ -203,6 +203,12 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
             _blockNumber < chainHead,
             "block number must be less than chain head"
         );
+        // Remove all blocks after the block number.
+        for (uint256 i = _blockNumber + 1; i <= chainHead; i++) {
+            delete headers[chain[i]];
+            delete headerMetadata[chain[i]];
+            delete chain[i];
+        }
         chainHead = _blockNumber;
         emit RolledBack(_blockNumber);
     }
