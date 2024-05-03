@@ -99,7 +99,7 @@ contract ChallengeBase is
 
     /// @notice Ensures the challenger has paid the challenge fee.
     modifier requireChallengeFee() {
-        require(msg.value >= challengeFee, "challenge fee not paid");
+        require(msg.value == challengeFee, "challenge fee not paid");
         _;
     }
 
