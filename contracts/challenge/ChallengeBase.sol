@@ -129,6 +129,10 @@ contract ChallengeBase is
     /// @param _challengeFee The new challenge fee.
     /// @dev Only the owner can call this function.
     function setChallengeFee(uint256 _challengeFee) external onlyOwner {
+        require(
+            _challengeFee >= 0.01 ether,
+            "challenge fee must be greater than 0.01 ether"
+        );
         challengeFee = _challengeFee;
     }
 
@@ -136,6 +140,10 @@ contract ChallengeBase is
     /// @param _challengeReward The new challenge reward.
     /// @dev Only the owner can call this function.
     function setChallengeReward(uint256 _challengeReward) external onlyOwner {
+        require(
+            _challengeReward >= 0.01 ether,
+            "challenge reward must be greater than 0.01 ether"
+        );
         challengeReward = _challengeReward;
     }
 

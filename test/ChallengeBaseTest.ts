@@ -122,7 +122,7 @@ describe("ChallengeDataAvailability", function () {
 
   describe("setChallengeFee", function () {
     it("should set the challenge fee", async function () {
-      const fee = ethers.parseEther("1");
+      const fee = ethers.parseEther("0.01");
       await challenge.setChallengeFee(fee);
       expect(await challenge.challengeFee()).to.be.equal(fee);
     });
@@ -131,11 +131,17 @@ describe("ChallengeDataAvailability", function () {
         challenge.connect(otherAccount).setChallengeFee(ethers.parseEther("1")),
       ).to.be.revertedWithCustomError(challenge, "OwnableUnauthorizedAccount");
     });
+    it("should revert as challenge fee is too low", async function () {
+      const fee = ethers.parseEther("0.001");
+      await expect(challenge.setChallengeFee(fee)).to.be.revertedWith(
+        "challenge fee must be greater than 0.01 ether",
+      );
+    });
   });
 
   describe("setChallengeReward", function () {
     it("should set the challenge reward", async function () {
-      const reward = ethers.parseEther("1");
+      const reward = ethers.parseEther("0.01");
       await challenge.setChallengeReward(reward);
       expect(await challenge.challengeReward()).to.be.equal(reward);
     });
@@ -145,6 +151,12 @@ describe("ChallengeDataAvailability", function () {
           .connect(otherAccount)
           .setChallengeReward(ethers.parseEther("1")),
       ).to.be.revertedWithCustomError(challenge, "OwnableUnauthorizedAccount");
+    });
+    it("should revert as challenge reward is too low", async function () {
+      const fee = ethers.parseEther("0.001");
+      await expect(challenge.setChallengeReward(fee)).to.be.revertedWith(
+        "challenge reward must be greater than 0.01 ether",
+      );
     });
   });
 
