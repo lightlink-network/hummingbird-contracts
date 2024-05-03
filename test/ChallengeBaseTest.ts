@@ -170,5 +170,10 @@ describe("ChallengeDataAvailability", function () {
         challenge.connect(otherAccount).setDefender(otherAccount.address),
       ).to.be.revertedWithCustomError(challenge, "OwnableUnauthorizedAccount");
     });
+    it("should revert if address is zero", async function () {
+      await expect(
+        challenge.setDefender(ethers.ZeroAddress),
+      ).to.be.revertedWith("defender cannot be the zero address");
+    });
   });
 });

@@ -151,6 +151,7 @@ contract ChallengeBase is
     /// @param _defender The new defender address.
     /// @dev Only the owner can call this function.
     function setDefender(address _defender) external onlyOwner {
+        require(_defender != address(0), "defender cannot be the zero address");
         defender = _defender;
     }
 
