@@ -130,8 +130,8 @@ contract ChallengeBase is
     /// @dev Only the owner can call this function.
     function setChallengeFee(uint256 _challengeFee) external onlyOwner {
         require(
-            _challengeFee >= 0.01 ether,
-            "challenge fee must be greater than 0.01 ether"
+            _challengeFee >= 0.01 ether && _challengeFee <= 10 ether,
+            "challenge fee must be between 0.01 ether and 10 ether"
         );
         challengeFee = _challengeFee;
     }
@@ -141,8 +141,8 @@ contract ChallengeBase is
     /// @dev Only the owner can call this function.
     function setChallengeReward(uint256 _challengeReward) external onlyOwner {
         require(
-            _challengeReward >= 0.01 ether,
-            "challenge reward must be greater than 0.01 ether"
+            _challengeReward >= 0.01 ether && _challengeReward <= 10 ether,
+            "challenge reward must be between 0.01 ether and 10 ether"
         );
         challengeReward = _challengeReward;
     }

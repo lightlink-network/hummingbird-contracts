@@ -134,7 +134,13 @@ describe("ChallengeDataAvailability", function () {
     it("should revert as challenge fee is too low", async function () {
       const fee = ethers.parseEther("0.001");
       await expect(challenge.setChallengeFee(fee)).to.be.revertedWith(
-        "challenge fee must be greater than 0.01 ether",
+        "challenge fee must be between 0.01 ether and 10 ether",
+      );
+    });
+    it("should revert as challenge fee is too high", async function () {
+      const fee = ethers.parseEther("10.1");
+      await expect(challenge.setChallengeFee(fee)).to.be.revertedWith(
+        "challenge fee must be between 0.01 ether and 10 ether",
       );
     });
   });
@@ -155,7 +161,13 @@ describe("ChallengeDataAvailability", function () {
     it("should revert as challenge reward is too low", async function () {
       const fee = ethers.parseEther("0.001");
       await expect(challenge.setChallengeReward(fee)).to.be.revertedWith(
-        "challenge reward must be greater than 0.01 ether",
+        "challenge reward must be between 0.01 ether and 10 ether",
+      );
+    });
+    it("should revert as challenge reward is too high", async function () {
+      const fee = ethers.parseEther("10.1");
+      await expect(challenge.setChallengeReward(fee)).to.be.revertedWith(
+        "challenge reward must be between 0.01 ether and 10 ether",
       );
     });
   });
