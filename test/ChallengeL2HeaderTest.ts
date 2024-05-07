@@ -101,7 +101,7 @@ describe("ChallengeL2Header", function () {
             1,
             MOCK_DATA[0].headers[CURR_HEADER].header.number,
           ),
-      ).to.be.revertedWith("Challenge: fee not paid");
+      ).to.be.revertedWith("challenge fee not paid");
     });
 
     it("should able to challenge if fee is paid", async function () {

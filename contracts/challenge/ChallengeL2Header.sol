@@ -228,7 +228,7 @@ contract ChallengeL2Header is ChallengeBase {
         challenge.status = L2HeaderChallengeStatus.DefenderWon;
 
         // payout the caller
-        (bool success, ) = payable(msg.sender).call{value: challengeFee}("");
+        (bool success, ) = defender.call{value: challengeFee}("");
         require(success, "failed to pay defender");
 
         // emit the event
