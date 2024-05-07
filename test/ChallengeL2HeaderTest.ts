@@ -76,6 +76,7 @@ describe("ChallengeL2Header", function () {
 
     challenge = Challenge__factory.connect(challengeDeployment.address, owner);
     await challenge.connect(owner).setChallengeFee(challengeFee);
+    await chain.connect(owner).setChallengeContract(challengeDeployment.address);
 
     // 4. push next block
     const nextBlock = { ...MOCK_DATA[0].rollupHeader };
@@ -389,11 +390,29 @@ describe("ChallengeL2Header", function () {
       const l2HeaderHash = MOCK_DATA[0].headers[CURR_HEADER].headerHash;
       const l2PrevHeaderHash =
         MOCK_DATA[0].headers[CURR_HEADER].header.parentHash;
-      await challenge
+      await expect(challenge
         .connect(publisher)
-        .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash);
-      // await expect(
-      // ).to.not.be.reverted;
+        .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash)
+      ).to.not.be.reverted;
+
+      const challengeData = await challenge.l2HeaderChallenges(challengeHash);
+      expect(challengeData[5], "incorrect challenge state").to.be.equal(3n);
+
+      //check the chain was not rolled back
+      const head = await chain.chainHead();
+      expect(head, "chain rolled back").to.be.equal(1n);
+
+      // check the challenge cannot be settled
+      await expect(
+        challenge.connect(owner).settleL2HeaderChallenge(challengeHash),
+      ).to.be.revertedWith("challenge is not in the correct state");
+
+      // check the challenge cannot be defended again
+      await expect(
+        challenge
+          .connect(publisher)
+          .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash),
+      ).to.be.revertedWith("challenge is not in the correct state");
     });
   });
 
@@ -439,13 +458,17 @@ describe("ChallengeL2Header", function () {
       const challengeHash = await challenge.l2HeaderChallengeHash(
         rblockHash,
         l2Header.number,
-      );
+      );;
+
+      // advance time
+      await ethers.provider.send("evm_increaseTime", [3600])
+      await ethers.provider.send("evm_mine")
 
       // settle
-      await challenge.connect(owner).settleL2HeaderChallenge(challengeHash);
+      await expect(challenge.connect(owner).settleL2HeaderChallenge(challengeHash), "challenge failed").to.not.be.reverted;
 
       const challengeData = await challenge.l2HeaderChallenges(challengeHash);
-      expect(challengeData[4]).to.be.equal(2);
+      expect(challengeData[5], "incorrect challenge hash").to.be.equal(2);
 
       //check the chain rolled back
       const head = await chain.chainHead();
@@ -507,6 +530,7 @@ describe("ChallengeL2Header", function () {
       const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
+      
       // load prev header to chainOracle
       await provideHeader(
         chainOracle,
@@ -516,7 +540,7 @@ describe("ChallengeL2Header", function () {
         prevHeaderRanges,
         prevPointerProofs,
       );
-
+      
       // load current header to chainOracle
       await provideHeader(
         chainOracle,
@@ -526,31 +550,35 @@ describe("ChallengeL2Header", function () {
         headerRanges,
         pointerProofs,
       );
-
+      
       // reduce challenge period
       await challenge.connect(owner).setChallengePeriod(0);
-
+      
       // challenge the current header
       const l2Header = MOCK_DATA[0].headers[CURR_HEADER].header;
       await challenge.connect(owner).challengeL2Header(1, l2Header.number, {
         value: challengeFee,
       });
-
+      
       const challengeHash = await challenge.l2HeaderChallengeHash(
         rblockHash,
         l2Header.number,
       );
 
-      // settle
-      await challenge.connect(owner).settleL2HeaderChallenge(challengeHash);
-
-      // settle
+      // advance time
+      await ethers.provider.send("evm_increaseTime", [3600])
+      await ethers.provider.send("evm_mine")
+      
+      // settle once
+      await expect(challenge.connect(owner).settleL2HeaderChallenge(challengeHash)).to.not.be.reverted;
+      
+      // settle again
       await expect(
         challenge.connect(owner).settleL2HeaderChallenge(challengeHash),
       ).to.be.revertedWith("challenge is not in the correct state");
 
       const challengeData = await challenge.l2HeaderChallenges(challengeHash);
-      expect(challengeData[4]).to.be.equal(2);
+      expect(challengeData[5]).to.be.equal(2);
     });
   });
 
