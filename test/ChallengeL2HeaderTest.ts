@@ -446,6 +446,10 @@ describe("ChallengeL2Header", function () {
 
       const challengeData = await challenge.l2HeaderChallenges(challengeHash);
       expect(challengeData[4]).to.be.equal(2);
+
+      //check the chain rolled back
+      const head = await chain.chainHead();
+      expect(head, "chain did not rollback").to.be.equal(0n);
     });
 
     it("should revert if challenge period has not ended", async function () {

@@ -46,6 +46,7 @@ contract ChallengeL2Header is ChallengeBase {
     /// @param challenger - The address of the challenger.
     /// @param status - The status of the challenge.
     struct L2HeaderChallenge {
+        uint256 blockNum;
         L2HeaderPointer header;
         L2HeaderPointer prevHeader;
         uint256 challengeEnd;
@@ -136,6 +137,7 @@ contract ChallengeL2Header is ChallengeBase {
 
         // 7. Create the challenge
         l2HeaderChallenges[challengeHash] = L2HeaderChallenge(
+            _rblockNum,
             header,
             prevHeader,
             block.timestamp + challengePeriod,
@@ -255,7 +257,6 @@ contract ChallengeL2Header is ChallengeBase {
             block.timestamp > challenge.challengeEnd,
             "challenge period has not ended"
         );
-
         challenge.status = L2HeaderChallengeStatus.ChallengerWon;
 
         emit L2HeaderChallengeUpdate(
@@ -269,6 +270,9 @@ contract ChallengeL2Header is ChallengeBase {
         // pay out the challenger
         (bool success, ) = challenge.challenger.call{value: challengeFee}("");
         require(success, "failed to pay challenger");
+
+        // rollback the block
+        chain.rollback(challenge.blockNum - 1);
     }
 
     /// @notice Returns the hash of an L2 header challenge.

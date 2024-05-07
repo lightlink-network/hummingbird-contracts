@@ -18,6 +18,7 @@ contract ChallengeL2Tx is ChallengeBase {
     }
 
     struct L2TxChallenge {
+        uint256 blockNum;
         bytes32 l2BlockHash;
         bytes32 l2TxRoot;
         uint32 txIndex;
@@ -75,6 +76,7 @@ contract ChallengeL2Tx is ChallengeBase {
         );
 
         l2TxChallenges[l2TxChallengesIdx] = L2TxChallenge({
+            blockNum: _rblockNum,
             l2BlockHash: _l2BlockHash,
             l2TxRoot: l2Header.transactionsRoot,
             txIndex: 0,
@@ -202,7 +204,9 @@ contract ChallengeL2Tx is ChallengeBase {
                 ""
             );
             require(success, "failed to pay challenger");
-            return;
+            
+            // rollback the tx
+            chain.rollback(challenge.blockNum - 1);
         }
 
         challenge.status = L2TxChallengeStatus.DefenderWon;
@@ -218,6 +222,5 @@ contract ChallengeL2Tx is ChallengeBase {
         // pay out the defender
         (bool success, ) = challenge.defender.call{value: challengeFee}("");
         require(success, "failed to pay defender");
-        return;
     }
 }
