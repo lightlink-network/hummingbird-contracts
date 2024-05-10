@@ -52,6 +52,7 @@ contract ChallengeL2Header is ChallengeBase {
         uint256 challengeEnd;
         address challenger;
         L2HeaderChallengeStatus status;
+        bool claimed;
     }
 
     /// @notice Emitted when an L2 header challenge is updated.
@@ -142,7 +143,8 @@ contract ChallengeL2Header is ChallengeBase {
             prevHeader,
             block.timestamp + challengePeriod,
             msg.sender,
-            L2HeaderChallengeStatus.Initiated
+            L2HeaderChallengeStatus.Initiated,
+            false
         );
 
         // 8. Emit the challenge event
@@ -227,10 +229,6 @@ contract ChallengeL2Header is ChallengeBase {
         // finalise the challenge
         challenge.status = L2HeaderChallengeStatus.DefenderWon;
 
-        // payout the caller
-        (bool success, ) = defender.call{value: challengeFee}("");
-        require(success, "failed to pay defender");
-
         // emit the event
         emit L2HeaderChallengeUpdate(
             _challengeHash,
@@ -257,6 +255,8 @@ contract ChallengeL2Header is ChallengeBase {
             block.timestamp > challenge.challengeEnd,
             "challenge period has not ended"
         );
+
+        // finalise the challenge
         challenge.status = L2HeaderChallengeStatus.ChallengerWon;
 
         emit L2HeaderChallengeUpdate(
@@ -267,9 +267,6 @@ contract ChallengeL2Header is ChallengeBase {
             L2HeaderChallengeStatus.ChallengerWon
         );
 
-        // pay out the challenger
-        (bool success, ) = challenge.challenger.call{value: challengeFee}("");
-        require(success, "failed to pay challenger");
 
         // rollback the block
         chain.rollback(challenge.blockNum - 1);
@@ -290,5 +287,21 @@ contract ChallengeL2Header is ChallengeBase {
     /// @dev Only the owner can call this function.
     function toggleL2HeaderChallenge(bool _status) external onlyOwner {
         isL2HeaderChallengeEnabled = _status;
+    }
+
+    function claimL2HeaderChallengeReward(bytes32 _challengeKey) external {
+        L2HeaderChallenge storage challenge = l2HeaderChallenges[_challengeKey];
+        require(challenge.claimed == false, "challenge has already been claimed");
+        require(challenge.status == L2HeaderChallengeStatus.ChallengerWon || challenge.status == L2HeaderChallengeStatus.DefenderWon, "challenge is not in the correct state");
+
+        if (challenge.status == L2HeaderChallengeStatus.ChallengerWon) {
+            (bool success, ) = challenge.challenger.call{value: challengeFee}("");
+            require(success, "failed to pay challenger");
+        } else {
+            (bool success, ) = defender.call{value: challengeFee}("");
+            require(success, "failed to pay defender");
+        }
+
+        challenge.claimed = true;
     }
 }

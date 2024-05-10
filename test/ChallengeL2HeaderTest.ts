@@ -295,7 +295,7 @@ describe("ChallengeL2Header", function () {
       expect(await chainOracle.hashHeader(header)).to.be.equal(headerHash);
     });
 
-    it("should be able to extra data from shares", async function () {
+    it("should be able to extract data from shares", async function () {
       expect(
         chainOracle
           .connect(owner)
@@ -473,6 +473,12 @@ describe("ChallengeL2Header", function () {
       //check the chain rolled back
       const head = await chain.chainHead();
       expect(head, "chain did not rollback").to.be.equal(0n);
+
+      // claim the challenge
+      await expect(challenge.connect(owner).claimL2HeaderChallengeReward(challengeHash)).to.not.be.reverted;
+
+      // check the reward can only be claimed once
+      await expect(challenge.connect(owner).claimL2HeaderChallengeReward(challengeHash)).to.be.revertedWith("challenge has already been claimed");
     });
 
     it("should revert if challenge period has not ended", async function () {

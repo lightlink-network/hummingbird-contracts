@@ -50,6 +50,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         address challenger;
         uint256 expiry;
         ChallengeDAStatus status;
+        bool claimed;
     }
 
     /// @notice The data structure for a DA challenge proof.
@@ -134,7 +135,8 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             _pointerIndex,
             msg.sender,
             block.timestamp + challengePeriod,
-            ChallengeDAStatus.ChallengerInitiated
+            ChallengeDAStatus.ChallengerInitiated,
+            false
         );
 
         emit ChallengeDAUpdate(
@@ -191,10 +193,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             ChallengeDAStatus.DefenderWon
         );
 
-        // pay out the reward.
-        // use call to prevent failing receiver is a contract.
-        (bool success, ) = defender.call{value: challengeFee}("");
-        require(success, "failed to pay defender");
+        // The defender can now call claimDAChallengeReward to claim the reward.
     }
 
     /// @notice Settles the data root inclusion challenge in favor of the challenger
@@ -223,18 +222,31 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             ChallengeDAStatus.ChallengerWon
         );
 
-        // pay out the reward.
-        // use call to prevent failing receiver is a contract.
-        (bool success, ) = challenge.challenger.call{value: challengeFee}("");
-        require(success, "failed to pay challenger");
-
         // rollback the chain.
         chain.rollback(challenge.blockIndex - 1);
+
+        // The challenger can now call claimDAChallengeReward to claim the reward.
     }
 
     /// @notice Toggles the data availability challenges on or off.
     /// @param _status - The status of the data availability challenges.
     function toggleDAChallenge(bool _status) external onlyOwner {
         isDAChallengeEnabled = _status;
+    }
+
+    function claimDAChallengeReward(bytes32 _challengeKey) external {
+        ChallengeDA storage challenge = daChallenges[_challengeKey];
+        require(challenge.claimed == false, "challenge has already been claimed");
+        require(challenge.status == ChallengeDAStatus.ChallengerWon || challenge.status == ChallengeDAStatus.DefenderWon, "challenge is not in the correct state");
+
+        if (challenge.status == ChallengeDAStatus.ChallengerWon) {
+            (bool success, ) = challenge.challenger.call{value: challengeFee}("");
+            require(success, "failed to pay challenger");
+        } else {
+            (bool success, ) = defender.call{value: challengeFee}("");
+            require(success, "failed to pay defender");
+        }
+
+       challenge.claimed = true;
     }
 }

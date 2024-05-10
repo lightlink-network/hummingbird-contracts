@@ -230,6 +230,9 @@ describe("ChallengeDataAvailability", function () {
         STATUS_DEFENDER_WON,
       );
 
+      // claim reward
+      await expect(challenge.connect(publisher).claimDAChallengeReward(challengeKey)).to.not.reverted;
+
       const postbalance = await challengeOwner.provider.getBalance(
         publisher.address,
       );
@@ -357,10 +360,16 @@ describe("ChallengeDataAvailability", function () {
         STATUS_CHALLENGER_WON,
       );
 
+      // claim reward
+      await expect(challenge.connect(publisher).claimDAChallengeReward(challengeKey)).to.not.reverted;
+
       const postbalance = await challengeOwner.provider.getBalance(
         challengeOwner.address,
       );
       expect(postbalance).to.be.greaterThan(prebalance);
+
+      // should not be able to claim reward again
+      await expect(challenge.connect(publisher).claimDAChallengeReward(challengeKey)).to.be.revertedWith("challenge has already been claimed");
     });
   });
 
