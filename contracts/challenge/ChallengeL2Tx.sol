@@ -217,11 +217,12 @@ contract ChallengeL2Tx is ChallengeBase {
         );
     }
 
-    function claimL2TxChallengeReward(uint256 _challengeKey) external {
+    function claimL2TxChallengeReward(uint256 _challengeKey) external nonReentrant {
         L2TxChallenge storage challenge = l2TxChallenges[_challengeKey];
         require(challenge.claimed == false, "challenge has already been claimed");
         require(challenge.status == L2TxChallengeStatus.ChallengerWon || challenge.status == L2TxChallengeStatus.DefenderWon, "challenge is not in the correct state");
 
+        challenge.claimed = true;
         if (challenge.status == L2TxChallengeStatus.ChallengerWon) {
             (bool success, ) = challenge.challenger.call{value: challengeFee}("");
             require(success, "failed to pay challenger");
@@ -230,6 +231,5 @@ contract ChallengeL2Tx is ChallengeBase {
             require(success, "failed to pay defender");
         }
 
-        challenge.claimed = true;
     }
 }

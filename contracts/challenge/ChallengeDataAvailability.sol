@@ -234,11 +234,12 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         isDAChallengeEnabled = _status;
     }
 
-    function claimDAChallengeReward(bytes32 _challengeKey) external {
+    function claimDAChallengeReward(bytes32 _challengeKey) external nonReentrant {
         ChallengeDA storage challenge = daChallenges[_challengeKey];
         require(challenge.claimed == false, "challenge has already been claimed");
         require(challenge.status == ChallengeDAStatus.ChallengerWon || challenge.status == ChallengeDAStatus.DefenderWon, "challenge is not in the correct state");
 
+        challenge.claimed = true;
         if (challenge.status == ChallengeDAStatus.ChallengerWon) {
             (bool success, ) = challenge.challenger.call{value: challengeFee}("");
             require(success, "failed to pay challenger");
@@ -247,6 +248,5 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             require(success, "failed to pay defender");
         }
 
-       challenge.claimed = true;
     }
 }
