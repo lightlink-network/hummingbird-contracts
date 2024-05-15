@@ -11,6 +11,7 @@ import {
 
 import { pushRandomHeader } from "./lib/chain";
 import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
+import { challengeDAMockData as MOCK_DATA } from "./mock/mock_challengeDa";
 
 type Header = CanonicalStateChain.HeaderStruct;
 
@@ -66,6 +67,17 @@ describe("ChallengeDataAvailability", function () {
     await challenge.setChallengeFee(challengeFee);
     // set publisher as defender
     await challenge.setDefender(publisher.address);
+    // set namespace
+    await challenge.setDANamespace({
+      id: MOCK_DATA.daProofs.shareProof.namespace.id,
+      version: MOCK_DATA.daProofs.shareProof.namespace.version,
+    })
+
+    
+    // push next block
+    MOCK_DATA.rollupHeader.prevHash = genesisHash;
+    await canonicalStateChain.connect(publisher).pushBlock(MOCK_DATA.rollupHeader)
+
     // set isDAChallengeEnabled to true
     await challenge.getFunction("toggleDAChallenge").send(true);
   });
@@ -86,44 +98,62 @@ describe("ChallengeDataAvailability", function () {
         await mockDaOracle.getAddress(),
       );
     });
+
+    it("Should have correct namespace", async function () {
+      const namespace = await challenge.daNamespace();
+      expect(namespace.id).to.equal(MOCK_DATA.daProofs.shareProof.namespace.id);
+      expect(namespace.version).to.equal(MOCK_DATA.daProofs.shareProof.namespace.version);
+    });
   });
 
   describe("challengeDataRootInclusion", function () {
     it("should not allow challenging the genesis header", async function () {
       await expect(
-        challenge.connect(challengeOwner).challengeDataRootInclusion(0, 0),
+        challenge.connect(challengeOwner).challengeDataRootInclusion(0, 0, 0),
       ).to.be.revertedWith("cannot challenge genesis block");
     });
 
     it("should not allow challenging a header that is not canonical", async function () {
       await expect(
-        challenge.connect(challengeOwner).challengeDataRootInclusion(100, 0),
+        challenge.connect(challengeOwner).challengeDataRootInclusion(100, 0, 0),
       ).to.be.revertedWith("block not in the chain yet");
     });
 
     it("should not allow challenge if challenge fee is not paid", async function () {
-      await pushRandomHeader(publisher, canonicalStateChain);
-
       await expect(
-        challenge.connect(challengeOwner).challengeDataRootInclusion(1, 0),
+        challenge.connect(challengeOwner).challengeDataRootInclusion(1, 0, 0),
       ).to.be.revertedWith("challenge fee not paid");
     });
 
+    it("should not allow challenge if pointer not in range", async function () {
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .challengeDataRootInclusion(1, MOCK_DATA.rollupHeader.celestiaPointers.length + 5, 0, { value: challengeFee })
+      ).to.be.revertedWith("invalid pointer index")
+    });
+
+    it("should not allow challenge if shareIndex not in range", async function () {
+      await expect(
+        challenge
+          .connect(challengeOwner)
+          .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, 10000, { value: challengeFee }),
+      ).to.be.reverted;
+    });
+
     it("should allow challenge (if challenge fee is paid)", async function () {
-      const [hash, header] = await pushRandomHeader(
-        publisher,
-        canonicalStateChain,
-      );
+      const hash = await canonicalStateChain.chain(1)
 
       await expect(
         challenge
           .connect(challengeOwner)
-          .challengeDataRootInclusion(1, 0, { value: challengeFee }),
+          .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee }),
       ).to.not.be.reverted;
 
       const challengeKey = await challenge.dataRootInclusionChallengeKey(
         hash,
-        0,
+        MOCK_DATA.daProofs.pointerIndex,
+        MOCK_DATA.daProofs.shareIndex,
       );
 
       const challengeInfo = await challenge.daChallenges(challengeKey);
@@ -142,23 +172,21 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should not allow two challenges on the same block", async function () {
-      await pushRandomHeader(publisher, canonicalStateChain);
 
       await challenge
         .connect(challengeOwner)
-        .challengeDataRootInclusion(1, 0, { value: challengeFee });
+        .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee });
 
       await expect(
         challenge
           .connect(challengeOwner)
-          .challengeDataRootInclusion(1, 0, { value: challengeFee }),
+          .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee }),
       ).to.be.revertedWith("challenge already exists");
     });
   });
 
   describe("defendDataRootInclusion", function () {
     it("should not allow defending a non-existent challenge", async function () {
-      const proof = { ...EXAMPLE_PROOF };
 
       const challengeKey = ethers.keccak256(
         ethers.toUtf8Bytes("None existent challenge"),
@@ -167,7 +195,7 @@ describe("ChallengeDataAvailability", function () {
       await expect(
         challenge
           .connect(publisher)
-          .defendDataRootInclusion(challengeKey, proof),
+          .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof),
       ).to.be.revertedWith("challenge is not in the correct state");
     });
 
@@ -178,44 +206,37 @@ describe("ChallengeDataAvailability", function () {
       );
 
       const challengeKey = await challenge.dataRootInclusionChallengeKey(
-        hash,
-        0,
+        hash, 0, header.celestiaPointers[0].shareStart
       );
 
       await challenge
         .connect(challengeOwner)
-        .challengeDataRootInclusion(1, 0, { value: challengeFee });
+        .challengeDataRootInclusion(2, 0, header.celestiaPointers[0].shareStart, { value: challengeFee });
 
       // set mock daoracle to return false result
       await mockDaOracle.getFunction("setResult").send(false);
 
-      const proof = { ...EXAMPLE_PROOF };
-      proof.dataRootTuple.height = toBigInt(header.celestiaPointers[0].height);
+      const proof = { ...MOCK_DATA.daProofs.shareProof };
 
       await expect(
         challenge
           .connect(publisher)
-          .defendDataRootInclusion(challengeKey, proof),
-      ).to.be.revertedWith("invalid proof");
+          .defendDataRootInclusion(challengeKey, proof, MOCK_DATA.daProofs.shareToRBlockRootProof),
+      ).to.be.reverted;
     });
 
     it("should be able to defend a challenge", async function () {
-      const [hash, header] = await pushRandomHeader(
-        publisher,
-        canonicalStateChain,
-      );
+      const hash = await canonicalStateChain.chain(1)
 
       const challengeKey = await challenge.dataRootInclusionChallengeKey(
         hash,
-        0,
+        MOCK_DATA.daProofs.pointerIndex,
+        MOCK_DATA.daProofs.shareIndex,
       );
 
       await challenge
         .connect(challengeOwner)
-        .challengeDataRootInclusion(1, 0, { value: challengeFee });
-
-      const proof = { ...EXAMPLE_PROOF };
-      proof.dataRootTuple.height = toBigInt(header.celestiaPointers[0].height);
+        .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee });
 
       const prebalance = await challengeOwner.provider.getBalance(
         publisher.address,
@@ -223,7 +244,7 @@ describe("ChallengeDataAvailability", function () {
 
       await challenge
         .connect(publisher)
-        .defendDataRootInclusion(challengeKey, proof);
+        .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof);
 
       const c = await challenge.daChallenges(challengeKey);
       expect(c.status, "expect: daChallenges(hash).status = 3").to.equal(
@@ -241,31 +262,26 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should not allow defending a challenge twice", async function () {
-      const [hash, header] = await pushRandomHeader(
-        publisher,
-        canonicalStateChain,
-      );
+      const hash = await canonicalStateChain.chain(1)
 
       const challengeKey = await challenge.dataRootInclusionChallengeKey(
         hash,
-        0,
+        MOCK_DATA.daProofs.pointerIndex,
+        MOCK_DATA.daProofs.shareIndex,
       );
 
       await challenge
         .connect(challengeOwner)
-        .challengeDataRootInclusion(1, 0, { value: challengeFee });
-
-      const proof = { ...EXAMPLE_PROOF };
-      proof.dataRootTuple.height = toBigInt(header.celestiaPointers[0].height);
+        .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee });
 
       await challenge
         .connect(publisher)
-        .defendDataRootInclusion(challengeKey, proof);
+        .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof);
 
       await expect(
         challenge
           .connect(publisher)
-          .defendDataRootInclusion(challengeKey, proof),
+          .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof),
       ).to.be.revertedWith("challenge is not in the correct state");
     });
   });
@@ -282,26 +298,21 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should not allow settling a challenge that is already defended", async function () {
-      const [hash, header] = await pushRandomHeader(
-        publisher,
-        canonicalStateChain,
-      );
+      const hash = await canonicalStateChain.chain(1)
 
       const challengeKey = await challenge.dataRootInclusionChallengeKey(
         hash,
-        0,
+        MOCK_DATA.daProofs.pointerIndex,
+        MOCK_DATA.daProofs.shareIndex,
       );
-
-      const proof = { ...EXAMPLE_PROOF };
-      proof.dataRootTuple.height = toBigInt(header.celestiaPointers[0].height);
 
       await challenge
         .connect(challengeOwner)
-        .challengeDataRootInclusion(1, 0, { value: challengeFee });
+        .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee });
 
       await challenge
         .connect(publisher)
-        .defendDataRootInclusion(challengeKey, proof);
+        .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof);
 
       await expect(
         challenge.connect(challengeOwner).settleDataRootInclusion(challengeKey),
@@ -309,19 +320,17 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should not settle challenge if challenge period is not over", async function () {
-      const [hash, header] = await pushRandomHeader(
-        publisher,
-        canonicalStateChain,
-      );
+      const hash = await canonicalStateChain.chain(1)
 
       const challengeKey = await challenge.dataRootInclusionChallengeKey(
         hash,
-        0,
+        MOCK_DATA.daProofs.pointerIndex,
+        MOCK_DATA.daProofs.shareIndex,
       );
 
       await challenge
         .connect(challengeOwner)
-        .challengeDataRootInclusion(1, 0, { value: challengeFee });
+        .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee });
 
       await expect(
         challenge.connect(challengeOwner).settleDataRootInclusion(challengeKey),
@@ -329,19 +338,17 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("should settle challenge if challenge period is over", async function () {
-      const [hash, header] = await pushRandomHeader(
-        publisher,
-        canonicalStateChain,
-      );
+      const hash = await canonicalStateChain.chain(1)
 
       const challengeKey = await challenge.dataRootInclusionChallengeKey(
         hash,
-        0,
+        MOCK_DATA.daProofs.pointerIndex,
+        MOCK_DATA.daProofs.shareIndex,
       );
 
       await challenge
         .connect(challengeOwner)
-        .challengeDataRootInclusion(1, 0, { value: challengeFee });
+        .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee });
 
       const prebalance = await challengeOwner.provider.getBalance(
         challengeOwner.address,
@@ -392,36 +399,23 @@ describe("ChallengeDataAvailability", function () {
     });
 
     it("challenge DA should revert when disabled", async function () {
-      await pushRandomHeader(publisher, canonicalStateChain);
       await challenge.getFunction("toggleDAChallenge").send(false);
       await expect(
         challenge
           .connect(challengeOwner)
-          .challengeDataRootInclusion(1, 0, { value: challengeFee }),
+          .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee }),
       ).to.be.revertedWith("DA challenges are disabled");
     });
 
     it("challenge DA should not revert when enabled", async function () {
-      await pushRandomHeader(publisher, canonicalStateChain);
       await challenge.getFunction("toggleDAChallenge").send(true);
       await expect(
         challenge
           .connect(challengeOwner)
-          .challengeDataRootInclusion(1, 0, { value: challengeFee }),
+          .challengeDataRootInclusion(1, MOCK_DATA.daProofs.pointerIndex, MOCK_DATA.daProofs.shareIndex, { value: challengeFee }),
       ).to.not.be.reverted;
     });
   });
 });
 
-const EXAMPLE_PROOF: ChallengeDAProof = {
-  rootNonce: BigInt(500),
-  dataRootTuple: {
-    height: BigInt(1),
-    dataRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
-  },
-  proof: {
-    sideNodes: [],
-    key: BigInt(0),
-    numLeaves: BigInt(0),
-  },
-};
+
