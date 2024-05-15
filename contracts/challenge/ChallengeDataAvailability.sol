@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
+import "hardhat/console.sol";
 
 /// @title  ChallengeDataAvailability
 /// @author LightLink Hummingbird
@@ -201,10 +202,13 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         (bool success, ) = DAVerifier.verifySharesToDataRootTupleRoot(daOracle, _proof,  _proof.attestationProof.tuple.dataRoot);
         require(success, "failed to verify shares to data root tuple root");
 
+        // calculate squaresize 
+        (uint256 squaresize, ) = DAVerifier.computeSquareSizeFromRowProof(_proof.rowProofs[0]);
+
         // check that the share index is within the celestia pointer range.
-        uint256 shareIndexInRow = _proof.shareProofs[0].beginKey;
+        uint256 shareIndexInRow = _proof.shareProofs[0].beginKey; 
         uint256 shareIndexInRowMajorOrder =
-            shareIndexInRow + _proof.rowProofs[0].numLeaves * _proof.rowProofs[0].key;
+            shareIndexInRow + squaresize * _proof.rowProofs[0].key;
         require(
             shareIndexInRowMajorOrder == challenge.shareIndex,
             "proof must be provided for the challenged share index"
