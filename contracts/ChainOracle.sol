@@ -197,6 +197,20 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         );
         require(verified, "shares not verified");
 
+        (uint256 squaresize, ) = DAVerifier.computeSquareSizeFromRowProof(_proof.rowProofs[0]);
+
+        // check that the share index is within the celestia pointer range.
+        uint64 shareStart = rHead.celestiaPointers[_pointer].shareStart;
+        uint64 shareEnd = shareStart + rHead.celestiaPointers[_pointer].shareLen;
+        uint256 shareIndexInRow = _proof.shareProofs[0].beginKey; 
+        uint256 shareIndexInRowMajorOrder =
+            shareIndexInRow + squaresize * _proof.rowProofs[0].key;
+        require(
+            shareIndexInRowMajorOrder >= shareStart &&
+                shareIndexInRowMajorOrder < shareEnd,
+            "provided share must be within the celestia pointer range"
+        );
+
         // 3. create a share by hashing the rblock and shares
         bytes32 shareKey = ShareKey(_rblock, _proof.data);
 
