@@ -18,6 +18,7 @@ contract ChallengeL2Tx is ChallengeBase {
     }
 
     struct L2TxChallenge {
+        bytes32 blockHash;
         uint256 blockNum;
         bytes32 l2BlockHash;
         bytes32 l2TxRoot;
@@ -77,6 +78,7 @@ contract ChallengeL2Tx is ChallengeBase {
         );
 
         l2TxChallenges[l2TxChallengesIdx] = L2TxChallenge({
+            blockHash: rblockHash,
             blockNum: _rblockNum,
             l2BlockHash: _l2BlockHash,
             l2TxRoot: l2Header.transactionsRoot,
@@ -202,7 +204,7 @@ contract ChallengeL2Tx is ChallengeBase {
             );
             
             // rollback the tx
-            chain.rollback(challenge.blockNum - 1);
+            chain.rollback(challenge.blockNum - 1, challenge.blockHash);
         }
         // Otherwise its implied the root was proved and the defender won
 

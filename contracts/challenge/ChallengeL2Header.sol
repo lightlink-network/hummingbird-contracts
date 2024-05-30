@@ -269,7 +269,7 @@ contract ChallengeL2Header is ChallengeBase {
 
 
         // rollback the block
-        chain.rollback(challenge.blockNum - 1);
+        chain.rollback(challenge.blockNum - 1, challenge.header.rblock);
     }
 
     /// @notice Returns the hash of an L2 header challenge.

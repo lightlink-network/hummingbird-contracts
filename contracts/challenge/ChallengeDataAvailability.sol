@@ -263,7 +263,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         // rollback the chain.
-        chain.rollback(challenge.blockIndex - 1);
+        chain.rollback(challenge.blockIndex - 1, challenge.blockHash);
 
         // The challenger can now call claimDAChallengeReward to claim the reward.
     }

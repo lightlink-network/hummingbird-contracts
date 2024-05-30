@@ -296,6 +296,7 @@ describe("ChallengeL2Header", function () {
     });
 
     it("should be able to extract data from shares", async function () {
+      MOCK_DATA[0].headers[CURR_HEADER].shareProofs.data;
       expect(
         chainOracle
           .connect(owner)

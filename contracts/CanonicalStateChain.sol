@@ -188,7 +188,8 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
     /// @notice Rolls back the chain to a previous block number. This function can only be
     ///         called by the challenge contract.
     /// @param _blockNumber - The block number to roll back to.
-    function rollback(uint256 _blockNumber) external {
+    /// @param _blockHash - The hash the block being purged.
+    function rollback(uint256 _blockNumber, bytes32 _blockHash) external {
         require(
             msg.sender == challenge,
             "only challenge contract can rollback chain"
@@ -196,6 +197,10 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         require(
             _blockNumber < chainHead,
             "block number must be less than chain head"
+        );
+        require(
+            chain[_blockNumber+1] == _blockHash,
+            "block hash must match block number"
         );
         chainHead = _blockNumber;
         emit RolledBack(_blockNumber);
