@@ -109,6 +109,26 @@ describe("ChallengeDataAvailability", function () {
       ).to.be.revertedWith("challenge fee not paid");
     });
 
+    it("should not allow challenge if challenge fee is too high", async function () {
+      await pushRandomHeader(publisher, canonicalStateChain);
+
+      await expect(
+        challenge.connect(challengeOwner).challengeDataRootInclusion(1, 0, {
+          value: challengeFee + BigInt(1),
+        }),
+      ).to.be.revertedWith("challenge fee not paid");
+    });
+
+    it("should not allow challenge if challenge fee is too low", async function () {
+      await pushRandomHeader(publisher, canonicalStateChain);
+
+      await expect(
+        challenge.connect(challengeOwner).challengeDataRootInclusion(1, 0, {
+          value: challengeFee - BigInt(1),
+        }),
+      ).to.be.revertedWith("challenge fee not paid");
+    });
+
     it("should allow challenge (if challenge fee is paid)", async function () {
       const [hash, header] = await pushRandomHeader(
         publisher,
