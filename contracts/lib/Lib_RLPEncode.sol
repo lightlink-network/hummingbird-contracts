@@ -17,11 +17,9 @@ library RLPEncode {
      * @param self The byte string to encode.
      * @return The RLP encoded string in bytes.
      */
-    function encodeBytes(bytes memory self)
-        internal
-        pure
-        returns (bytes memory)
-    {
+    function encodeBytes(
+        bytes memory self
+    ) internal pure returns (bytes memory) {
         bytes memory encoded;
         if (self.length == 1 && uint8(self[0]) <= 128) {
             encoded = self;
@@ -36,11 +34,9 @@ library RLPEncode {
      * @param self The list of RLP encoded byte strings.
      * @return The RLP encoded list of items in bytes.
      */
-    function encodeList(bytes[] memory self)
-        internal
-        pure
-        returns (bytes memory)
-    {
+    function encodeList(
+        bytes[] memory self
+    ) internal pure returns (bytes memory) {
         bytes memory list = flatten(self);
         return concat(encodeLength(list.length, 192), list);
     }
@@ -50,11 +46,9 @@ library RLPEncode {
      * @param self The string to encode.
      * @return The RLP encoded string in bytes.
      */
-    function encodeString(string memory self)
-        internal
-        pure
-        returns (bytes memory)
-    {
+    function encodeString(
+        string memory self
+    ) internal pure returns (bytes memory) {
         return encodeBytes(bytes(self));
     }
 
@@ -116,11 +110,10 @@ library RLPEncode {
      * @param offset 128 if item is string, 192 if item is list.
      * @return RLP encoded bytes.
      */
-    function encodeLength(uint256 len, uint256 offset)
-        private
-        pure
-        returns (bytes memory)
-    {
+    function encodeLength(
+        uint256 len,
+        uint256 offset
+    ) private pure returns (bytes memory) {
         bytes memory encoded;
         if (len < 56) {
             encoded = new bytes(1);
@@ -136,7 +129,7 @@ library RLPEncode {
             encoded = new bytes(lenLen + 1);
             encoded[0] = bytes32(lenLen + offset + 55)[31];
             for (i = 1; i <= lenLen; i++) {
-                encoded[i] = bytes32((len / (256**(lenLen - i))) % 256)[31];
+                encoded[i] = bytes32((len / (256 ** (lenLen - i))) % 256)[31];
             }
         }
         return encoded;
@@ -173,11 +166,7 @@ library RLPEncode {
      * @param _src Source location.
      * @param _len Length of memory to copy.
      */
-    function memcpy(
-        uint256 _dest,
-        uint256 _src,
-        uint256 _len
-    ) private pure {
+    function memcpy(uint256 _dest, uint256 _src, uint256 _len) private pure {
         uint256 dest = _dest;
         uint256 src = _src;
         uint256 len = _len;
@@ -190,7 +179,7 @@ library RLPEncode {
             src += 32;
         }
 
-        uint256 mask = 256**(32 - len) - 1;
+        uint256 mask = 256 ** (32 - len) - 1;
         assembly {
             let srcpart := and(mload(src), not(mask))
             let destpart := and(mload(dest), mask)
@@ -243,11 +232,10 @@ library RLPEncode {
      * @param _postBytes Second byte string.
      * @return Both byte string combined.
      */
-    function concat(bytes memory _preBytes, bytes memory _postBytes)
-        private
-        pure
-        returns (bytes memory)
-    {
+    function concat(
+        bytes memory _preBytes,
+        bytes memory _postBytes
+    ) private pure returns (bytes memory) {
         bytes memory tempBytes;
 
         assembly {

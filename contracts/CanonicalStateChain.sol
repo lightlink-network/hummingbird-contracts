@@ -198,7 +198,7 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
             "block number must be less than chain head"
         );
         require(
-            chain[_blockNumber+1] == _blockHash,
+            chain[_blockNumber + 1] == _blockHash,
             "block hash must match block number"
         );
         chainHead = _blockNumber;
