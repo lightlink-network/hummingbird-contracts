@@ -225,13 +225,12 @@ describe("ChallengeL2Header", function () {
       const rblockHash = await chain.chain(1);
       const shareProof = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const shareRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
 
       // load shares for the current header
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
 
       // load header for the current header
@@ -313,12 +312,11 @@ describe("ChallengeL2Header", function () {
       const headerHash = MOCK_DATA[0].headers[CURR_HEADER].headerHash;
       const shareProof = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const shareRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
 
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, shareProof.data);
@@ -340,17 +338,15 @@ describe("ChallengeL2Header", function () {
     it("should be able to defend", async function () {
       const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
       const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
-      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
       const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
       // load prev header
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, prevHeaderShares, prevPointerProofs),
+          .provideShares(rblockHash, 0, prevHeaderShares),
       ).to.not.be.reverted;
       const prevShareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -366,7 +362,7 @@ describe("ChallengeL2Header", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, headerShares, pointerProofs),
+          .provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const shareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -421,10 +417,8 @@ describe("ChallengeL2Header", function () {
     it("happy path", async function () {
       const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
       const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
-      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
       const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
       // load prev header to chainOracle
@@ -434,7 +428,6 @@ describe("ChallengeL2Header", function () {
         0,
         prevHeaderShares,
         prevHeaderRanges,
-        prevPointerProofs,
       );
 
       // load current header to chainOracle
@@ -444,7 +437,6 @@ describe("ChallengeL2Header", function () {
         0,
         headerShares,
         headerRanges,
-        pointerProofs,
       );
 
       // reduce challenge period
@@ -485,10 +477,8 @@ describe("ChallengeL2Header", function () {
     it("should revert if challenge period has not ended", async function () {
       const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
       const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
-      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
       const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
       // load prev header
@@ -498,7 +488,6 @@ describe("ChallengeL2Header", function () {
         0,
         prevHeaderShares,
         prevHeaderRanges,
-        prevPointerProofs,
       );
 
       // load current header
@@ -508,7 +497,6 @@ describe("ChallengeL2Header", function () {
         0,
         headerShares,
         headerRanges,
-        pointerProofs,
       );
 
       // challenge
@@ -531,10 +519,8 @@ describe("ChallengeL2Header", function () {
     it("should revert if challenge is not in the correct state", async function () {
       const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
       const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
-      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
       const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
       
@@ -545,7 +531,6 @@ describe("ChallengeL2Header", function () {
         0,
         prevHeaderShares,
         prevHeaderRanges,
-        prevPointerProofs,
       );
       
       // load current header to chainOracle
@@ -555,7 +540,6 @@ describe("ChallengeL2Header", function () {
         0,
         headerShares,
         headerRanges,
-        pointerProofs,
       );
       
       // reduce challenge period

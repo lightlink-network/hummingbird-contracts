@@ -170,8 +170,7 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     function provideShares(
         bytes32 _rblock,
         uint8 _pointer,
-        SharesProof memory _proof,
-        BinaryMerkleProof[] memory _blockProof
+        SharesProof memory _proof
     ) public returns (bytes32) {
         // 1. Load the rblock (bundle) from the canonical state chain.
         ICanonicalStateChain.Header memory rHead = canonicalStateChain
@@ -183,12 +182,6 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
             "rblock height mismatch"
         );
 
-        // 2. Check that the shares are included in the rblock.
-        require(
-            verifyShareRoot(rHead.shareRoot, _proof.data, _blockProof),
-            "invalid share root"
-        );
-
         // 2. verify shares are valid
         (bool verified, ) = DAVerifier.verifySharesToDataRootTupleRoot(
             daOracle,
@@ -197,14 +190,18 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         );
         require(verified, "shares not verified");
 
-        (uint256 squaresize, ) = DAVerifier.computeSquareSizeFromRowProof(_proof.rowProofs[0]);
+        (uint256 squaresize, ) = DAVerifier.computeSquareSizeFromRowProof(
+            _proof.rowProofs[0]
+        );
 
         // check that the share index is within the celestia pointer range.
         uint64 shareStart = rHead.celestiaPointers[_pointer].shareStart;
-        uint64 shareEnd = shareStart + rHead.celestiaPointers[_pointer].shareLen;
-        uint256 shareIndexInRow = _proof.shareProofs[0].beginKey; 
-        uint256 shareIndexInRowMajorOrder =
-            shareIndexInRow + squaresize * _proof.rowProofs[0].key;
+        uint64 shareEnd = shareStart +
+            rHead.celestiaPointers[_pointer].shareLen;
+        uint256 shareIndexInRow = _proof.shareProofs[0].beginKey;
+        uint256 shareIndexInRowMajorOrder = shareIndexInRow +
+            squaresize *
+            _proof.rowProofs[0].key;
         require(
             shareIndexInRowMajorOrder >= shareStart &&
                 shareIndexInRowMajorOrder < shareEnd,
@@ -336,32 +333,6 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         }
 
         return data;
-    }
-
-    /// @notice Verifies the share root using the shares and pointer proof.
-    /// @param _shareRoot - The share root to verify.
-    /// @param _shares - The shares to verify.
-    /// @param _merkleProofs - The merkle proofs for each share.
-    function verifyShareRoot(
-        bytes32 _shareRoot,
-        bytes[] memory _shares,
-        BinaryMerkleProof[] memory _merkleProofs
-    ) public pure returns (bool) {
-        // ensure correct length of pointer proof
-        if (_merkleProofs.length != _shares.length) return false;
-
-        // verify each pointer proof
-        for (uint i = 0; i < _shares.length; i++) {
-            if (
-                !BinaryMerkleTree.verify(
-                    _shareRoot,
-                    _merkleProofs[i],
-                    _shares[i]
-                )
-            ) return false;
-        }
-
-        return true;
     }
 
     /// @notice Decodes an RLP header into the Header struct.

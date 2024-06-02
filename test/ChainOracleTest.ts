@@ -81,7 +81,7 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
     });
 
@@ -94,7 +94,6 @@ describe("ChainOracle", function () {
             "0x0000000000000000000000000000000000000000000000000000000000000000",
             1,
             MOCK_DATA[0].headers[0].shareProofs,
-            MOCK_DATA[0].headers[0].pointerProofs,
           ),
       ).to.be.revertedWith("rblock not found");
     });
@@ -110,49 +109,8 @@ describe("ChainOracle", function () {
             hash,
             0,
             MOCK_DATA[0].headers[0].shareProofs,
-            MOCK_DATA[0].headers[0].pointerProofs,
           ),
       ).to.be.revertedWith("rblock height mismatch");
-    });
-
-    it("should not be allowed to provide shares if they are not included in the block", async function () {
-      // push a new random header to the chain who's height is not the same as the mock proof height
-      const rblockHash = await canonicalStateChain.chain(1);
-
-      let pointerProofs = [
-        {
-          key: "2",
-          numLeaves: "12",
-          sideNodes: [
-            "0x7883b8d72ca485e77dc0fde8a83bf6e4d6878126248ef54cb25d8d928662e1fa",
-            "0xb2919060511b691b77e3921c43cc620acd57cf543f52f98d6e457e23a85ed86b",
-            "0x625e4380aa7a1271004c9e6152c9a24c5a52937132d9b52ba039160ff3fb81d5",
-            "0xac481ea0797cbc58f473593efee9f059a658e5766ea9b8040b5435bbe963edc3",
-          ],
-        },
-        {
-          key: "3",
-          numLeaves: "12",
-          sideNodes: [
-            "0x465aa459fd06b6c78b472481ca7df40f9231a904115aff486aede673a7e7b06a",
-            "0xb2919060511b691b77e3921c43cc620acd57cf543f52f98d6e457e23a85ed86b",
-            "0x625e4380aa7a1271004c9e6152c9a24c5a52937132d9b52ba039160ff3fb81d5",
-            "0xac481ea0797cbc58f473593efee9f059a658e5766ea9b8040b5435bbe963edc3",
-          ],
-        },
-      ];
-
-      await expect(
-        chainOracle
-          .connect(publisher)
-          .getFunction("provideShares")
-          .send(
-            rblockHash,
-            0,
-            MOCK_DATA[0].headers[0].shareProofs,
-            pointerProofs,
-          ),
-      ).to.be.revertedWith("invalid share root");
     });
 
     it("should revert if shares cannot be verified", async function () {
@@ -165,7 +123,7 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.be.revertedWith("shares not verified");
     });
   });
@@ -179,14 +137,13 @@ describe("ChainOracle", function () {
 
       const headerShares = MOCK_DATA2.headers[0].shareProofs;
       const headerRanges = MOCK_DATA2.headers[0].shareRanges;
-      const pointerProofs = MOCK_DATA2.headers[0].pointerProofs;
       const rblockHash = await canonicalStateChain.chain(2);
 
       // load prev header
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, headerShares, pointerProofs),
+          .provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const shareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -240,7 +197,7 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, headerShares, pointerProofs),
+          .provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const prevShareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -264,13 +221,12 @@ describe("ChainOracle", function () {
 
       const txShares = MOCK_DATA2.transactions[0][0].shareProofs;
       const txRanges = MOCK_DATA2.transactions[0][0].shareRanges;
-      const pointerProofs = MOCK_DATA2.transactions[0][0].pointerProofs;
       const rblockHash = await canonicalStateChain.chain(2);
 
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, txShares, pointerProofs),
+          .provideShares(rblockHash, 0, txShares),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
@@ -304,13 +260,12 @@ describe("ChainOracle", function () {
 
       const txShares = MOCK_DATA2.transactions[0][0].shareProofs;
       const txRanges = MOCK_DATA2.transactions[0][0].shareRanges;
-      const pointerProofs = MOCK_DATA2.transactions[0][0].pointerProofs;
       const rblockHash = await canonicalStateChain.chain(2);
 
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, txShares, pointerProofs),
+          .provideShares(rblockHash, 0, txShares),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
@@ -358,37 +313,6 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle.extractData(TestShares, TestRanges),
       ).to.be.revertedWith("Invalid range");
-    });
-  });
-
-  describe("verifyShareRoot", function () {
-    it("happy path", async function () {
-      const shareRoot = MOCK_DATA[0].rollupHeader.shareRoot;
-      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
-      const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
-
-      await expect(
-        chainOracle.verifyShareRoot(
-          shareRoot,
-          headerShares.data,
-          pointerProofs,
-        ),
-      ).to.not.be.reverted;
-    });
-
-    it("should return false as proofs length not equal share length", async function () {
-      const shareRoot = MOCK_DATA[0].rollupHeader.shareRoot;
-      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
-      const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
-      pointerProofs.pop();
-
-      expect(
-        await chainOracle.verifyShareRoot(
-          shareRoot,
-          headerShares.data,
-          pointerProofs,
-        ),
-      ).to.equal(false);
     });
   });
 

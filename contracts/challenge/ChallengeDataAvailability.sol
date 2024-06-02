@@ -74,7 +74,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     event ChallengeDAUpdate(
         bytes32 indexed _blockHash,
         uint256 indexed _pointerIndex,
-        uint32  _shareIndex,
+        uint32 _shareIndex,
         uint256 _blockIndex,
         uint256 _expiry,
         ChallengeDAStatus indexed _status
@@ -97,7 +97,8 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         uint8 _pointerIndex,
         uint32 _shareIndex
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_blockHash, _pointerIndex, _shareIndex));
+        return
+            keccak256(abi.encodePacked(_blockHash, _pointerIndex, _shareIndex));
     }
 
     /// @notice Challenges the data root inclusion of a block.
@@ -118,8 +119,12 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     {
         require(isDAChallengeEnabled, "DA challenges are disabled");
 
-        bytes32 h = chain.chain(_blockIndex);
-        bytes32 challengeKey = dataRootInclusionChallengeKey(h, _pointerIndex, _shareIndex);
+        bytes32 challengeBlockHash = chain.chain(_blockIndex);
+        bytes32 challengeKey = dataRootInclusionChallengeKey(
+            challengeBlockHash,
+            _pointerIndex,
+            _shareIndex
+        );
 
         // check if there is already a challenge for this block.
         ChallengeDA storage challenge = daChallenges[challengeKey];
@@ -128,26 +133,25 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             "challenge already exists"
         );
 
-        ICanonicalStateChain.Header memory header = chain.getHeaderByNum(_blockIndex);
+        ICanonicalStateChain.Header memory header = chain.getHeaderByNum(
+            _blockIndex
+        );
 
         require(
-            _pointerIndex <
-                header.celestiaPointers.length,
+            _pointerIndex < header.celestiaPointers.length,
             "invalid pointer index"
         );
         require(
-            _shareIndex >= 
-                header.celestiaPointers[_pointerIndex].shareStart &&
-            _shareIndex <
+            _shareIndex >= header.celestiaPointers[_pointerIndex].shareStart &&
+                _shareIndex <
                 header.celestiaPointers[_pointerIndex].shareStart +
-                header.celestiaPointers[_pointerIndex].shareLen,
+                    header.celestiaPointers[_pointerIndex].shareLen,
             "invalid share index: not in pointers range"
         );
-        
 
         // create a new challenge.
         daChallenges[challengeKey] = ChallengeDA(
-            h,
+            challengeBlockHash,
             _blockIndex,
             _pointerIndex,
             _shareIndex,
@@ -158,7 +162,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         emit ChallengeDAUpdate(
-            h,
+            challengeBlockHash,
             _pointerIndex,
             _shareIndex,
             _blockIndex,
@@ -174,8 +178,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     /// @param _proof - The proof of inclusion.
     function defendDataRootInclusion(
         bytes32 _challengeKey,
-        SharesProof memory _proof,
-        BinaryMerkleProof memory _sharesToRblockProof
+        SharesProof memory _proof
     ) public nonReentrant {
         ChallengeDA storage challenge = daChallenges[_challengeKey];
         ICanonicalStateChain.Header memory header = chain.getHeaderByNum(
@@ -193,33 +196,30 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         // check the namespace
-        require(
-            _proof.namespace.equalTo(daNamespace),
-            "invalid namespace"
-        );
+        require(_proof.namespace.equalTo(daNamespace), "invalid namespace");
 
         // verify the provided proof is valid – this also calls verifyAttestations.
-        (bool success, ) = DAVerifier.verifySharesToDataRootTupleRoot(daOracle, _proof,  _proof.attestationProof.tuple.dataRoot);
+        (bool success, ) = DAVerifier.verifySharesToDataRootTupleRoot(
+            daOracle,
+            _proof,
+            _proof.attestationProof.tuple.dataRoot
+        );
         require(success, "failed to verify shares to data root tuple root");
 
-        // calculate squaresize 
-        (uint256 squaresize, ) = DAVerifier.computeSquareSizeFromRowProof(_proof.rowProofs[0]);
+        // calculate squaresize
+        (uint256 squaresize, ) = DAVerifier.computeSquareSizeFromRowProof(
+            _proof.rowProofs[0]
+        );
 
         // check that the share index is within the celestia pointer range.
-        uint256 shareIndexInRow = _proof.shareProofs[0].beginKey; 
-        uint256 shareIndexInRowMajorOrder =
-            shareIndexInRow + squaresize * _proof.rowProofs[0].key;
+        uint256 shareIndexInRow = _proof.shareProofs[0].beginKey;
+        uint256 shareIndexInRowMajorOrder = shareIndexInRow +
+            squaresize *
+            _proof.rowProofs[0].key;
         require(
             shareIndexInRowMajorOrder == challenge.shareIndex,
             "proof must be provided for the challenged share index"
         );
-
-        // check that the shares are part of share root commited to in the rblock header.
-        require(BinaryMerkleTree.verify(
-                    header.shareRoot,
-                    _sharesToRblockProof,
-                    _proof.data[0]
-                ), "invalid sharesToRblock proof");
 
         // update the challenge.
         challenge.status = ChallengeDAStatus.DefenderWon;
@@ -253,6 +253,10 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
         // update the challenge.
         challenge.status = ChallengeDAStatus.ChallengerWon;
+
+        // rollback the chain.
+        chain.rollback(challenge.blockIndex - 1, challenge.blockHash);
+
         emit ChallengeDAUpdate(
             challenge.blockHash,
             challenge.pointerIndex,
@@ -261,9 +265,6 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             challenge.expiry,
             ChallengeDAStatus.ChallengerWon
         );
-
-        // rollback the chain.
-        chain.rollback(challenge.blockIndex - 1, challenge.blockHash);
 
         // The challenger can now call claimDAChallengeReward to claim the reward.
     }
@@ -274,19 +275,29 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         isDAChallengeEnabled = _status;
     }
 
-    function claimDAChallengeReward(bytes32 _challengeKey) external nonReentrant {
+    function claimDAChallengeReward(
+        bytes32 _challengeKey
+    ) external nonReentrant {
         ChallengeDA storage challenge = daChallenges[_challengeKey];
-        require(challenge.claimed == false, "challenge has already been claimed");
-        require(challenge.status == ChallengeDAStatus.ChallengerWon || challenge.status == ChallengeDAStatus.DefenderWon, "challenge is not in the correct state");
+        require(
+            challenge.claimed == false,
+            "challenge has already been claimed"
+        );
+        require(
+            challenge.status == ChallengeDAStatus.ChallengerWon ||
+                challenge.status == ChallengeDAStatus.DefenderWon,
+            "challenge is not in the correct state"
+        );
 
         challenge.claimed = true;
         if (challenge.status == ChallengeDAStatus.ChallengerWon) {
-            (bool success, ) = challenge.challenger.call{value: challengeFee}("");
+            (bool success, ) = challenge.challenger.call{value: challengeFee}(
+                ""
+            );
             require(success, "failed to pay challenger");
         } else {
             (bool success, ) = defender.call{value: challengeFee}("");
             require(success, "failed to pay defender");
         }
-
     }
 }

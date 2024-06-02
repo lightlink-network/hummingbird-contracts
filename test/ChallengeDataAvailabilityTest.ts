@@ -195,7 +195,7 @@ describe("ChallengeDataAvailability", function () {
       await expect(
         challenge
           .connect(publisher)
-          .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof),
+          .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof),
       ).to.be.revertedWith("challenge is not in the correct state");
     });
 
@@ -221,7 +221,7 @@ describe("ChallengeDataAvailability", function () {
       await expect(
         challenge
           .connect(publisher)
-          .defendDataRootInclusion(challengeKey, proof, MOCK_DATA.daProofs.shareToRBlockRootProof),
+          .defendDataRootInclusion(challengeKey, proof),
       ).to.be.reverted;
     });
 
@@ -244,7 +244,7 @@ describe("ChallengeDataAvailability", function () {
 
       await challenge
         .connect(publisher)
-        .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof);
+        .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof);
 
       const c = await challenge.daChallenges(challengeKey);
       expect(c.status, "expect: daChallenges(hash).status = 3").to.equal(
@@ -276,12 +276,12 @@ describe("ChallengeDataAvailability", function () {
 
       await challenge
         .connect(publisher)
-        .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof);
+        .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof);
 
       await expect(
         challenge
           .connect(publisher)
-          .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof),
+          .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof),
       ).to.be.revertedWith("challenge is not in the correct state");
     });
   });
@@ -312,7 +312,7 @@ describe("ChallengeDataAvailability", function () {
 
       await challenge
         .connect(publisher)
-        .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof, MOCK_DATA.daProofs.shareToRBlockRootProof);
+        .defendDataRootInclusion(challengeKey, MOCK_DATA.daProofs.shareProof);
 
       await expect(
         challenge.connect(challengeOwner).settleDataRootInclusion(challengeKey),
