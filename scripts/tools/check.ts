@@ -30,11 +30,9 @@ export const main = async () => {
   // 3. check publisher health
   console.log(chalk.bold(`Checking publisher health:`));
   const headMetadata = await canonicalStateChain.headerMetadata(headHash);
-  const oneDayAgo = Math.floor(Date.now() / 1000) - 60 * 60;
+  const oneDayAgo = Math.floor(Date.now() / 1000) - 60 * 60 * 24;
   if (headMetadata.timestamp < oneDayAgo) {
-    console.error(
-      "❌ Publisher is unhealthy, last publish was over 1 hours ago",
-    );
+    console.error("❌ Publisher is unhealthy, last publish was over 1 day ago");
     process.exit(1);
   }
   // - check publisher balance

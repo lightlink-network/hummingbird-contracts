@@ -12,6 +12,7 @@ import { makeNextBlock, setupCanonicalStateChain } from "./lib/chain";
 import { challengeL2HeaderMockData as MOCK_DATA } from "./mock/mock_challengeL2Header";
 import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
 import { provideHeader } from "./lib/oracle";
+import { time } from "@nomicfoundation/hardhat-network-helpers";
 
 type Header = CanonicalStateChain.HeaderStruct;
 
@@ -152,7 +153,13 @@ describe("ChallengeL2Header", function () {
     it("should not able to challenge if not in challenge window", async function () {
       const l2Header = MOCK_DATA[0].headers[1].header;
 
-      await challenge.connect(owner).connect(owner).setChallengeWindow(0);
+      await challenge
+        .connect(owner)
+        .connect(owner)
+        .setChallengeWindow(12 * 60 * 60);
+
+      // advance time by 12 hrs & 1 second and mine a new block
+      await time.increase(12 * 60 * 60 + 1);
 
       await expect(
         challenge.connect(owner).challengeL2Header(1, l2Header.number, {
@@ -439,8 +446,8 @@ describe("ChallengeL2Header", function () {
         headerRanges,
       );
 
-      // reduce challenge period
-      await challenge.connect(owner).setChallengePeriod(0);
+      // set challenge period
+      await challenge.connect(owner).setChallengePeriod(12 * 60 * 60);
 
       // challenge the current header
       const l2Header = MOCK_DATA[0].headers[CURR_HEADER].header;
@@ -453,12 +460,12 @@ describe("ChallengeL2Header", function () {
         l2Header.number,
       );;
 
-      // advance time
-      await ethers.provider.send("evm_increaseTime", [3600])
-      await ethers.provider.send("evm_mine")
+      // advance time by 12 hrs & 1 second and mine a new block
+      await time.increase(12 * 60 * 60 + 1);
 
-      // settle
+      // settle now that the challenge period has ended
       await expect(challenge.connect(owner).settleL2HeaderChallenge(challengeHash), "challenge failed").to.not.be.reverted;
+
 
       const challengeData = await challenge.l2HeaderChallenges(challengeHash);
       expect(challengeData[5], "incorrect challenge hash").to.be.equal(2);
@@ -543,8 +550,8 @@ describe("ChallengeL2Header", function () {
       );
       
       // reduce challenge period
-      await challenge.connect(owner).setChallengePeriod(0);
-      
+      await challenge.connect(owner).setChallengePeriod(12 * 60 * 60);
+
       // challenge the current header
       const l2Header = MOCK_DATA[0].headers[CURR_HEADER].header;
       await challenge.connect(owner).challengeL2Header(1, l2Header.number, {
@@ -556,14 +563,13 @@ describe("ChallengeL2Header", function () {
         l2Header.number,
       );
 
-      // advance time
-      await ethers.provider.send("evm_increaseTime", [3600])
-      await ethers.provider.send("evm_mine")
-      
+      // advance time by 12 hrs & 1 second and mine a new block
+      await time.increase(12 * 60 * 60 + 1);
+
       // settle once
       await expect(challenge.connect(owner).settleL2HeaderChallenge(challengeHash)).to.not.be.reverted;
-      
-      // settle again
+
+      // settle
       await expect(
         challenge.connect(owner).settleL2HeaderChallenge(challengeHash),
       ).to.be.revertedWith("challenge is not in the correct state");

@@ -24,7 +24,7 @@ const main = async () => {
     logProgress(`Fetching headers: ${Number(head) - i} of ${head}...`);
 
     const headerHash = await canonicalStateChain.chain(i);
-    const header = await canonicalStateChain.headers(headerHash);
+    const header = await canonicalStateChain.getHeaderByHash(headerHash);
     const headerMetadata = await canonicalStateChain.headerMetadata(headerHash);
     const timestamp = Number(headerMetadata.timestamp) * 1000;
 

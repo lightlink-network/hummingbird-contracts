@@ -39,7 +39,7 @@ const main = async () => {
   for (let i = from + 1; i <= Number(headNum); i++) {
     logProgress(`Fetching headers: ${i - from} of ${HEADER_SAMPLE_SIZE} ...`);
     const headerHash = await canonicalStateChain.chain(BigInt(i));
-    const header = await canonicalStateChain.headers(headerHash);
+    const header = await canonicalStateChain.getHeaderByHash(headerHash);
     const headerMetadata = await canonicalStateChain.headerMetadata(headerHash);
     headers.push(header);
     metadata.push(headerMetadata);

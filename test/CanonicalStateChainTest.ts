@@ -54,6 +54,12 @@ describe("CanonicalStateChain", function () {
         "InvalidInitialization",
       );
     });
+
+    it("genesis block metaData should be set", async function () {
+      const genesisBlockHash = await canonicalStateChain.chain(0);
+      const header = await canonicalStateChain.headerMetadata(genesisBlockHash);
+      expect(header[1]).to.equal(owner.address);
+    });
   });
 
   describe("pushBlock", function () {
@@ -220,6 +226,53 @@ describe("CanonicalStateChain", function () {
         goodBlockHash,
         "chain head should be the good block hash",
       );
+    });
+
+    it("ensure rolled back blocks are deleted", async function () {
+      await pushRandomHeader(publisher, canonicalStateChain);
+      await pushRandomHeader(publisher, canonicalStateChain);
+      await pushRandomHeader(publisher, canonicalStateChain);
+
+      const blockOneHash = await canonicalStateChain.chain(1);
+      const blockTwoHash = await canonicalStateChain.chain(2);
+      const blockThreeHash = await canonicalStateChain.chain(3);
+
+      // rollback to block 1
+      await canonicalStateChain.connect(challengeContract).rollback(1);
+
+      // ensure chain is in correct state
+      expect(await canonicalStateChain.chain(1)).to.equal(blockOneHash);
+      expect(await canonicalStateChain.chain(2)).to.equal(ethers.ZeroHash);
+      expect(await canonicalStateChain.chain(3)).to.equal(ethers.ZeroHash);
+
+      // ensure chain head is correct
+      expect(await canonicalStateChain.chainHead()).to.equal(1);
+
+      // ensure header one metadata exists, and header two and three do not
+      const blockOneMetadata =
+        await canonicalStateChain.headerMetadata(blockOneHash);
+      expect(blockOneMetadata[1]).to.equal(publisher.address);
+
+      const blockTwoMetadata =
+        await canonicalStateChain.headerMetadata(blockTwoHash);
+      expect(blockTwoMetadata[1]).to.equal(ethers.ZeroAddress);
+
+      const blockThreeMetadata =
+        await canonicalStateChain.headerMetadata(blockThreeHash);
+      expect(blockThreeMetadata[1]).to.equal(ethers.ZeroAddress);
+
+      // ensure header one exists, and header two and three do not
+      const blockOneHeader =
+        await canonicalStateChain.getHeaderByHash(blockOneHash);
+      expect(blockOneHeader[0]).to.equal(1);
+
+      const blockTwoHeader =
+        await canonicalStateChain.getHeaderByHash(blockTwoHash);
+      expect(blockTwoHeader[0]).to.equal(0);
+
+      const blockThreeHeader =
+        await canonicalStateChain.getHeaderByHash(blockThreeHash);
+      expect(blockThreeHeader[0]).to.equal(0);
     });
   });
 

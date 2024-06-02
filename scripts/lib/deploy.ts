@@ -57,3 +57,15 @@ export const createGenesisHeader = async (pegasusRPC: string) => {
 
   return genesisHeader;
 };
+
+export const getBlobstreamXAddr = (chainId: any) => {
+  switch (chainId) {
+    case 11155111: // Sepolia
+      if (!process.env.BLOBSTREAM_SEPOLIA) {
+        throw new Error("Environment variable BLOBSTREAM_SEPOLIA is not set");
+      }
+      return process.env.BLOBSTREAM_SEPOLIA!;
+    default:
+      throw new Error("BlobstreamX address not found for chain id: " + chainId);
+  }
+};
