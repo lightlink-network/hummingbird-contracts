@@ -119,9 +119,9 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     {
         require(isDAChallengeEnabled, "DA challenges are disabled");
 
-        bytes32 h = chain.chain(_blockIndex);
+        bytes32 challengeBlockHash = chain.chain(_blockIndex);
         bytes32 challengeKey = dataRootInclusionChallengeKey(
-            h,
+            challengeBlockHash,
             _pointerIndex,
             _shareIndex
         );
@@ -151,7 +151,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
         // create a new challenge.
         daChallenges[challengeKey] = ChallengeDA(
-            h,
+            challengeBlockHash,
             _blockIndex,
             _pointerIndex,
             _shareIndex,
@@ -162,7 +162,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         );
 
         emit ChallengeDAUpdate(
-            h,
+            challengeBlockHash,
             _pointerIndex,
             _shareIndex,
             _blockIndex,
