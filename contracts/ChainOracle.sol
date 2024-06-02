@@ -500,5 +500,12 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
         rlpReader = IRLPReader(_rlpReader);
     }
 
+    /// @notice Sets the data availability oracle contract address.
+    /// @param _daOracle The new data availability oracle address.
+    /// @dev Only the owner can call this function.
+    function setDAOracle(address _daOracle) public onlyOwner {
+        daOracle = IDAOracle(_daOracle);
+    }
+
     uint256[50] private __gap;
 }

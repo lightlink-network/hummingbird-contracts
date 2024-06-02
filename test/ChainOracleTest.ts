@@ -79,9 +79,7 @@ describe("ChainOracle", function () {
       const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
 
       await expect(
-        chainOracle
-          .connect(owner)
-          .provideShares(rblockHash, 0, shareProof),
+        chainOracle.connect(owner).provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
     });
 
@@ -105,11 +103,7 @@ describe("ChainOracle", function () {
         chainOracle
           .connect(publisher)
           .getFunction("provideShares")
-          .send(
-            hash,
-            0,
-            MOCK_DATA[0].headers[0].shareProofs,
-          ),
+          .send(hash, 0, MOCK_DATA[0].headers[0].shareProofs),
       ).to.be.revertedWith("rblock height mismatch");
     });
 
@@ -121,9 +115,7 @@ describe("ChainOracle", function () {
       await mockDaOracle.setResult(false);
 
       await expect(
-        chainOracle
-          .connect(owner)
-          .provideShares(rblockHash, 0, shareProof),
+        chainOracle.connect(owner).provideShares(rblockHash, 0, shareProof),
       ).to.be.revertedWith("shares not verified");
     });
   });
@@ -141,9 +133,7 @@ describe("ChainOracle", function () {
 
       // load prev header
       await expect(
-        chainOracle
-          .connect(owner)
-          .provideShares(rblockHash, 0, headerShares),
+        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const shareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -195,9 +185,7 @@ describe("ChainOracle", function () {
       const rblockHash = await canonicalStateChain.chain(1);
 
       await expect(
-        chainOracle
-          .connect(owner)
-          .provideShares(rblockHash, 0, headerShares),
+        chainOracle.connect(owner).provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const prevShareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -224,9 +212,7 @@ describe("ChainOracle", function () {
       const rblockHash = await canonicalStateChain.chain(2);
 
       await expect(
-        chainOracle
-          .connect(owner)
-          .provideShares(rblockHash, 0, txShares),
+        chainOracle.connect(owner).provideShares(rblockHash, 0, txShares),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
@@ -263,9 +249,7 @@ describe("ChainOracle", function () {
       const rblockHash = await canonicalStateChain.chain(2);
 
       await expect(
-        chainOracle
-          .connect(owner)
-          .provideShares(rblockHash, 0, txShares),
+        chainOracle.connect(owner).provideShares(rblockHash, 0, txShares),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
@@ -505,6 +489,32 @@ describe("ChainOracle", function () {
           .connect(publisher)
           .getFunction("setRLPReader")
           .send(await rlpReader.getAddress()),
+      ).to.be.revertedWithCustomError(
+        canonicalStateChain,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+  });
+
+  describe("setDAOracle", function () {
+    it("happy path", async function () {
+      const DAOracleMockAddress = "0xF0c6429ebAB2e7DC6e05DaFB61128bE21f13cb1e";
+
+      await expect(chainOracle.connect(owner).setDAOracle(DAOracleMockAddress))
+        .to.not.be.reverted;
+
+      const _DAOracle = await chainOracle.daOracle();
+      expect(_DAOracle).to.equal(DAOracleMockAddress);
+    });
+
+    it("should revert as non owner", async function () {
+      const DAOracleMockAddress = "0xF0c6429ebAB2e7DC6e05DaFB61128bE21f13cb1e";
+
+      await expect(
+        chainOracle
+          .connect(publisher)
+          .getFunction("setDAOracle")
+          .send(DAOracleMockAddress),
       ).to.be.revertedWithCustomError(
         canonicalStateChain,
         "OwnableUnauthorizedAccount",

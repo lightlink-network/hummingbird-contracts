@@ -165,5 +165,13 @@ contract ChallengeBase is
         daNamespace = _namespace;
     }
 
+    /// @notice Sets the data availability oracle address.
+    /// @param _daOracle The new data availability oracle address.
+    /// @dev Only the owner can call this function.
+    function setDAOracle(address _daOracle) external onlyOwner {
+        require(_daOracle != address(0), "daOracle cannot be the zero address");
+        daOracle = IDAOracle(_daOracle);
+    }
+
     uint256[50] private __gap;
 }
