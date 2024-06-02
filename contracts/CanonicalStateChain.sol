@@ -29,7 +29,6 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         uint64 l2Height;
         bytes32 prevHash;
         bytes32 stateRoot;
-        bytes32 shareRoot;
         CelestiaPointer[] celestiaPointers;
     }
 
@@ -194,7 +193,8 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
     /// @notice Rolls back the chain to a previous block number. This function can only be
     ///         called by the challenge contract.
     /// @param _blockNumber - The block number to roll back to.
-    function rollback(uint256 _blockNumber) external {
+    /// @param _blockHash - The hash the block being purged.
+    function rollback(uint256 _blockNumber, bytes32 _blockHash) external {
         require(
             msg.sender == challenge,
             "only challenge contract can rollback chain"
@@ -203,12 +203,19 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
             _blockNumber < chainHead,
             "block number must be less than chain head"
         );
+
+        require(
+            chain[_blockNumber + 1] == _blockHash,
+            "block hash must match block number"
+        );
+
         // Remove all blocks after the block number.
         for (uint256 i = _blockNumber + 1; i <= chainHead; i++) {
             delete headers[chain[i]];
             delete headerMetadata[chain[i]];
             delete chain[i];
         }
+        
         chainHead = _blockNumber;
         emit RolledBack(_blockNumber);
     }

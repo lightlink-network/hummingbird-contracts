@@ -46,11 +46,13 @@ contract ChallengeL2Header is ChallengeBase {
     /// @param challenger - The address of the challenger.
     /// @param status - The status of the challenge.
     struct L2HeaderChallenge {
+        uint256 blockNum;
         L2HeaderPointer header;
         L2HeaderPointer prevHeader;
         uint256 challengeEnd;
         address challenger;
         L2HeaderChallengeStatus status;
+        bool claimed;
     }
 
     /// @notice Emitted when an L2 header challenge is updated.
@@ -136,11 +138,13 @@ contract ChallengeL2Header is ChallengeBase {
 
         // 7. Create the challenge
         l2HeaderChallenges[challengeHash] = L2HeaderChallenge(
+            _rblockNum,
             header,
             prevHeader,
             block.timestamp + challengePeriod,
             msg.sender,
-            L2HeaderChallengeStatus.Initiated
+            L2HeaderChallengeStatus.Initiated,
+            false
         );
 
         // 8. Emit the challenge event
@@ -225,10 +229,6 @@ contract ChallengeL2Header is ChallengeBase {
         // finalise the challenge
         challenge.status = L2HeaderChallengeStatus.DefenderWon;
 
-        // payout the caller
-        (bool success, ) = payable(msg.sender).call{value: challengeFee}("");
-        require(success, "failed to pay defender");
-
         // emit the event
         emit L2HeaderChallengeUpdate(
             _challengeHash,
@@ -256,7 +256,11 @@ contract ChallengeL2Header is ChallengeBase {
             "challenge period has not ended"
         );
 
+        // finalise the challenge
         challenge.status = L2HeaderChallengeStatus.ChallengerWon;
+
+        // rollback the block
+        chain.rollback(challenge.blockNum - 1, challenge.header.rblock);
 
         emit L2HeaderChallengeUpdate(
             _challengeHash,
@@ -265,10 +269,6 @@ contract ChallengeL2Header is ChallengeBase {
             challenge.challengeEnd,
             L2HeaderChallengeStatus.ChallengerWon
         );
-
-        // pay out the challenger
-        (bool success, ) = challenge.challenger.call{value: challengeFee}("");
-        require(success, "failed to pay challenger");
     }
 
     /// @notice Returns the hash of an L2 header challenge.
@@ -286,5 +286,31 @@ contract ChallengeL2Header is ChallengeBase {
     /// @dev Only the owner can call this function.
     function toggleL2HeaderChallenge(bool _status) external onlyOwner {
         isL2HeaderChallengeEnabled = _status;
+    }
+
+    function claimL2HeaderChallengeReward(
+        bytes32 _challengeKey
+    ) external nonReentrant {
+        L2HeaderChallenge storage challenge = l2HeaderChallenges[_challengeKey];
+        require(
+            challenge.claimed == false,
+            "challenge has already been claimed"
+        );
+        require(
+            challenge.status == L2HeaderChallengeStatus.ChallengerWon ||
+                challenge.status == L2HeaderChallengeStatus.DefenderWon,
+            "challenge is not in the correct state"
+        );
+
+        challenge.claimed = true;
+        if (challenge.status == L2HeaderChallengeStatus.ChallengerWon) {
+            (bool success, ) = challenge.challenger.call{value: challengeFee}(
+                ""
+            );
+            require(success, "failed to pay challenger");
+        } else {
+            (bool success, ) = defender.call{value: challengeFee}("");
+            require(success, "failed to pay defender");
+        }
     }
 }

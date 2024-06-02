@@ -76,7 +76,7 @@ abstract contract ChallengeHeader is ChallengeBase {
         require(!_isHeaderValid(header, _hash, _blockIndex), "header is valid");
 
         // rollback the chain.
-        chain.rollback(_blockIndex - 1);
+        chain.rollback(_blockIndex - 1, _hash);
     }
 
     /// @notice Checks if a header is valid.

@@ -41,6 +41,9 @@ contract ChallengeBase is
     /// @notice The address of the canonical state chain.
     ICanonicalStateChain public chain;
 
+    /// @notice The namespace used for data availability.
+    Namespace public daNamespace;
+
     /// @notice The address of the data availability oracle.
     IDAOracle public daOracle;
 
@@ -153,6 +156,13 @@ contract ChallengeBase is
     function setDefender(address _defender) external onlyOwner {
         require(_defender != address(0), "defender cannot be the zero address");
         defender = _defender;
+    }
+
+    /// @notice Sets the namespace.
+    /// @param _namespace The new namespace.
+    /// @dev Only the owner can call this function.
+    function setDANamespace(Namespace memory _namespace) external onlyOwner {
+        daNamespace = _namespace;
     }
 
     uint256[50] private __gap;

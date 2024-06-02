@@ -9,7 +9,6 @@ interface headerData {
   headerHash: string;
   shareProofs: SharesProofStruct;
   shareRanges: ChainOracle.ShareRangeStruct[];
-  pointerProofs: BinaryMerkleProofStruct[];
   shares: string[];
 }
 
@@ -18,12 +17,10 @@ interface transactionData {
   hash: string;
   shareProofs: SharesProofStruct;
   shareRanges: ChainOracle.ShareRangeStruct[];
-  pointerProofs: BinaryMerkleProofStruct[];
   shares: string[];
 }
 
 interface MockData {
-  rollupHash: string;
   rollupHeader: CanonicalStateChain.HeaderStruct;
   headers: headerData[];
   transactions: transactionData[][];
@@ -59,30 +56,7 @@ export const challengeL2TxMockData: MockData = {
       },
       headerHash:
         "0x451f04ea1f8d1aafc7b003114ecaa7a5bc025bbb5213deacb74b11312e190731",
-      pointerProofs: [
-        {
-          key: "0",
-          numLeaves: "23",
-          sideNodes: [
-            "0x8200c52066e596cc71586bfc0b38dc2aca52608c071e9d9ce0ef2b204e2c6483",
-            "0x25e84e5125679e829a978e23a9572753a2806097c2b7e8fd1fb6e6ac5285736b",
-            "0x17e2592f111ee8dc88d06d17616b243ed1a9c51895c600285460bfa03d402a78",
-            "0xd833b5df5c75c67d81ab53212a2088e63fb35ebc3f38b4aa32f2b0001b37ea68",
-            "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-          ],
-        },
-        {
-          key: "1",
-          numLeaves: "23",
-          sideNodes: [
-            "0x2d68c01424e3a5240abb5ead5bf9356367ebceb2883086d6e1bf4793b19d72c0",
-            "0x25e84e5125679e829a978e23a9572753a2806097c2b7e8fd1fb6e6ac5285736b",
-            "0x17e2592f111ee8dc88d06d17616b243ed1a9c51895c600285460bfa03d402a78",
-            "0xd833b5df5c75c67d81ab53212a2088e63fb35ebc3f38b4aa32f2b0001b37ea68",
-            "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-          ],
-        },
-      ],
+    
       shareProofs: {
         attestationProof: {
           proof: {
@@ -203,8 +177,6 @@ export const challengeL2TxMockData: MockData = {
       ],
     },
   ],
-  rollupHash:
-    "0x77961b0bbd1130a0b0ef54a8465d82839c7111e48436d6fcf2574a7d23bf69d5",
   rollupHeader: {
     celestiaPointers: [
       {
@@ -217,8 +189,6 @@ export const challengeL2TxMockData: MockData = {
     l2Height: 80745359,
     prevHash:
       "0x40bef6a408a0ef4612eb8578d2cfe374df3ba9633d53946e8f15cf91dc8311c9",
-    shareRoot:
-      "0x801bef1f4c094e5c88dad1d2902ef2aac0e7b87917eb30a89811a60b4f351c7b",
     stateRoot:
       "0x8f90ed7c817cc87861bc28bd3054d40cf5aa85596f5cba03879c735acbd42ec9",
   },
@@ -226,140 +196,6 @@ export const challengeL2TxMockData: MockData = {
     [
       {
         hash: "0x02dbfc25d26bef72ea2ef6b54cac39bcbae8c4561f075091ef85f9aa0900b2ac",
-        pointerProofs: [
-          {
-            key: "1",
-            numLeaves: "23",
-            sideNodes: [
-              "0x2d68c01424e3a5240abb5ead5bf9356367ebceb2883086d6e1bf4793b19d72c0",
-              "0x25e84e5125679e829a978e23a9572753a2806097c2b7e8fd1fb6e6ac5285736b",
-              "0x17e2592f111ee8dc88d06d17616b243ed1a9c51895c600285460bfa03d402a78",
-              "0xd833b5df5c75c67d81ab53212a2088e63fb35ebc3f38b4aa32f2b0001b37ea68",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "2",
-            numLeaves: "23",
-            sideNodes: [
-              "0x7b02226dd3340a681b319d668f3ef91e9ad7d8918ec253f0dfb7741a2c217090",
-              "0x4f329c2cd4a7a5a1765dd439ba86861fb46743c0a9be2f2a55da24ae0cdda754",
-              "0x17e2592f111ee8dc88d06d17616b243ed1a9c51895c600285460bfa03d402a78",
-              "0xd833b5df5c75c67d81ab53212a2088e63fb35ebc3f38b4aa32f2b0001b37ea68",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "3",
-            numLeaves: "23",
-            sideNodes: [
-              "0x438e3d25cb1c0ca840decf8b0523d52c5a88efd8f62ff0fa4090affa2e6ce13f",
-              "0x4f329c2cd4a7a5a1765dd439ba86861fb46743c0a9be2f2a55da24ae0cdda754",
-              "0x17e2592f111ee8dc88d06d17616b243ed1a9c51895c600285460bfa03d402a78",
-              "0xd833b5df5c75c67d81ab53212a2088e63fb35ebc3f38b4aa32f2b0001b37ea68",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "4",
-            numLeaves: "23",
-            sideNodes: [
-              "0x832bf0c0772c4d6489bc58b0440b2a6840c56e1b8756c3e4be8f1b63ac35335d",
-              "0x2e06fb5c7038d20a52a0d66c390c1024930eaf072e8104c4b4691c324de45304",
-              "0x645603418fe485fcce756050049006156c3c5e56875d0b024fd996a93970df3b",
-              "0xd833b5df5c75c67d81ab53212a2088e63fb35ebc3f38b4aa32f2b0001b37ea68",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "5",
-            numLeaves: "23",
-            sideNodes: [
-              "0x4f3d9ba88d80cb43b965628c2e411efa7eb9ec89a5873f3eb2e26f1a9b81a37e",
-              "0x2e06fb5c7038d20a52a0d66c390c1024930eaf072e8104c4b4691c324de45304",
-              "0x645603418fe485fcce756050049006156c3c5e56875d0b024fd996a93970df3b",
-              "0xd833b5df5c75c67d81ab53212a2088e63fb35ebc3f38b4aa32f2b0001b37ea68",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "6",
-            numLeaves: "23",
-            sideNodes: [
-              "0x0a67cd69459449d3ec034c824e559b103aee885387efa4acbc15d9d2d336bfb7",
-              "0xe1605cf666296d61bf8aa6598cde84c12f7b787af6f5e70dbb6e22f94594f1c3",
-              "0x645603418fe485fcce756050049006156c3c5e56875d0b024fd996a93970df3b",
-              "0xd833b5df5c75c67d81ab53212a2088e63fb35ebc3f38b4aa32f2b0001b37ea68",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "7",
-            numLeaves: "23",
-            sideNodes: [
-              "0x90e157898ce22834fe3e2456872fc100853ac21603355de9556d0e57be12f293",
-              "0xe1605cf666296d61bf8aa6598cde84c12f7b787af6f5e70dbb6e22f94594f1c3",
-              "0x645603418fe485fcce756050049006156c3c5e56875d0b024fd996a93970df3b",
-              "0xd833b5df5c75c67d81ab53212a2088e63fb35ebc3f38b4aa32f2b0001b37ea68",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "8",
-            numLeaves: "23",
-            sideNodes: [
-              "0x47577877d1cdd18574611417909ff2ce883c3d69e948f971e38e022fdee2efc0",
-              "0x472fba7ff044faff9cdab39b01b23a7835e16a98a3de7acef9631bc08e003f18",
-              "0x874d666aece43c34509b372117dc055ca3c840a89d202da325b31d4cf36c2804",
-              "0xfd27288568a7028c1d2dd3d307a96aebc2cf17f772f1230f5a854edba2992a09",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "9",
-            numLeaves: "23",
-            sideNodes: [
-              "0xd4181a7f4e95b8fc687462a589faf3ef77c88e0fd5fc57e58437a6504351ec59",
-              "0x472fba7ff044faff9cdab39b01b23a7835e16a98a3de7acef9631bc08e003f18",
-              "0x874d666aece43c34509b372117dc055ca3c840a89d202da325b31d4cf36c2804",
-              "0xfd27288568a7028c1d2dd3d307a96aebc2cf17f772f1230f5a854edba2992a09",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "10",
-            numLeaves: "23",
-            sideNodes: [
-              "0x90fbb0edb98c6e289d3c44d986fe0cc4a1ecbdc4d17d270061c3371577c1c650",
-              "0xebe4534a4f3622b841f8260e67510af4776efc0ace301bbb9ae1a03cb8ef38db",
-              "0x874d666aece43c34509b372117dc055ca3c840a89d202da325b31d4cf36c2804",
-              "0xfd27288568a7028c1d2dd3d307a96aebc2cf17f772f1230f5a854edba2992a09",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "11",
-            numLeaves: "23",
-            sideNodes: [
-              "0xf39c775c4a46e546a1e3bbc71e8ab04651a771067822c2efafa7fae8e30fa932",
-              "0xebe4534a4f3622b841f8260e67510af4776efc0ace301bbb9ae1a03cb8ef38db",
-              "0x874d666aece43c34509b372117dc055ca3c840a89d202da325b31d4cf36c2804",
-              "0xfd27288568a7028c1d2dd3d307a96aebc2cf17f772f1230f5a854edba2992a09",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-          {
-            key: "12",
-            numLeaves: "23",
-            sideNodes: [
-              "0x1ec9df86564be1a011fc04147a0b3c91d36b5113c04f97421f109c9ae730bfca",
-              "0x5dd0ba72446469141f04daad176a92274279de886dcb09c032f8db1f30fb3d16",
-              "0x9b64b19114fa81cd442144233b64265e926410835635b7789c0ed4cf301dffbf",
-              "0xfd27288568a7028c1d2dd3d307a96aebc2cf17f772f1230f5a854edba2992a09",
-              "0x77b7fec25cee2d0ebb42da425c7c46cc6380ae21216b34bb1f3e47144774941a",
-            ],
-          },
-        ],
         shareProofs: {
           attestationProof: {
             proof: {

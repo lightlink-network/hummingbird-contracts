@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./ChallengeBase.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
+import "hardhat/console.sol";
 
 /// @title  ChallengeDataAvailability
 /// @author LightLink Hummingbird
@@ -47,9 +48,11 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         bytes32 blockHash;
         uint256 blockIndex;
         uint8 pointerIndex;
+        uint32 shareIndex;
         address challenger;
         uint256 expiry;
         ChallengeDAStatus status;
+        bool claimed;
     }
 
     /// @notice The data structure for a DA challenge proof.
@@ -71,6 +74,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     event ChallengeDAUpdate(
         bytes32 indexed _blockHash,
         uint256 indexed _pointerIndex,
+        uint32 _shareIndex,
         uint256 _blockIndex,
         uint256 _expiry,
         ChallengeDAStatus indexed _status
@@ -90,9 +94,11 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     /// @return The reference key for the DA challenge.
     function dataRootInclusionChallengeKey(
         bytes32 _blockHash,
-        uint8 _pointerIndex
+        uint8 _pointerIndex,
+        uint32 _shareIndex
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_blockHash, _pointerIndex));
+        return
+            keccak256(abi.encodePacked(_blockHash, _pointerIndex, _shareIndex));
     }
 
     /// @notice Challenges the data root inclusion of a block.
@@ -101,7 +107,8 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     /// @return The index of the block being challenged.
     function challengeDataRootInclusion(
         uint256 _blockIndex,
-        uint8 _pointerIndex
+        uint8 _pointerIndex,
+        uint32 _shareIndex
     )
         external
         payable
@@ -112,8 +119,12 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     {
         require(isDAChallengeEnabled, "DA challenges are disabled");
 
-        bytes32 h = chain.chain(_blockIndex);
-        bytes32 challengeKey = dataRootInclusionChallengeKey(h, _pointerIndex);
+        bytes32 challengeBlockHash = chain.chain(_blockIndex);
+        bytes32 challengeKey = dataRootInclusionChallengeKey(
+            challengeBlockHash,
+            _pointerIndex,
+            _shareIndex
+        );
 
         // check if there is already a challenge for this block.
         ChallengeDA storage challenge = daChallenges[challengeKey];
@@ -121,25 +132,39 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             challenge.status == ChallengeDAStatus.None,
             "challenge already exists"
         );
+
+        ICanonicalStateChain.Header memory header = chain.getHeaderByNum(
+            _blockIndex
+        );
+
         require(
-            _pointerIndex <
-                chain.getHeaderByNum(_blockIndex).celestiaPointers.length,
+            _pointerIndex < header.celestiaPointers.length,
             "invalid pointer index"
+        );
+        require(
+            _shareIndex >= header.celestiaPointers[_pointerIndex].shareStart &&
+                _shareIndex <
+                header.celestiaPointers[_pointerIndex].shareStart +
+                    header.celestiaPointers[_pointerIndex].shareLen,
+            "invalid share index: not in pointers range"
         );
 
         // create a new challenge.
         daChallenges[challengeKey] = ChallengeDA(
-            h,
+            challengeBlockHash,
             _blockIndex,
             _pointerIndex,
+            _shareIndex,
             msg.sender,
             block.timestamp + challengePeriod,
-            ChallengeDAStatus.ChallengerInitiated
+            ChallengeDAStatus.ChallengerInitiated,
+            false
         );
 
         emit ChallengeDAUpdate(
-            h,
+            challengeBlockHash,
             _pointerIndex,
+            _shareIndex,
             _blockIndex,
             block.timestamp + challengePeriod,
             ChallengeDAStatus.ChallengerInitiated
@@ -153,32 +178,47 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     /// @param _proof - The proof of inclusion.
     function defendDataRootInclusion(
         bytes32 _challengeKey,
-        ChallengeDAProof memory _proof
+        SharesProof memory _proof
     ) public nonReentrant {
         ChallengeDA storage challenge = daChallenges[_challengeKey];
-        require(
-            challenge.status == ChallengeDAStatus.ChallengerInitiated,
-            "challenge is not in the correct state"
-        );
-
         ICanonicalStateChain.Header memory header = chain.getHeaderByNum(
             challenge.blockIndex
         );
 
         require(
+            challenge.status == ChallengeDAStatus.ChallengerInitiated,
+            "challenge is not in the correct state"
+        );
+        require(
             header.celestiaPointers[challenge.pointerIndex].height ==
-                _proof.dataRootTuple.height,
+                _proof.attestationProof.tuple.height,
             "invalid celestia height"
         );
 
-        // verify the proof.
+        // check the namespace
+        require(_proof.namespace.equalTo(daNamespace), "invalid namespace");
+
+        // verify the provided proof is valid – this also calls verifyAttestations.
+        (bool success, ) = DAVerifier.verifySharesToDataRootTupleRoot(
+            daOracle,
+            _proof,
+            _proof.attestationProof.tuple.dataRoot
+        );
+        require(success, "failed to verify shares to data root tuple root");
+
+        // calculate squaresize
+        (uint256 squaresize, ) = DAVerifier.computeSquareSizeFromRowProof(
+            _proof.rowProofs[0]
+        );
+
+        // check that the share index is within the celestia pointer range.
+        uint256 shareIndexInRow = _proof.shareProofs[0].beginKey;
+        uint256 shareIndexInRowMajorOrder = shareIndexInRow +
+            squaresize *
+            _proof.rowProofs[0].key;
         require(
-            daOracle.verifyAttestation(
-                _proof.rootNonce,
-                _proof.dataRootTuple,
-                _proof.proof
-            ),
-            "invalid proof"
+            shareIndexInRowMajorOrder == challenge.shareIndex,
+            "proof must be provided for the challenged share index"
         );
 
         // update the challenge.
@@ -186,15 +226,13 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
         emit ChallengeDAUpdate(
             challenge.blockHash,
             challenge.pointerIndex,
+            challenge.shareIndex,
             challenge.blockIndex,
             challenge.expiry,
             ChallengeDAStatus.DefenderWon
         );
 
-        // pay out the reward.
-        // use call to prevent failing receiver is a contract.
-        (bool success, ) = defender.call{value: challengeFee}("");
-        require(success, "failed to pay defender");
+        // The defender can now call claimDAChallengeReward to claim the reward.
     }
 
     /// @notice Settles the data root inclusion challenge in favor of the challenger
@@ -215,26 +253,51 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
         // update the challenge.
         challenge.status = ChallengeDAStatus.ChallengerWon;
+
+        // rollback the chain.
+        chain.rollback(challenge.blockIndex - 1, challenge.blockHash);
+
         emit ChallengeDAUpdate(
             challenge.blockHash,
             challenge.pointerIndex,
+            challenge.shareIndex,
             challenge.blockIndex,
             challenge.expiry,
             ChallengeDAStatus.ChallengerWon
         );
 
-        // pay out the reward.
-        // use call to prevent failing receiver is a contract.
-        (bool success, ) = challenge.challenger.call{value: challengeFee}("");
-        require(success, "failed to pay challenger");
-
-        // rollback the chain.
-        chain.rollback(challenge.blockIndex - 1);
+        // The challenger can now call claimDAChallengeReward to claim the reward.
     }
 
     /// @notice Toggles the data availability challenges on or off.
     /// @param _status - The status of the data availability challenges.
     function toggleDAChallenge(bool _status) external onlyOwner {
         isDAChallengeEnabled = _status;
+    }
+
+    function claimDAChallengeReward(
+        bytes32 _challengeKey
+    ) external nonReentrant {
+        ChallengeDA storage challenge = daChallenges[_challengeKey];
+        require(
+            challenge.claimed == false,
+            "challenge has already been claimed"
+        );
+        require(
+            challenge.status == ChallengeDAStatus.ChallengerWon ||
+                challenge.status == ChallengeDAStatus.DefenderWon,
+            "challenge is not in the correct state"
+        );
+
+        challenge.claimed = true;
+        if (challenge.status == ChallengeDAStatus.ChallengerWon) {
+            (bool success, ) = challenge.challenger.call{value: challengeFee}(
+                ""
+            );
+            require(success, "failed to pay challenger");
+        } else {
+            (bool success, ) = defender.call{value: challengeFee}("");
+            require(success, "failed to pay defender");
+        }
     }
 }

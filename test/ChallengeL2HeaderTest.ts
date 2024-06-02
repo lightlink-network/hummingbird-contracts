@@ -77,6 +77,7 @@ describe("ChallengeL2Header", function () {
 
     challenge = Challenge__factory.connect(challengeDeployment.address, owner);
     await challenge.connect(owner).setChallengeFee(challengeFee);
+    await chain.connect(owner).setChallengeContract(challengeDeployment.address);
 
     // 4. push next block
     const nextBlock = { ...MOCK_DATA[0].rollupHeader };
@@ -101,7 +102,7 @@ describe("ChallengeL2Header", function () {
             1,
             MOCK_DATA[0].headers[CURR_HEADER].header.number,
           ),
-      ).to.be.revertedWith("Challenge: fee not paid");
+      ).to.be.revertedWith("challenge fee not paid");
     });
 
     it("should able to challenge if fee is paid", async function () {
@@ -231,13 +232,12 @@ describe("ChallengeL2Header", function () {
       const rblockHash = await chain.chain(1);
       const shareProof = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const shareRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
 
       // load shares for the current header
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
 
       // load header for the current header
@@ -301,7 +301,8 @@ describe("ChallengeL2Header", function () {
       expect(await chainOracle.hashHeader(header)).to.be.equal(headerHash);
     });
 
-    it("should be able to extra data from shares", async function () {
+    it("should be able to extract data from shares", async function () {
+      MOCK_DATA[0].headers[CURR_HEADER].shareProofs.data;
       expect(
         chainOracle
           .connect(owner)
@@ -318,12 +319,11 @@ describe("ChallengeL2Header", function () {
       const headerHash = MOCK_DATA[0].headers[CURR_HEADER].headerHash;
       const shareProof = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const shareRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
 
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, shareProof.data);
@@ -345,17 +345,15 @@ describe("ChallengeL2Header", function () {
     it("should be able to defend", async function () {
       const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
       const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
-      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
       const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
       // load prev header
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, prevHeaderShares, prevPointerProofs),
+          .provideShares(rblockHash, 0, prevHeaderShares),
       ).to.not.be.reverted;
       const prevShareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -371,7 +369,7 @@ describe("ChallengeL2Header", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, headerShares, pointerProofs),
+          .provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const shareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -396,11 +394,29 @@ describe("ChallengeL2Header", function () {
       const l2HeaderHash = MOCK_DATA[0].headers[CURR_HEADER].headerHash;
       const l2PrevHeaderHash =
         MOCK_DATA[0].headers[CURR_HEADER].header.parentHash;
-      await challenge
+      await expect(challenge
         .connect(publisher)
-        .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash);
-      // await expect(
-      // ).to.not.be.reverted;
+        .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash)
+      ).to.not.be.reverted;
+
+      const challengeData = await challenge.l2HeaderChallenges(challengeHash);
+      expect(challengeData[5], "incorrect challenge state").to.be.equal(3n);
+
+      //check the chain was not rolled back
+      const head = await chain.chainHead();
+      expect(head, "chain rolled back").to.be.equal(1n);
+
+      // check the challenge cannot be settled
+      await expect(
+        challenge.connect(owner).settleL2HeaderChallenge(challengeHash),
+      ).to.be.revertedWith("challenge is not in the correct state");
+
+      // check the challenge cannot be defended again
+      await expect(
+        challenge
+          .connect(publisher)
+          .defendL2Header(challengeHash, l2HeaderHash, l2PrevHeaderHash),
+      ).to.be.revertedWith("challenge is not in the correct state");
     });
   });
 
@@ -408,10 +424,8 @@ describe("ChallengeL2Header", function () {
     it("happy path", async function () {
       const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
       const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
-      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
       const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
       // load prev header to chainOracle
@@ -421,7 +435,6 @@ describe("ChallengeL2Header", function () {
         0,
         prevHeaderShares,
         prevHeaderRanges,
-        prevPointerProofs,
       );
 
       // load current header to chainOracle
@@ -431,7 +444,6 @@ describe("ChallengeL2Header", function () {
         0,
         headerShares,
         headerRanges,
-        pointerProofs,
       );
 
       // set challenge period
@@ -446,25 +458,34 @@ describe("ChallengeL2Header", function () {
       const challengeHash = await challenge.l2HeaderChallengeHash(
         rblockHash,
         l2Header.number,
-      );
+      );;
 
       // advance time by 12 hrs & 1 second and mine a new block
       await time.increase(12 * 60 * 60 + 1);
 
       // settle now that the challenge period has ended
-      await challenge.connect(owner).settleL2HeaderChallenge(challengeHash);
+      await expect(challenge.connect(owner).settleL2HeaderChallenge(challengeHash), "challenge failed").to.not.be.reverted;
+
 
       const challengeData = await challenge.l2HeaderChallenges(challengeHash);
-      expect(challengeData[4]).to.be.equal(2);
+      expect(challengeData[5], "incorrect challenge hash").to.be.equal(2);
+
+      //check the chain rolled back
+      const head = await chain.chainHead();
+      expect(head, "chain did not rollback").to.be.equal(0n);
+
+      // claim the challenge
+      await expect(challenge.connect(owner).claimL2HeaderChallengeReward(challengeHash)).to.not.be.reverted;
+
+      // check the reward can only be claimed once
+      await expect(challenge.connect(owner).claimL2HeaderChallengeReward(challengeHash)).to.be.revertedWith("challenge has already been claimed");
     });
 
     it("should revert if challenge period has not ended", async function () {
       const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
       const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
-      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
       const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
       // load prev header
@@ -474,7 +495,6 @@ describe("ChallengeL2Header", function () {
         0,
         prevHeaderShares,
         prevHeaderRanges,
-        prevPointerProofs,
       );
 
       // load current header
@@ -484,7 +504,6 @@ describe("ChallengeL2Header", function () {
         0,
         headerShares,
         headerRanges,
-        pointerProofs,
       );
 
       // challenge
@@ -507,12 +526,11 @@ describe("ChallengeL2Header", function () {
     it("should revert if challenge is not in the correct state", async function () {
       const prevHeaderShares = MOCK_DATA[0].headers[PREV_HEADER].shareProofs;
       const prevHeaderRanges = MOCK_DATA[0].headers[PREV_HEADER].shareRanges;
-      const prevPointerProofs = MOCK_DATA[0].headers[PREV_HEADER].pointerProofs;
       const headerShares = MOCK_DATA[0].headers[CURR_HEADER].shareProofs;
       const headerRanges = MOCK_DATA[0].headers[CURR_HEADER].shareRanges;
-      const pointerProofs = MOCK_DATA[0].headers[CURR_HEADER].pointerProofs;
       const rblockHash = await chain.chain(1);
 
+      
       // load prev header to chainOracle
       await provideHeader(
         chainOracle,
@@ -520,9 +538,8 @@ describe("ChallengeL2Header", function () {
         0,
         prevHeaderShares,
         prevHeaderRanges,
-        prevPointerProofs,
       );
-
+      
       // load current header to chainOracle
       await provideHeader(
         chainOracle,
@@ -530,9 +547,8 @@ describe("ChallengeL2Header", function () {
         0,
         headerShares,
         headerRanges,
-        pointerProofs,
       );
-
+      
       // reduce challenge period
       await challenge.connect(owner).setChallengePeriod(12 * 60 * 60);
 
@@ -541,7 +557,7 @@ describe("ChallengeL2Header", function () {
       await challenge.connect(owner).challengeL2Header(1, l2Header.number, {
         value: challengeFee,
       });
-
+      
       const challengeHash = await challenge.l2HeaderChallengeHash(
         rblockHash,
         l2Header.number,
@@ -550,8 +566,8 @@ describe("ChallengeL2Header", function () {
       // advance time by 12 hrs & 1 second and mine a new block
       await time.increase(12 * 60 * 60 + 1);
 
-      // settle
-      await challenge.connect(owner).settleL2HeaderChallenge(challengeHash);
+      // settle once
+      await expect(challenge.connect(owner).settleL2HeaderChallenge(challengeHash)).to.not.be.reverted;
 
       // settle
       await expect(
@@ -559,7 +575,7 @@ describe("ChallengeL2Header", function () {
       ).to.be.revertedWith("challenge is not in the correct state");
 
       const challengeData = await challenge.l2HeaderChallenges(challengeHash);
-      expect(challengeData[4]).to.be.equal(2);
+      expect(challengeData[5]).to.be.equal(2);
     });
   });
 

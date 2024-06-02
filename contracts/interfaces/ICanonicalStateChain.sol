@@ -14,7 +14,6 @@ interface ICanonicalStateChain {
         uint64 l2Height;
         bytes32 prevHash;
         bytes32 stateRoot;
-        bytes32 shareRoot;
         CelestiaPointer[] celestiaPointers;
     }
 
@@ -105,7 +104,7 @@ interface ICanonicalStateChain {
     /// @notice Rolls back the chain to a previous block number. Reverts
     ///         the chain to a previous state, It can only be called by
     ///         the challenge contract.
-    function rollback(uint256 _blockNumber) external;
+    function rollback(uint256 _blockNumber, bytes32 _blockhash) external;
 
     /// @notice Sets the publisher address.
     /// @param _publisher - The new publisher address.

@@ -18,6 +18,8 @@ contract ChallengeL2Tx is ChallengeBase {
     }
 
     struct L2TxChallenge {
+        bytes32 blockHash;
+        uint256 blockNum;
         bytes32 l2BlockHash;
         bytes32 l2TxRoot;
         uint32 txIndex;
@@ -25,6 +27,7 @@ contract ChallengeL2Tx is ChallengeBase {
         address defender;
         uint256 expiry;
         L2TxChallengeStatus status;
+        bool claimed;
     }
 
     event L2TxChallengeUpdate(
@@ -75,13 +78,16 @@ contract ChallengeL2Tx is ChallengeBase {
         );
 
         l2TxChallenges[l2TxChallengesIdx] = L2TxChallenge({
+            blockHash: rblockHash,
+            blockNum: _rblockNum,
             l2BlockHash: _l2BlockHash,
             l2TxRoot: l2Header.transactionsRoot,
             txIndex: 0,
             challenger: msg.sender,
             defender: address(0),
             expiry: block.timestamp + (challengePeriod / 4),
-            status: L2TxChallengeStatus.Initiated
+            status: L2TxChallengeStatus.Initiated,
+            claimed: false
         });
 
         emit L2TxChallengeUpdate(
@@ -197,13 +203,10 @@ contract ChallengeL2Tx is ChallengeBase {
                 L2TxChallengeStatus.ChallengerWon
             );
 
-            // pay out the challenger
-            (bool success, ) = challenge.challenger.call{value: challengeFee}(
-                ""
-            );
-            require(success, "failed to pay challenger");
-            return;
+            // rollback the tx
+            chain.rollback(challenge.blockNum - 1, challenge.blockHash);
         }
+        // Otherwise its implied the root was proved and the defender won
 
         challenge.status = L2TxChallengeStatus.DefenderWon;
         emit L2TxChallengeUpdate(
@@ -214,10 +217,31 @@ contract ChallengeL2Tx is ChallengeBase {
             challenge.challenger,
             L2TxChallengeStatus.DefenderWon
         );
+    }
 
-        // pay out the defender
-        (bool success, ) = challenge.defender.call{value: challengeFee}("");
-        require(success, "failed to pay defender");
-        return;
+    function claimL2TxChallengeReward(
+        uint256 _challengeKey
+    ) external nonReentrant {
+        L2TxChallenge storage challenge = l2TxChallenges[_challengeKey];
+        require(
+            challenge.claimed == false,
+            "challenge has already been claimed"
+        );
+        require(
+            challenge.status == L2TxChallengeStatus.ChallengerWon ||
+                challenge.status == L2TxChallengeStatus.DefenderWon,
+            "challenge is not in the correct state"
+        );
+
+        challenge.claimed = true;
+        if (challenge.status == L2TxChallengeStatus.ChallengerWon) {
+            (bool success, ) = challenge.challenger.call{value: challengeFee}(
+                ""
+            );
+            require(success, "failed to pay challenger");
+        } else {
+            (bool success, ) = defender.call{value: challengeFee}("");
+            require(success, "failed to pay defender");
+        }
     }
 }
