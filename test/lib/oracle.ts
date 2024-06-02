@@ -13,7 +13,7 @@ export const provideHeader = async (
   pointerProof: BinaryMerkleProofStruct[],
 ) => {
   const shareKey = await oracle.ShareKey(rblockHash, proof.data);
-  await oracle.provideShares(rblockHash, pointerIndex, proof, pointerProof);
+  await oracle.provideShares(rblockHash, pointerIndex, proof);
   await oracle.provideHeader(shareKey, ranges);
 };
 
@@ -26,6 +26,6 @@ export const provideLegacyTx = async (
   pointerProof: BinaryMerkleProofStruct[],
 ) => {
   const shareKey = await oracle.ShareKey(rblockHash, proof.data);
-  await oracle.provideShares(rblockHash, pointerIndex, proof, pointerProof);
+  await oracle.provideShares(rblockHash, pointerIndex, proof);
   await oracle.provideLegacyTx(shareKey, ranges);
 };
