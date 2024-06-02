@@ -188,4 +188,30 @@ describe("ChallengeDataAvailability", function () {
       ).to.be.revertedWith("defender cannot be the zero address");
     });
   });
+
+  describe("setDAOracle", function () {
+    it("happy path", async function () {
+      const DAOracleMockAddress = "0xF0c6429ebAB2e7DC6e05DaFB61128bE21f13cb1e";
+
+      await expect(challenge.connect(owner).setDAOracle(DAOracleMockAddress)).to
+        .not.be.reverted;
+
+      const _DAOracle = await challenge.daOracle();
+      expect(_DAOracle).to.equal(DAOracleMockAddress);
+    });
+
+    it("should revert as non owner", async function () {
+      const DAOracleMockAddress = "0xF0c6429ebAB2e7DC6e05DaFB61128bE21f13cb1e";
+
+      await expect(
+        challenge
+          .connect(publisher)
+          .getFunction("setDAOracle")
+          .send(DAOracleMockAddress),
+      ).to.be.revertedWithCustomError(
+        canonicalStateChain,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+  });
 });
