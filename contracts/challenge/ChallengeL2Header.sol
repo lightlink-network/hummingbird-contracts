@@ -259,6 +259,9 @@ contract ChallengeL2Header is ChallengeBase {
         // finalise the challenge
         challenge.status = L2HeaderChallengeStatus.ChallengerWon;
 
+        // rollback the block
+        chain.rollback(challenge.blockNum - 1, challenge.header.rblock);
+
         emit L2HeaderChallengeUpdate(
             _challengeHash,
             challenge.header.number,
@@ -266,9 +269,6 @@ contract ChallengeL2Header is ChallengeBase {
             challenge.challengeEnd,
             L2HeaderChallengeStatus.ChallengerWon
         );
-
-        // rollback the block
-        chain.rollback(challenge.blockNum - 1, challenge.header.rblock);
     }
 
     /// @notice Returns the hash of an L2 header challenge.

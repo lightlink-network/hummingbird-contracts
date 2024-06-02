@@ -253,6 +253,10 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
         // update the challenge.
         challenge.status = ChallengeDAStatus.ChallengerWon;
+
+        // rollback the chain.
+        chain.rollback(challenge.blockIndex - 1, challenge.blockHash);
+
         emit ChallengeDAUpdate(
             challenge.blockHash,
             challenge.pointerIndex,
@@ -261,9 +265,6 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             challenge.expiry,
             ChallengeDAStatus.ChallengerWon
         );
-
-        // rollback the chain.
-        chain.rollback(challenge.blockIndex - 1, challenge.blockHash);
 
         // The challenger can now call claimDAChallengeReward to claim the reward.
     }
