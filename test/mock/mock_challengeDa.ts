@@ -182,7 +182,6 @@ export const challengeDAMockData: MockData = {
      "epoch": 5902275,
      "l2Height": 83993089,
      "prevHash": "0x61b42beb89c37b9c02b1e343719335369a966dde6abb1e48e5dabd54f8300ae1",
-     "shareRoot": "0xb5e852ae532af6a1efdd5c03587a1ffbbd93ef86a5dde21ceebaca4b849680a9",
      "stateRoot": "0x7d0f4357f5226358b2caa95be8452edda23ee88ae40a4de9351810589c2bdd8c"
     }
    }

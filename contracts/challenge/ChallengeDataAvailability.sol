@@ -174,8 +174,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     /// @param _proof - The proof of inclusion.
     function defendDataRootInclusion(
         bytes32 _challengeKey,
-        SharesProof memory _proof,
-        BinaryMerkleProof memory _sharesToRblockProof
+        SharesProof memory _proof
     ) public nonReentrant {
         ChallengeDA storage challenge = daChallenges[_challengeKey];
         ICanonicalStateChain.Header memory header = chain.getHeaderByNum(
@@ -213,13 +212,6 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
             shareIndexInRowMajorOrder == challenge.shareIndex,
             "proof must be provided for the challenged share index"
         );
-
-        // check that the shares are part of share root commited to in the rblock header.
-        require(BinaryMerkleTree.verify(
-                    header.shareRoot,
-                    _sharesToRblockProof,
-                    _proof.data[0]
-                ), "invalid sharesToRblock proof");
 
         // update the challenge.
         challenge.status = ChallengeDAStatus.DefenderWon;

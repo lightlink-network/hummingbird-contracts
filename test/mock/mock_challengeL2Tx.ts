@@ -217,8 +217,6 @@ export const challengeL2TxMockData: MockData = {
     l2Height: 80745359,
     prevHash:
       "0x40bef6a408a0ef4612eb8578d2cfe374df3ba9633d53946e8f15cf91dc8311c9",
-    shareRoot:
-      "0x801bef1f4c094e5c88dad1d2902ef2aac0e7b87917eb30a89811a60b4f351c7b",
     stateRoot:
       "0x8f90ed7c817cc87861bc28bd3054d40cf5aa85596f5cba03879c735acbd42ec9",
   },

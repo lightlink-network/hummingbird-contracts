@@ -231,7 +231,7 @@ describe("ChallengeL2Header", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
 
       // load header for the current header
@@ -318,7 +318,7 @@ describe("ChallengeL2Header", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, shareProof.data);
@@ -350,7 +350,7 @@ describe("ChallengeL2Header", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, prevHeaderShares, prevPointerProofs),
+          .provideShares(rblockHash, 0, prevHeaderShares),
       ).to.not.be.reverted;
       const prevShareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -366,7 +366,7 @@ describe("ChallengeL2Header", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, headerShares, pointerProofs),
+          .provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const shareKey = await chainOracle.ShareKey(
         rblockHash,

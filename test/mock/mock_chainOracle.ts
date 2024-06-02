@@ -435,8 +435,6 @@ export const chainOracleMockData: MockData[] = [
       l2Height: 80745349,
       prevHash:
         "0xb60af11fe3741dce0cce9d55bfdd24281f4da3f91b7adce52c32a9567bb662fe",
-      shareRoot:
-        "0x3917b75eff2fa1a183ce9c089b1d1c77c5463a82896aa34690e4ab46a6644672",
       stateRoot:
         "0x392fc7225ab25e7b2cb04146c5c83b76342b6a21734afd33807bf4d4f235797d",
     },

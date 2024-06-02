@@ -81,7 +81,7 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.not.be.reverted;
     });
 
@@ -94,7 +94,6 @@ describe("ChainOracle", function () {
             "0x0000000000000000000000000000000000000000000000000000000000000000",
             1,
             MOCK_DATA[0].headers[0].shareProofs,
-            MOCK_DATA[0].headers[0].pointerProofs,
           ),
       ).to.be.revertedWith("rblock not found");
     });
@@ -110,7 +109,6 @@ describe("ChainOracle", function () {
             hash,
             0,
             MOCK_DATA[0].headers[0].shareProofs,
-            MOCK_DATA[0].headers[0].pointerProofs,
           ),
       ).to.be.revertedWith("rblock height mismatch");
     });
@@ -150,7 +148,6 @@ describe("ChainOracle", function () {
             rblockHash,
             0,
             MOCK_DATA[0].headers[0].shareProofs,
-            pointerProofs,
           ),
       ).to.be.revertedWith("invalid share root");
     });
@@ -165,7 +162,7 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, shareProof, pointerProofs),
+          .provideShares(rblockHash, 0, shareProof),
       ).to.be.revertedWith("shares not verified");
     });
   });
@@ -186,7 +183,7 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, headerShares, pointerProofs),
+          .provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const shareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -240,7 +237,7 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, headerShares, pointerProofs),
+          .provideShares(rblockHash, 0, headerShares),
       ).to.not.be.reverted;
       const prevShareKey = await chainOracle.ShareKey(
         rblockHash,
@@ -270,7 +267,7 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, txShares, pointerProofs),
+          .provideShares(rblockHash, 0, txShares),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
@@ -310,7 +307,7 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle
           .connect(owner)
-          .provideShares(rblockHash, 0, txShares, pointerProofs),
+          .provideShares(rblockHash, 0, txShares),
       ).to.not.be.reverted;
 
       const shareKey = await chainOracle.ShareKey(rblockHash, txShares.data);
@@ -358,37 +355,6 @@ describe("ChainOracle", function () {
       await expect(
         chainOracle.extractData(TestShares, TestRanges),
       ).to.be.revertedWith("Invalid range");
-    });
-  });
-
-  describe("verifyShareRoot", function () {
-    it("happy path", async function () {
-      const shareRoot = MOCK_DATA[0].rollupHeader.shareRoot;
-      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
-      const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
-
-      await expect(
-        chainOracle.verifyShareRoot(
-          shareRoot,
-          headerShares.data,
-          pointerProofs,
-        ),
-      ).to.not.be.reverted;
-    });
-
-    it("should return false as proofs length not equal share length", async function () {
-      const shareRoot = MOCK_DATA[0].rollupHeader.shareRoot;
-      const headerShares = MOCK_DATA[0].headers[0].shareProofs;
-      const pointerProofs = MOCK_DATA[0].headers[0].pointerProofs;
-      pointerProofs.pop();
-
-      expect(
-        await chainOracle.verifyShareRoot(
-          shareRoot,
-          headerShares.data,
-          pointerProofs,
-        ),
-      ).to.equal(false);
     });
   });
 
