@@ -12,6 +12,7 @@ import { makeNextBlock, setupCanonicalStateChain } from "./lib/chain";
 import { challengeL2HeaderMockData as MOCK_DATA } from "./mock/mock_challengeL2Header";
 import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
 import { provideHeader } from "./lib/oracle";
+import { time } from "@nomicfoundation/hardhat-network-helpers";
 
 type Header = CanonicalStateChain.HeaderStruct;
 
@@ -151,7 +152,13 @@ describe("ChallengeL2Header", function () {
     it("should not able to challenge if not in challenge window", async function () {
       const l2Header = MOCK_DATA[0].headers[1].header;
 
-      await challenge.connect(owner).connect(owner).setChallengeWindow(0);
+      await challenge
+        .connect(owner)
+        .connect(owner)
+        .setChallengeWindow(12 * 60 * 60);
+
+      // advance time by 12 hrs & 1 second and mine a new block
+      await time.increase(12 * 60 * 60 + 1);
 
       await expect(
         challenge.connect(owner).challengeL2Header(1, l2Header.number, {
@@ -427,8 +434,8 @@ describe("ChallengeL2Header", function () {
         pointerProofs,
       );
 
-      // reduce challenge period
-      await challenge.connect(owner).setChallengePeriod(0);
+      // set challenge period
+      await challenge.connect(owner).setChallengePeriod(12 * 60 * 60);
 
       // challenge the current header
       const l2Header = MOCK_DATA[0].headers[CURR_HEADER].header;
@@ -441,7 +448,10 @@ describe("ChallengeL2Header", function () {
         l2Header.number,
       );
 
-      // settle
+      // advance time by 12 hrs & 1 second and mine a new block
+      await time.increase(12 * 60 * 60 + 1);
+
+      // settle now that the challenge period has ended
       await challenge.connect(owner).settleL2HeaderChallenge(challengeHash);
 
       const challengeData = await challenge.l2HeaderChallenges(challengeHash);
@@ -524,7 +534,7 @@ describe("ChallengeL2Header", function () {
       );
 
       // reduce challenge period
-      await challenge.connect(owner).setChallengePeriod(0);
+      await challenge.connect(owner).setChallengePeriod(12 * 60 * 60);
 
       // challenge the current header
       const l2Header = MOCK_DATA[0].headers[CURR_HEADER].header;
@@ -536,6 +546,9 @@ describe("ChallengeL2Header", function () {
         rblockHash,
         l2Header.number,
       );
+
+      // advance time by 12 hrs & 1 second and mine a new block
+      await time.increase(12 * 60 * 60 + 1);
 
       // settle
       await challenge.connect(owner).settleL2HeaderChallenge(challengeHash);

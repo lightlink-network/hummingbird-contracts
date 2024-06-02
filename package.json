@@ -16,6 +16,7 @@
     "node": "v18.16.0"
   },
   "dependencies": {
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
     "@openzeppelin/contracts": "^5.0.1",
     "@openzeppelin/contracts-upgradeable": "^5.0.1",
     "blobstream-contracts": "github:celestiaorg/blobstream-contracts",

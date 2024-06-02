@@ -99,7 +99,7 @@ contract ChallengeBase is
 
     /// @notice Ensures the challenger has paid the challenge fee.
     modifier requireChallengeFee() {
-        require(msg.value >= challengeFee, "challenge fee not paid");
+        require(msg.value == challengeFee, "challenge fee not paid");
         _;
     }
 
@@ -107,6 +107,10 @@ contract ChallengeBase is
     /// @param _challengeWindow The new challenge window time.
     /// @dev Only the owner can call this function.
     function setChallengeWindow(uint256 _challengeWindow) external onlyOwner {
+        require(
+            _challengeWindow >= 12 hours && _challengeWindow <= 3 weeks,
+            "challenge window must be between 12 hours and 3 weeks"
+        );
         challengeWindow = _challengeWindow;
     }
 
@@ -114,6 +118,10 @@ contract ChallengeBase is
     /// @param _challengePeriod The new challenge period time.
     /// @dev Only the owner can call this function.
     function setChallengePeriod(uint256 _challengePeriod) external onlyOwner {
+        require(
+            _challengePeriod >= 12 hours && _challengePeriod <= 3 weeks,
+            "challenge period must be between 12 hours and 3 weeks"
+        );
         challengePeriod = _challengePeriod;
     }
 
@@ -121,6 +129,10 @@ contract ChallengeBase is
     /// @param _challengeFee The new challenge fee.
     /// @dev Only the owner can call this function.
     function setChallengeFee(uint256 _challengeFee) external onlyOwner {
+        require(
+            _challengeFee >= 0.01 ether && _challengeFee <= 10 ether,
+            "challenge fee must be between 0.01 ether and 10 ether"
+        );
         challengeFee = _challengeFee;
     }
 
@@ -128,6 +140,10 @@ contract ChallengeBase is
     /// @param _challengeReward The new challenge reward.
     /// @dev Only the owner can call this function.
     function setChallengeReward(uint256 _challengeReward) external onlyOwner {
+        require(
+            _challengeReward >= 0.01 ether && _challengeReward <= 10 ether,
+            "challenge reward must be between 0.01 ether and 10 ether"
+        );
         challengeReward = _challengeReward;
     }
 
@@ -135,6 +151,7 @@ contract ChallengeBase is
     /// @param _defender The new defender address.
     /// @dev Only the owner can call this function.
     function setDefender(address _defender) external onlyOwner {
+        require(_defender != address(0), "defender cannot be the zero address");
         defender = _defender;
     }
 
