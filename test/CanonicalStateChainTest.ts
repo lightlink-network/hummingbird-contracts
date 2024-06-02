@@ -181,16 +181,22 @@ describe("CanonicalStateChain", function () {
   describe("rollback", function () {
     it("Should revert if called by an account other than the challenge contract", async function () {
       await pushRandomHeader(publisher, canonicalStateChain);
-      const [badBlockHash] = await pushRandomHeader(publisher, canonicalStateChain);
-
-      await expect(canonicalStateChain.rollback(1, badBlockHash)).to.be.revertedWith(
-        "only challenge contract can rollback chain",
+      const [badBlockHash] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain,
       );
+
+      await expect(
+        canonicalStateChain.rollback(1, badBlockHash),
+      ).to.be.revertedWith("only challenge contract can rollback chain");
     });
 
     it("Should emit a RolledBack event when called by the challenge address", async function () {
       await pushRandomHeader(publisher, canonicalStateChain);
-      const [badBlockHash] = await pushRandomHeader(publisher, canonicalStateChain);
+      const [badBlockHash] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain,
+      );
 
       await expect(
         canonicalStateChain
@@ -202,7 +208,9 @@ describe("CanonicalStateChain", function () {
 
     it("Should not be able to rollback if no blocks added", async function () {
       await expect(
-        canonicalStateChain.connect(challengeContract).rollback(0, _chain.genesisHash),
+        canonicalStateChain
+          .connect(challengeContract)
+          .rollback(0, _chain.genesisHash),
       ).to.be.revertedWith("block number must be less than chain head");
     });
 
@@ -211,9 +219,14 @@ describe("CanonicalStateChain", function () {
         publisher,
         canonicalStateChain,
       );
-      const [badBlockHash] = await pushRandomHeader(publisher, canonicalStateChain);
+      const [badBlockHash] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain,
+      );
 
-      await canonicalStateChain.connect(challengeContract).rollback(1, badBlockHash);
+      await canonicalStateChain
+        .connect(challengeContract)
+        .rollback(1, badBlockHash);
       expect(await canonicalStateChain.chainHead()).to.equal(
         1,
         "chain head should be 1",
@@ -229,16 +242,23 @@ describe("CanonicalStateChain", function () {
     });
 
     it("ensure rolled back blocks are deleted", async function () {
-      await pushRandomHeader(publisher, canonicalStateChain);
-      await pushRandomHeader(publisher, canonicalStateChain);
-      await pushRandomHeader(publisher, canonicalStateChain);
-
-      const blockOneHash = await canonicalStateChain.chain(1);
-      const blockTwoHash = await canonicalStateChain.chain(2);
-      const blockThreeHash = await canonicalStateChain.chain(3);
+      const [blockOneHash] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain,
+      );
+      const [blockTwoHash] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain,
+      );
+      const [blockThreeHash] = await pushRandomHeader(
+        publisher,
+        canonicalStateChain,
+      );
 
       // rollback to block 1
-      await canonicalStateChain.connect(challengeContract).rollback(1);
+      await canonicalStateChain
+        .connect(challengeContract)
+        .rollback(1, blockTwoHash);
 
       // ensure chain is in correct state
       expect(await canonicalStateChain.chain(1)).to.equal(blockOneHash);
@@ -324,11 +344,14 @@ describe("CanonicalStateChain", function () {
           celestiaPointers: [{ height: 1, shareStart: 1, shareLen: 1 }],
         });
 
-        // get last block hash
+      // get last block hash
       const badBlockHash = await canonicalStateChain.chain(1);
 
       await expect(
-        canonicalStateChain.connect(publisher).getFunction("rollback").send(0, badBlockHash),
+        canonicalStateChain
+          .connect(publisher)
+          .getFunction("rollback")
+          .send(0, badBlockHash),
       ).to.be.revertedWith("only challenge contract can rollback chain");
 
       await canonicalStateChain.setChallengeContract(challengeContract.address);
