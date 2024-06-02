@@ -137,7 +137,6 @@ describe("ChainOracle", function () {
 
       const headerShares = MOCK_DATA2.headers[0].shareProofs;
       const headerRanges = MOCK_DATA2.headers[0].shareRanges;
-      const pointerProofs = MOCK_DATA2.headers[0].pointerProofs;
       const rblockHash = await canonicalStateChain.chain(2);
 
       // load prev header
@@ -222,7 +221,6 @@ describe("ChainOracle", function () {
 
       const txShares = MOCK_DATA2.transactions[0][0].shareProofs;
       const txRanges = MOCK_DATA2.transactions[0][0].shareRanges;
-      const pointerProofs = MOCK_DATA2.transactions[0][0].pointerProofs;
       const rblockHash = await canonicalStateChain.chain(2);
 
       await expect(
@@ -262,7 +260,6 @@ describe("ChainOracle", function () {
 
       const txShares = MOCK_DATA2.transactions[0][0].shareProofs;
       const txRanges = MOCK_DATA2.transactions[0][0].shareRanges;
-      const pointerProofs = MOCK_DATA2.transactions[0][0].pointerProofs;
       const rblockHash = await canonicalStateChain.chain(2);
 
       await expect(

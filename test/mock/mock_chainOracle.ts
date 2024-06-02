@@ -14,7 +14,6 @@ interface headerData {
 }
 
 interface MockData {
-  rollupHash: string;
   rollupHeader: CanonicalStateChain.HeaderStruct;
   headers: headerData[];
 }
@@ -421,8 +420,6 @@ export const chainOracleMockData: MockData[] = [
         ],
       },
     ],
-    rollupHash:
-      "0x40bef6a408a0ef4612eb8578d2cfe374df3ba9633d53946e8f15cf91dc8311c9",
     rollupHeader: {
       celestiaPointers: [
         {

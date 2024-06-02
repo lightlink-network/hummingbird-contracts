@@ -3,7 +3,6 @@ import { SharesProofStruct, BinaryMerkleProofStruct } from "../../typechain-type
 
 
 interface MockData {
-    rollupHash: string;
     rollupHeader: CanonicalStateChain.HeaderStruct;
     daProofs: {
         key: string;
@@ -165,7 +164,6 @@ export const challengeDAMockData: MockData = {
       ]
      }
     },
-    "rollupHash": "0x4d1610db8c28207a5b7d9f92c69875f9614be56b30d25ab895619834fff25c6c",
     "rollupHeader": {
      "celestiaPointers": [
       {

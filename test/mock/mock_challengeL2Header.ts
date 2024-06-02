@@ -9,12 +9,10 @@ interface headerData {
   headerHash: string;
   shareProofs: SharesProofStruct;
   shareRanges: ChainOracle.ShareRangeStruct[];
-  pointerProofs: BinaryMerkleProofStruct[];
   shares: string[];
 }
 
 interface MockData {
-  rollupHash: string;
   rollupHeader: CanonicalStateChain.HeaderStruct;
   headers: headerData[];
 }
@@ -49,28 +47,7 @@ export const challengeL2HeaderMockData: MockData[] = [
         },
         headerHash:
           "0x2a095c3fb59f3a7a604442d513721666456ea4444a5a4b5fea9995e0f346fbd6",
-        pointerProofs: [
-          {
-            key: "2",
-            numLeaves: "12",
-            sideNodes: [
-              "0x7883b8d72ca485e77dc0fde8a83bf6e4d6878126248ef54cb25d8d928662e1fb",
-              "0xb2919060511b691b77e3921c43cc620acd57cf543f52f98d6e457e23a85ed86b",
-              "0x625e4380aa7a1271004c9e6152c9a24c5a52937132d9b52ba039160ff3fb81d5",
-              "0xac481ea0797cbc58f473593efee9f059a658e5766ea9b8040b5435bbe963edc3",
-            ],
-          },
-          {
-            key: "3",
-            numLeaves: "12",
-            sideNodes: [
-              "0x465aa459fd06b6c78b472481ca7df40f9231a904115aff486aede673a7e7b06a",
-              "0xb2919060511b691b77e3921c43cc620acd57cf543f52f98d6e457e23a85ed86b",
-              "0x625e4380aa7a1271004c9e6152c9a24c5a52937132d9b52ba039160ff3fb81d5",
-              "0xac481ea0797cbc58f473593efee9f059a658e5766ea9b8040b5435bbe963edc3",
-            ],
-          },
-        ],
+       
         shareProofs: {
           attestationProof: {
             proof: {
@@ -266,28 +243,6 @@ export const challengeL2HeaderMockData: MockData[] = [
         },
         headerHash:
           "0x33c4e19c2acaad13fe46fb2febb7de7249c6c459f2aea7a98728a336bbf2555d",
-        pointerProofs: [
-          {
-            key: "3",
-            numLeaves: "12",
-            sideNodes: [
-              "0x465aa459fd06b6c78b472481ca7df40f9231a904115aff486aede673a7e7b06a",
-              "0xb2919060511b691b77e3921c43cc620acd57cf543f52f98d6e457e23a85ed86b",
-              "0x625e4380aa7a1271004c9e6152c9a24c5a52937132d9b52ba039160ff3fb81d5",
-              "0xac481ea0797cbc58f473593efee9f059a658e5766ea9b8040b5435bbe963edc3",
-            ],
-          },
-          {
-            key: "4",
-            numLeaves: "12",
-            sideNodes: [
-              "0x07d8fc127e62de90d54c5d68fca59f4803c08689850e291a47ee0b5670464ba1",
-              "0x4019af5c48fa350c6fc3fe906a12e3822ee8bd05a8f63abc7425a23de0f3d1a4",
-              "0x36ac20849f9d765e9ce19861c5b5637457ca1d62de50c1240ed95d56f0e36a75",
-              "0xac481ea0797cbc58f473593efee9f059a658e5766ea9b8040b5435bbe963edc3",
-            ],
-          },
-        ],
         shareProofs: {
           attestationProof: {
             proof: {
@@ -421,8 +376,6 @@ export const challengeL2HeaderMockData: MockData[] = [
         ],
       },
     ],
-    rollupHash:
-      "0x40bef6a408a0ef4612eb8578d2cfe374df3ba9633d53946e8f15cf91dc8311c9",
     rollupHeader: {
       celestiaPointers: [
         {

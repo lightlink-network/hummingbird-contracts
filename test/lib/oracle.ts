@@ -10,7 +10,6 @@ export const provideHeader = async (
   pointerIndex: number,
   proof: SharesProofStruct,
   ranges: ChainOracle.ShareRangeStruct[],
-  pointerProof: BinaryMerkleProofStruct[],
 ) => {
   const shareKey = await oracle.ShareKey(rblockHash, proof.data);
   await oracle.provideShares(rblockHash, pointerIndex, proof);
