@@ -51,7 +51,6 @@ export const createGenesisHeader = async (pegasusRPC: string) => {
     prevHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
     stateRoot: latestBlock?.stateRoot, // fix state root
-    shareRoot: ethers.ZeroHash,
     celestiaPointers: [],
   };
 
