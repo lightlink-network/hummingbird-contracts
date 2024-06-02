@@ -267,7 +267,6 @@ contract ChallengeL2Header is ChallengeBase {
             L2HeaderChallengeStatus.ChallengerWon
         );
 
-
         // rollback the block
         chain.rollback(challenge.blockNum - 1, challenge.header.rblock);
     }
@@ -289,19 +288,29 @@ contract ChallengeL2Header is ChallengeBase {
         isL2HeaderChallengeEnabled = _status;
     }
 
-    function claimL2HeaderChallengeReward(bytes32 _challengeKey) external nonReentrant {
+    function claimL2HeaderChallengeReward(
+        bytes32 _challengeKey
+    ) external nonReentrant {
         L2HeaderChallenge storage challenge = l2HeaderChallenges[_challengeKey];
-        require(challenge.claimed == false, "challenge has already been claimed");
-        require(challenge.status == L2HeaderChallengeStatus.ChallengerWon || challenge.status == L2HeaderChallengeStatus.DefenderWon, "challenge is not in the correct state");
+        require(
+            challenge.claimed == false,
+            "challenge has already been claimed"
+        );
+        require(
+            challenge.status == L2HeaderChallengeStatus.ChallengerWon ||
+                challenge.status == L2HeaderChallengeStatus.DefenderWon,
+            "challenge is not in the correct state"
+        );
 
         challenge.claimed = true;
         if (challenge.status == L2HeaderChallengeStatus.ChallengerWon) {
-            (bool success, ) = challenge.challenger.call{value: challengeFee}("");
+            (bool success, ) = challenge.challenger.call{value: challengeFee}(
+                ""
+            );
             require(success, "failed to pay challenger");
         } else {
             (bool success, ) = defender.call{value: challengeFee}("");
             require(success, "failed to pay defender");
         }
-
     }
 }
