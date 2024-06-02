@@ -1,11 +1,11 @@
 import { ethers, network } from "hardhat";
-import { ZeroAddress } from "ethers";
 import { verify } from "../../utils/verify";
 import { log } from "../lib/log";
-import { createGenesisHeader, proxyDeployAndInitialize } from "../lib/deploy";
-
-// Set blobstreamX address
-const blobstreamXAddr = "BLOBSTREAMX_ADDRESS";
+import {
+  createGenesisHeader,
+  proxyDeployAndInitialize,
+  getBlobstreamXAddr,
+} from "../lib/deploy";
 
 const main = async () => {
   // Log network name and chain id selected for deployment
@@ -13,6 +13,8 @@ const main = async () => {
   const chainId = parseInt(chainIdHex, 16);
   log("Network name:", network.name);
   log("Network chain id:", chainId + "\n");
+
+  const blobstreamXAddr = getBlobstreamXAddr(chainId);
 
   // Step 1. Get deployer/signer account
   const [owner, publisher] = await ethers.getSigners();
