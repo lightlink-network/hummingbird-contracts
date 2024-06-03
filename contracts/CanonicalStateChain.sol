@@ -118,7 +118,7 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
             msg.sender
         );
 
-        maxPointers = 7;
+        maxPointers = 21;
     }
 
     /// @notice Optimistically pushes block headers to the canonical chain.
@@ -215,7 +215,7 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
             delete headerMetadata[chain[i]];
             delete chain[i];
         }
-        
+
         chainHead = _blockNumber;
         emit RolledBack(_blockNumber);
     }
