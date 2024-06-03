@@ -52,9 +52,9 @@ const config: HardhatUserConfig = {
     ethereum: {
       url: process.env.ETHEREUM_PROVIDER_URL || "",
       accounts: [
-        process.env.SEPOLIA_OWNER_PRIVATE_KEY ??
+        process.env.ETHEREUM_OWNER_PRIVATE_KEY ??
           "0000000000000000000000000000000000000000000000000000000000000000",
-        process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+        process.env.ETHEREUM_PUBLISHER_PRIVATE_KEY ??
           "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
@@ -85,7 +85,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       hardhat: "123456",
-      mainnet: process.env.ETHERSCAN_API_KEY || "",
+      ethereum: process.env.ETHERSCAN_API_KEY || "",
       sepolia: process.env.ETHERSCAN_API_KEY || "",
       arbSepolia: process.env.ETHERSCAN_API_KEY || "",
     },

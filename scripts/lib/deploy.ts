@@ -37,9 +37,9 @@ export const proxyDeployAndInitialize = async (
   };
 };
 
-export const createGenesisHeader = async (pegasusRPC: string) => {
-  const pegasus = new ethers.JsonRpcProvider(pegasusRPC);
-  const latestBlock = await pegasus.provider.send("eth_getBlockByNumber", [
+export const createGenesisHeader = async (providerRPC: string) => {
+  const rpc = new ethers.JsonRpcProvider(providerRPC);
+  const latestBlock = await rpc.provider.send("eth_getBlockByNumber", [
     "latest",
     true,
   ]);
