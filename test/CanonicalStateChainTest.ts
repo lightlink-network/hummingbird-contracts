@@ -31,8 +31,8 @@ describe("CanonicalStateChain", function () {
       expect(await canonicalStateChain.chain(0)).to.equal(_chain.genesisHash);
     });
 
-    it("maxPointers var should be 7 by default", async function () {
-      expect(await canonicalStateChain.maxPointers()).to.eq(7);
+    it("maxPointers var should be 21 by default", async function () {
+      expect(await canonicalStateChain.maxPointers()).to.eq(21);
     });
 
     it("Should not be allowed to initialize twice", async function () {
@@ -151,13 +151,27 @@ describe("CanonicalStateChain", function () {
       ).to.be.revertedWith("block must have atleast one celestia pointer");
     });
 
-    it("Should revert as > 7 (maxPointers) celestia pointers", async function () {
+    it("Should revert as > 21 (maxPointers) celestia pointers", async function () {
       const header: CanonicalStateChain.HeaderStruct = {
         epoch: 1,
         l2Height: 1,
         prevHash: _chain.genesisHash,
         stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
         celestiaPointers: [
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
+          { height: 1, shareStart: 1, shareLen: 1 },
           { height: 1, shareStart: 1, shareLen: 1 },
           { height: 1, shareStart: 1, shareLen: 1 },
           { height: 1, shareStart: 1, shareLen: 1 },
