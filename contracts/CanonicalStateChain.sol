@@ -206,7 +206,7 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
 
         require(
             chain[_blockNumber + 1] == _blockHash,
-            "block hash must match block number"
+            "block hash must match block numbers parent block hash"
         );
 
         // Remove all blocks after the block number.
