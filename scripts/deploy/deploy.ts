@@ -27,9 +27,7 @@ const main = async () => {
   log("DAOracle address:", blobstreamXAddr + "\n");
 
   // Step 2. Fetch latests l2 block from Pegasus
-  const genesisHeader = await createGenesisHeader(
-    process.env.PEGASUS_PROVIDER_URL!,
-  );
+  const genesisHeader = await createGenesisHeader(process.env.LL_PROVIDER_URL!);
 
   // Step 3. Deploy CanonicalStateChain contract as proxy
   log("Deploying CanonicalStateChain...");
