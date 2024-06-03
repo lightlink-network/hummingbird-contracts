@@ -164,6 +164,7 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     ///         Availability layer. It verifies the shares are included in a
     ///         given rblock (bundle) and stores them in the contract.
     /// @param _rblock - The rblock (bundle) that the shares are related to.
+    /// @param _pointer - The pointer to the shares in the rblock.
     /// @param _proof - The proof that the shares are available and part of the
     ///               rblocks dataroot commitment.
     /// @return The share key that the shares are stored under.
@@ -496,6 +497,8 @@ contract ChainOracle is UUPSUpgradeable, OwnableUpgradeable {
     }
 
     /// @notice Sets the RLPReader contract address.
+    /// @param _rlpReader - The new RLPReader address.
+    /// @dev Only the owner can call this function.
     function setRLPReader(address _rlpReader) public onlyOwner {
         rlpReader = IRLPReader(_rlpReader);
     }

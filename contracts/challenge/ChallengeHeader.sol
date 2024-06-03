@@ -139,12 +139,14 @@ abstract contract ChallengeHeader is ChallengeBase {
 
     /// @notice Enables or disables the header challenge.
     /// @param _status - The status to set.
+    /// @dev Only the owner can call this function.
     function toggleHeaderChallenge(bool _status) external onlyOwner {
         isHeaderChallengeEnabled = _status;
     }
 
     /// @notice Sets the maximum bundle size.
     /// @param _maxBundleSize - The new maximum bundle size.
+    /// @dev Only the owner can call this function.
     function setMaxBundleSize(uint256 _maxBundleSize) external onlyOwner {
         maxBundleSize = _maxBundleSize;
     }

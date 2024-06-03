@@ -40,11 +40,13 @@ contract ChallengeL2Header is ChallengeBase {
     }
 
     /// @notice The data structure for an L2 header challenge.
+    /// @param blockNum - The number of the L2 header being challenged.
     /// @param header - The header being challenged.
     /// @param prevHeader - The previous header.
     /// @param challengeEnd - The end of the challenge period.
     /// @param challenger - The address of the challenger.
     /// @param status - The status of the challenge.
+    /// @param claimed - Whether the challenge has been claimed.
     struct L2HeaderChallenge {
         uint256 blockNum;
         L2HeaderPointer header;
@@ -288,6 +290,8 @@ contract ChallengeL2Header is ChallengeBase {
         isL2HeaderChallengeEnabled = _status;
     }
 
+    /// @notice Allows the challender or defender to claim the reward for an L2 header challenge.
+    /// @param _challengeKey - The key of the challenge.
     function claimL2HeaderChallengeReward(
         bytes32 _challengeKey
     ) external nonReentrant {
