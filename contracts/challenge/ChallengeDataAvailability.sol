@@ -41,9 +41,11 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     /// @param blockHash - The block hash of the block being challenged.
     /// @param blockIndex - The index of the block being challenged.
     /// @param pointerIndex - The index of the celestia pointer being challenged.
+    /// @param shareIndex - The index of the share being challenged.
     /// @param challenger - The address of the challenger.
     /// @param expiry - The expiry time of the challenge.
     /// @param status - The status of the challenge.
+    /// @param claimed - Whether the challenge has been claimed.
     struct ChallengeDA {
         bytes32 blockHash;
         uint256 blockIndex;
@@ -68,6 +70,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     /// @notice Emitted when a DA challenge is updated.
     /// @param _blockHash - The block hash of the block being challenged.
     /// @param _pointerIndex - The index of the celestia pointer being challenged.
+    /// @param _shareIndex - The index of the share being challenged.
     /// @param _blockIndex - The index of the block being challenged.
     /// @param _expiry - The expiry time of the challenge.
     /// @param _status - The status of the challenge.
@@ -91,6 +94,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     /// @notice Returns the reference key for a DA challenge.
     /// @param _blockHash - The block hash of the block being challenged.
     /// @param _pointerIndex - The index of the celestia pointer being challenged.
+    /// @param _shareIndex - The index of the share being challenged.
     /// @return The reference key for the DA challenge.
     function dataRootInclusionChallengeKey(
         bytes32 _blockHash,
@@ -104,6 +108,7 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
     /// @notice Challenges the data root inclusion of a block.
     /// @param _blockIndex - The index of the block to challenge.
     /// @param _pointerIndex - The index of the celestia pointer to challenge.
+    /// @param _shareIndex - The index of the share to challenge.
     /// @return The index of the block being challenged.
     function challengeDataRootInclusion(
         uint256 _blockIndex,
@@ -271,10 +276,13 @@ abstract contract ChallengeDataAvailability is ChallengeBase {
 
     /// @notice Toggles the data availability challenges on or off.
     /// @param _status - The status of the data availability challenges.
+    /// @dev Only the owner can call this function.
     function toggleDAChallenge(bool _status) external onlyOwner {
         isDAChallengeEnabled = _status;
     }
 
+    /// @notice Claims the reward for a data root inclusion challenge.
+    /// @param _challengeKey - The reference key of the challenge.
     function claimDAChallengeReward(
         bytes32 _challengeKey
     ) external nonReentrant {

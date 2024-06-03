@@ -96,6 +96,7 @@ interface IChainOracle {
     ///         Availability layer. It verifies the shares are included in a
     ///         given rblock (bundle) and stores them in the contract.
     /// @param _rblock - The rblock (bundle) that the shares are related to.
+    /// @param _pointer - The pointer to the shares in the rblock.
     /// @param _proof - The proof that the shares are available and part of the
     ///               rblocks dataroot commitment.
     /// @return The share key that the shares are stored under.
@@ -135,19 +136,27 @@ interface IChainOracle {
     ) external pure returns (bytes32);
 
     /// @notice Stores shares that are provided to the contract.
+    /// @param _key - The key of the shares.
+    /// @return The shares.
     function shares(bytes32 _key) external view returns (bytes[] memory);
 
     /// @notice Stores headers that are provided to the contract.
+    /// @param _headerHash - The hash of the header.
+    /// @return The header.
     function headers(
         bytes32 _headerHash
     ) external view returns (L2Header memory);
 
     /// @notice Stores transactions that are provided to the contract.
+    /// @param _txHash - The hash of the transaction.
+    /// @return The transaction.
     function transactions(
         bytes32 _txHash
     ) external view returns (DepositTx memory);
 
     /// @notice Stores the header to rblock mapping.
+    /// @param _headerHash - The hash of the header.
+    /// @return The rblock.
     function headerToRblock(
         bytes32 _headerHash
     ) external view returns (bytes32);

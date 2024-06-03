@@ -89,9 +89,11 @@ interface ICanonicalStateChain {
 
     /// @notice Returns the hash of a block header.
     /// @param _header - The block header to hash.
+    /// @return The hash of the block header.
     function hash(Header memory _header) external pure returns (bytes32);
 
     /// @notice Returns the hash of a block header.
+    /// @param _index - The block number of the header.
     /// @return The hash of the block header.
     function getHeaderByNum(
         uint256 _index
@@ -104,6 +106,8 @@ interface ICanonicalStateChain {
     /// @notice Rolls back the chain to a previous block number. Reverts
     ///         the chain to a previous state, It can only be called by
     ///         the challenge contract.
+    /// @param _blockNumber - The block number to rollback to.
+    /// @param _blockhash - The block hash to rollback to.
     function rollback(uint256 _blockNumber, bytes32 _blockhash) external;
 
     /// @notice Sets the publisher address.
