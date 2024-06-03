@@ -23,5 +23,8 @@
     "dotenv": "^16.3.1",
     "openzeppelin-contracts": "github:OpenZeppelin/openzeppelin-contracts",
     "solidity-coverage": "^0.8.12"
+  },
+  "overrides": {
+    "hardhat-gas-reporter": "^2.2.0"
   }
 }
