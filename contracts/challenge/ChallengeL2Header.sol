@@ -5,7 +5,7 @@ import "./ChallengeBase.sol";
 
 /// @title  ChallengeL2Header
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice ChallengeL2Header is a two party challenge game where the defender must provide
 ///         a valid L2 header to defend against a challenge.
 ///

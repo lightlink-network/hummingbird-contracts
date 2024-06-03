@@ -59,6 +59,11 @@ export const createGenesisHeader = async (pegasusRPC: string) => {
 
 export const getBlobstreamXAddr = (chainId: any) => {
   switch (chainId) {
+    case 1: // Ethereum
+      if (!process.env.BLOBSTREAM_ETHEREUM) {
+        throw new Error("Environment variable BLOBSTREAM_ETHEREUM is not set");
+      }
+      return process.env.BLOBSTREAM_ETHEREUM!;
     case 11155111: // Sepolia
       if (!process.env.BLOBSTREAM_SEPOLIA) {
         throw new Error("Environment variable BLOBSTREAM_SEPOLIA is not set");

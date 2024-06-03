@@ -10,7 +10,7 @@ import "blobstream-contracts/src/IDAOracle.sol";
 
 /// @title  ChallengeBase
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice ChallengeBase is the base contract for all challenges. It contains
 ///         the global variables for challenge period, fee, and reward. The
 ///         owner can set the challenge period, fee, and reward. Thus is

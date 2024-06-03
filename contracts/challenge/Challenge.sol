@@ -8,7 +8,7 @@ import "./ChallengeL2Header.sol";
 /// @custom:proxied
 /// @title  Challenge
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice Challenge is the entry point for all validity challenges.
 ///         Challenge mechanisms allow for the verification of rollup
 ///         validity, with invalid blocks causing a rollback.

@@ -7,7 +7,7 @@ import "hardhat/console.sol";
 
 /// @title  ChallengeDataAvailability
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice ChallengeDataAvailability is a challenge for verifying a rollup blocks
 ///         data root has been included. (via Celestia Blobstream).
 ///

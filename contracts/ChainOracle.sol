@@ -12,7 +12,7 @@ import "./lib/Lib_RLPEncode.sol";
 /// @custom:proxied
 /// @title ChainOracle
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice This contract enables any user to directly upload valid Layer 2 blocks, from
 ///         the data availability layer, on to Layer 1. Once loaded, the headers and
 ///         transactions can be fetched from the ChainOracle by their respective hashes.
