@@ -5,7 +5,7 @@ import "./lib/Lib_RLPReader.sol";
 
 /// @title RLPReader
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice A contract that reads RLP encoded data.
 contract RLPReader {
     using Lib_RLPReader for bytes;

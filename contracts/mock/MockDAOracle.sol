@@ -5,7 +5,7 @@ import "blobstream-contracts/src/IDAOracle.sol";
 
 /// @title MockDAOracle
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice A mock implementation of the DAOracle contract.
 contract MockDAOracle is IDAOracle {
     /// @notice The result of the verification.

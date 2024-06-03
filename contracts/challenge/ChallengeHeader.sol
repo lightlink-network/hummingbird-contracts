@@ -5,7 +5,7 @@ import "./ChallengeBase.sol";
 
 /// @title  ChallengeHeader
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice ChallengeHeader lets anyone challenge a block header against some basic validity checks.
 ///         If the header is invalid, the chain is rolled back to the previous block.
 ///         Note: This challenge is free and has no payout.

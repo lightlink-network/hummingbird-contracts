@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 /// @custom:proxied
 /// @title Canonical State Chain
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice The Canonical State Chain (CSC) is the source of truth for the layer two chain.
 ///         All layer two blocks will eventually be bundled up by the hummingbird publisher
 ///         and published to the CSC. The chain can only be rolled back by the challenge contract,

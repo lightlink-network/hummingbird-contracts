@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 /// @title CoreProxy
 /// @author LightLink Hummingbird
-/// @custom:version v1.0.0-alpha
+/// @custom:version v1.1.0-beta
 /// @notice The core proxy contract for the Hummingbird protocol.
 contract CoreProxy is ERC1967Proxy {
     /// @notice CoreProxy constructor
