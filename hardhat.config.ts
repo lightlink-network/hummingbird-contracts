@@ -3,9 +3,9 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 import "@solarity/hardhat-gobind";
-import "./tasks/rollupHead";
-import "./tasks/challengeL2Header";
-import "./tasks/pushRBlock";
+import "./tasks/hummingbird/rollupHead";
+import "./tasks/hummingbird/challengeL2Header";
+import "./tasks/hummingbird/pushRBlock";
 import "solidity-coverage";
 
 cfg();
@@ -38,7 +38,12 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {},
     localhost: {
-      chainId: 1337,
+      chainId: 88,
+      url: process.env.LOCALHOST_PROVIDER_URL || "",
+      accounts: [
+        process.env.LOCALHOST_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+      ],
     },
     sepolia: {
       url: process.env.SEPOLIA_PROVIDER_URL || "",
@@ -106,10 +111,12 @@ const config: HardhatUserConfig = {
     runOnCompile: false,
     verbose: false,
     onlyFiles: [
-      "contracts/CanonicalStateChain.sol",
-      "contracts/challenge/Challenge.sol",
-      "contracts/ChainOracle.sol",
-      "contracts/interfaces/IBlobstreamX.sol",
+      "contracts/hummingbird/CanonicalStateChain.sol",
+      "contracts/hummingbird/challenge/Challenge.sol",
+      "contracts/hummingbird/ChainOracle.sol",
+      "contracts/hummingbird/interfaces/IBlobstreamX.sol",
+      "contracts/enterprise/EnterprisePortal.sol",
+      "contracts/enterprise/EnterpriseGasStation.sol",
     ],
     skipFiles: ["@openzeppelin", "@solarity"],
   },
