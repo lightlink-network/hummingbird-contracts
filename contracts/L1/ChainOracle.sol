@@ -7,7 +7,7 @@ import "./interfaces/IRLPReader.sol";
 import "blobstream-contracts/src/lib/verifier/DAVerifier.sol";
 import "blobstream-contracts/src/IDAOracle.sol";
 import "./interfaces/ICanonicalStateChain.sol";
-import "./lib/Lib_RLPEncode.sol";
+import "../libraries/Lib_RLPEncode.sol";
 
 /// @custom:proxied
 /// @title ChainOracle

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.5.10 <0.9.0;
 
-import "./lib/Lib_RLPReader.sol";
+import "../libraries/Lib_RLPReader.sol";
 
 /// @title RLPReader
 /// @author LightLink Hummingbird
