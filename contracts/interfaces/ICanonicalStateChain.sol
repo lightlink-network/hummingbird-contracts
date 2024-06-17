@@ -6,14 +6,14 @@ interface ICanonicalStateChain {
     /// @param epoch - Epoch refers to a block number on the Ethereum blockchain.
     /// @param l2Height - L2Height is the index of the Last L2 Block in this bundle.
     /// @param prevHash - PrevHash is the hash of the previous block bundle.
-    /// @param stateRoot - The Stateroot after applying all the blocks in the Bundle.
+    /// @param outputRoot - The output root = keccack(version_hash || keccack(state_root || withdrawal_root || latest_block_hash))
     /// @param celestiaPointers - Pointer to the blocks contents on celestia.
     /// See `Span` from https://docs.celestia.org/developers/blobstream-offchain#defining-a-chain
     struct Header {
         uint64 epoch;
         uint64 l2Height;
         bytes32 prevHash;
-        bytes32 stateRoot;
+        bytes32 outputRoot;
         CelestiaPointer[] celestiaPointers;
     }
 

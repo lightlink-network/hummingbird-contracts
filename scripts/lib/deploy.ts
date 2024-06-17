@@ -44,13 +44,32 @@ export const createGenesisHeader = async (providerRPC: string) => {
     true,
   ]);
 
+  if (latestBlock == undefined) throw new Error("Failed to get latest block");
+
+  // calculate output root:
+  const versionHash = ethers.keccak256("0x0")
+  const stateRoot = latestBlock.stateRoot
+  const withdrawalRoot = ethers.zeroPadBytes("", 32)
+  const blockHash = latestBlock.hash
+
+  const outputPayload = ethers.keccak256(
+    ethers.solidityPacked(
+      ["bytes32", "bytes32", "bytes32"],
+      [stateRoot, withdrawalRoot, blockHash]
+    )
+  );
+  const outputRoot = ethers.keccak256(
+    ethers.solidityPacked(["bytes32", "bytes32"], [versionHash, outputPayload])
+  );
+
+
   // Step 3. Build genesis header from latest L2 block
   const genesisHeader: CanonicalStateChain.HeaderStruct = {
     epoch: 0,
     l2Height: parseInt(latestBlock?.number, 16),
     prevHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
-    stateRoot: latestBlock?.stateRoot, // fix state root
+    outputRoot: outputRoot,
     celestiaPointers: [],
   };
 

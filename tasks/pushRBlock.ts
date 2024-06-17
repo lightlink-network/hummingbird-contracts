@@ -35,14 +35,14 @@ task("pushRBlock", "Push a block to the chain")
 
 // // check block has the right format
 // e.g.
-// epoch, l2Height, prevHash, txRoot, blockRoot, stateRoot, celestiaHeight, celestiaShareStart, celestiaShareLen
+// epoch, l2Height, prevHash, txRoot, blockRoot, outputRoot, celestiaHeight, celestiaShareStart, celestiaShareLen
 const validateBlock = (block: any) => {
   if (!block.epoch) throw new Error("Block is missing epoch");
   if (!block.l2Height) throw new Error("Block is missing l2Height");
   if (!block.prevHash) throw new Error("Block is missing prevHash");
   if (!block.txRoot) throw new Error("Block is missing txRoot");
   if (!block.blockRoot) throw new Error("Block is missing blockRoot");
-  if (!block.stateRoot) throw new Error("Block is missing stateRoot");
+  if (!block.outputRoot) throw new Error("Block is missing stateRoot");
   if (!block.celestiaHeight) throw new Error("Block is missing celestiaHeight");
   if (!block.celestiaShareStart)
     throw new Error("Block is missing celestiaShareStart");

@@ -56,7 +56,7 @@ export const challengeL2TxMockData: MockData = {
       },
       headerHash:
         "0x451f04ea1f8d1aafc7b003114ecaa7a5bc025bbb5213deacb74b11312e190731",
-    
+
       shareProofs: {
         attestationProof: {
           proof: {
@@ -189,7 +189,7 @@ export const challengeL2TxMockData: MockData = {
     l2Height: 80745359,
     prevHash:
       "0x40bef6a408a0ef4612eb8578d2cfe374df3ba9633d53946e8f15cf91dc8311c9",
-    stateRoot:
+    outputRoot:
       "0x8f90ed7c817cc87861bc28bd3054d40cf5aa85596f5cba03879c735acbd42ec9",
   },
   transactions: [
