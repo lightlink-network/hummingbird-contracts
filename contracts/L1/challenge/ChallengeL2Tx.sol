@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 // NOT IMPLEMENTED YET
 
 import "./ChallengeBase.sol";
-import "../lib/Lib_MerkleRoot.sol";
+import "../../libraries/Lib_MerkleRoot.sol";
 
 contract ChallengeL2Tx is ChallengeBase {
     enum L2TxChallengeStatus {
