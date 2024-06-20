@@ -35,7 +35,7 @@ contract SystemConfig is OwnableUpgradeable, IGasToken {
         address l1ERC721Bridge;
         address l1StandardBridge;
         address disputeGameFactory;
-        address lightLinkPortal;
+        address lightlinkPortal;
         address optimismMintableERC20Factory;
         address gasPayingToken;
     }
@@ -198,7 +198,7 @@ contract SystemConfig is OwnableUpgradeable, IGasToken {
         address _batchInbox,
         SystemConfig.Addresses memory _addresses
     ) public initializer {
-        __Ownable_init();
+        __Ownable_init(_owner);
         transferOwnership(_owner);
 
         // These are set in ascending order of their UpdateTypes.
