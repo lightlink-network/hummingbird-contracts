@@ -23,6 +23,7 @@
     "blobstream-contracts": "github:celestiaorg/blobstream-contracts",
     "dotenv": "^16.3.1",
     "openzeppelin-contracts": "github:OpenZeppelin/openzeppelin-contracts",
+    "solady": "^0.0.209",
     "solidity-coverage": "^0.8.12"
   },
   "overrides": {
