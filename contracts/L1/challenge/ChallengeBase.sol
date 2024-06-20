@@ -106,6 +106,11 @@ contract ChallengeBase is
         _;
     }
 
+    /// @return The total time in seconds for a block to be finalized.
+    function finilizationSeconds() external view returns (uint256) {
+        return challengePeriod + challengeWindow;
+    }
+
     /// @notice Sets the challenge window time in seconds.
     /// @param _challengeWindow The new challenge window time.
     /// @dev Only the owner can call this function.
