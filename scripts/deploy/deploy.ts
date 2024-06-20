@@ -17,7 +17,12 @@ const main = async () => {
   const blobstreamXAddr = getBlobstreamXAddr(chainId);
 
   // Step 1. Get deployer/signer account
-  const [owner, publisher] = await ethers.getSigners();
+  let [owner, publisher] = await ethers.getSigners();
+  if (publisher === undefined) { // somestimes if owner, and publisher are the same, publisher is undefined
+    log("Publisher account not found. Using owner account as publisher.")
+    publisher = owner;
+  }
+
   const [ownerAddr, publisherAddr] = [
     await owner.getAddress(),
     await publisher.getAddress(),

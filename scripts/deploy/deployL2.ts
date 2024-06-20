@@ -2,6 +2,10 @@ import { ethers, network } from "hardhat";
 import { verify } from "../../utils/verify";
 import { log } from "../lib/log";
 
+// These contracts should eventually be deployed as predeployed contracts
+// and not as part of the deployment script.
+// 
+// But for testnet deployment, we can deploy them this way.
 const main = async () => {
     // Log network name and chain id selected for deployment
     const chainIdHex = await network.provider.send("eth_chainId");
@@ -20,7 +24,12 @@ const main = async () => {
     const L1ToL2MessagePasser = await ethers.getContractFactory("L2ToL1MessagePasser");
     const l1ToL2MessagePasser = await L1ToL2MessagePasser.deploy();
 
+    // Step 3. Deploy L1Block contract
+    const L1Block = await ethers.getContractFactory("L1Block");
+    const l1Block = await L1Block.deploy();
+
     console.log("L1ToL2MessagePasser:", await l1ToL2MessagePasser.getAddress());
+    console.log("L1Block:", await l1Block.getAddress());
 };
 
 main()

@@ -37,6 +37,19 @@ export const proxyDeployAndInitialize = async (
   };
 };
 
+export const deployAndInitialize = async (
+  signer: any,
+  factory: any,
+  args: any[],
+) => {
+  const contract = await factory.connect(signer).deploy();
+  await contract.waitForDeployment();
+  await contract.initialize(...args);
+
+
+  return { contract: await factory.attach(contract.address), address: contract.address };
+}
+
 export const createGenesisHeader = async (providerRPC: string) => {
   const rpc = new ethers.JsonRpcProvider(providerRPC);
   const latestBlock = await rpc.provider.send("eth_getBlockByNumber", [
