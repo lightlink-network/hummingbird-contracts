@@ -366,7 +366,7 @@ contract LightLinkPortal is Initializable, ResourceMetering {
 
         // Grab the OutputProposal from the L2OutputOracle, will revert if the output that
         // corresponds to the given index has not been proposed yet.
-        Types.OutputProposal memory proposal = l2Oracle.getL2Output(
+        ICanonicalStateChain.Output memory proposal = l2Oracle.getL2Output(
             provenWithdrawal.l2OutputIndex
         );
 
