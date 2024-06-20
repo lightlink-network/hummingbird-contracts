@@ -103,6 +103,20 @@ interface ICanonicalStateChain {
     /// @return The header of the last block in the chain.
     function getHead() external view returns (Header memory);
 
+    struct Output {
+        bytes32 outputRoot;
+        uint64 timestamp;
+    }
+
+    /// @notice get the output of a block.
+    /// @param _index - The block number of the output.
+    /// @return The output of the block.
+    function getL2Output(uint256 _index) external view returns (Output memory);
+
+    /// @notice Returns the starting timestamp of the chain.
+    /// @return The starting timestamp of the chain.
+    function startingTimestamp() external view returns (uint64);
+
     /// @notice Rolls back the chain to a previous block number. Reverts
     ///         the chain to a previous state, It can only be called by
     ///         the challenge contract.

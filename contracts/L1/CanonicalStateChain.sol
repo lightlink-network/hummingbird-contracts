@@ -184,6 +184,21 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         return headers[chain[_index]];
     }
 
+    struct Output {
+        bytes32 outputRoot;
+        uint64 timestamp;
+    }
+
+    function getL2Output(uint256 _index) public view returns (Output memory) {
+        bytes32 _hash = chain[_index];
+        return
+            Output(headers[_hash].outputRoot, headerMetadata[_hash].timestamp);
+    }
+
+    function startingTimestamp() public view returns (uint64) {
+        return headerMetadata[chain[0]].timestamp;
+    }
+
     /// @notice Returns the block header at the head of the chain.
     /// @return The block header.
     function getHead() public view returns (Header memory) {
