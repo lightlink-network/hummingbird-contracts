@@ -111,10 +111,12 @@ const config: HardhatUserConfig = {
     verbose: false,
     onlyFiles: [
       "contracts/L1/CanonicalStateChain.sol",
+      "contracts/L1/LightLinkPortal.sol",
       "contracts/L1/challenge/Challenge.sol",
       "contracts/L1/ChainOracle.sol",
       "contracts/L1/interfaces/IBlobstreamX.sol",
       "contracts/L2/L2ToL1MessagePasser.sol",
+      "contracts/L2/L1Block.sol",
     ],
     skipFiles: ["@openzeppelin", "@solarity"],
   },
