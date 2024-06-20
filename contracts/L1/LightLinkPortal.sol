@@ -5,6 +5,7 @@ import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.s
 import {SafeCall} from "../libraries/SafeCall.sol";
 // import {L2OutputOracle} from "../L1/L2OutputOracle.sol";
 import {ICanonicalStateChain} from "./interfaces/ICanonicalStateChain.sol";
+import {IChallengeBase} from "./interfaces/IChallengeBase.sol";
 import {SystemConfig} from "../L1/SystemConfig.sol";
 // import {SuperchainConfig} from "src/L1/SuperchainConfig.sol";
 import {Constants} from "../libraries/Constants.sol";
@@ -66,6 +67,9 @@ contract LightLinkPortal is Initializable, ResourceMetering {
     /// @notice Contract of the L2OutputOracle.
     /// @custom:network-specific
     ICanonicalStateChain public l2Oracle;
+
+    /// @notice Contract of the ChallengeBase.
+    IChallengeBase challenge;
 
     /// @notice Contract of the SystemConfig.
     /// @custom:network-specific
@@ -143,6 +147,7 @@ contract LightLinkPortal is Initializable, ResourceMetering {
     constructor() {
         initialize({
             _l2Oracle: ICanonicalStateChain(address(0)),
+            _challenge: IChallengeBase(address(0)),
             _systemConfig: SystemConfig(address(0))
         });
     }
@@ -152,9 +157,11 @@ contract LightLinkPortal is Initializable, ResourceMetering {
     /// @param _systemConfig Contract of the SystemConfig.
     function initialize(
         ICanonicalStateChain _l2Oracle,
+        IChallengeBase _challenge,
         SystemConfig _systemConfig
     ) public initializer {
         l2Oracle = _l2Oracle;
+        challenge = _challenge;
         systemConfig = _systemConfig;
         if (l2Sender == address(0)) {
             l2Sender = Constants.DEFAULT_L2_SENDER;
@@ -648,8 +655,6 @@ contract LightLinkPortal is Initializable, ResourceMetering {
     function _isFinalizationPeriodElapsed(
         uint256 _timestamp
     ) internal view returns (bool) {
-        return
-            block.timestamp >
-            _timestamp + l2Oracle.FINALIZATION_PERIOD_SECONDS();
+        return block.timestamp > _timestamp + challenge.finalizationSeconds();
     }
 }
