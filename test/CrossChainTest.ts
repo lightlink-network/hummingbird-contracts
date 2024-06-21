@@ -13,8 +13,13 @@ import {
 import { Types } from "../typechain-types/contracts/L1/test/BridgeProofHelper";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
-import { MessagePassedEvent, L2ToL1MessagePasserInterface } from "../typechain-types/contracts/L2/L2ToL1MessagePasser";
+import {
+  MessagePassedEvent,
+  L2ToL1MessagePasserInterface,
+} from "../typechain-types/contracts/L2/L2ToL1MessagePasser";
 import exp from "constants";
+
+import { makeStateTrieProof, hashMessageHash } from "../test/lib/bridge";
 
 describe("Cross-chain interaction", function () {
   // Networks
@@ -25,7 +30,7 @@ describe("Cross-chain interaction", function () {
   let l1Deployer: HardhatEthersSigner;
   let l2Deployer: HardhatEthersSigner;
 
-  // Providers 
+  // Providers
   let l1Provider: JsonRpcProvider;
   let l2Provider: JsonRpcProvider;
 
@@ -69,7 +74,6 @@ describe("Cross-chain interaction", function () {
       ],
     );
     lightLinkPortal = lightLinkPortalDeployment.contract as LightLinkPortal;
-
 
     // BridgeProofHelper
     const bridgeProofHelperFactory = await ethers.getContractFactory(
@@ -118,36 +122,70 @@ describe("Cross-chain interaction", function () {
         .connect(l2Deployer)
         .initiateWithdrawal(ethers.ZeroAddress, 0, "0x");
       const initiateReceipt = await initiateTx.wait();
-      const msgPassed = parseMessagePassedEvent(l2ToL1MessagePasser.interface, initiateReceipt!.logs[0])
+      const msgPassed = parseMessagePassedEvent(
+        l2ToL1MessagePasser.interface,
+        initiateReceipt!.logs[0],
+      );
 
       // Verify initiateWithdrawal event
       expect(msgPassed).to.not.be.undefined;
       expect(msgPassed.withdrawalTx).to.not.be.undefined;
-      expect(msgPassed.withdrawalTx.data, "MessagePassed event: incorrect data").to.equal("0x");
-      expect(msgPassed.withdrawalTx.gasLimit, "MessagePassed event: incorrect gas limit").to.equal(0);
-      expect(msgPassed.withdrawalTx.nonce, "MessagePassed event: incorrect nonce").to.not.be.undefined;
-      expect(msgPassed.withdrawalTx.sender, "MessagePassed event: incorrect sender").to.equal(l2Deployer.address);
-      expect(msgPassed.withdrawalTx.target, "MessagePassed event: incorrect target").to.equal(ethers.ZeroAddress);
+      expect(
+        msgPassed.withdrawalTx.data,
+        "MessagePassed event: incorrect data",
+      ).to.equal("0x");
+      expect(
+        msgPassed.withdrawalTx.gasLimit,
+        "MessagePassed event: incorrect gas limit",
+      ).to.equal(0);
+      expect(
+        msgPassed.withdrawalTx.nonce,
+        "MessagePassed event: incorrect nonce",
+      ).to.not.be.undefined;
+      expect(
+        msgPassed.withdrawalTx.sender,
+        "MessagePassed event: incorrect sender",
+      ).to.equal(l2Deployer.address);
+      expect(
+        msgPassed.withdrawalTx.target,
+        "MessagePassed event: incorrect target",
+      ).to.equal(ethers.ZeroAddress);
 
       // Get withdrawal tx hash
-      const withdrawalHash = await BridgeProofHelper.connect(l1Deployer).hashWithdrawalTx(
-        msgPassed.withdrawalTx
-      );
+      const withdrawalHash = await BridgeProofHelper.connect(
+        l1Deployer,
+      ).hashWithdrawalTx(msgPassed.withdrawalTx);
 
       expect(withdrawalHash).to.not.be.undefined;
       expect(withdrawalHash).to.not.be.empty;
 
-      // Generate proof
+      // Calculate message slot
+      const messageSlot = hashMessageHash(withdrawalHash);
 
+      // Generate proof
+      let withdrawalProof = await makeStateTrieProof(
+        l1Provider,
+        1, // block number
+        await l2ToL1MessagePasser.getAddress(),
+        messageSlot,
+      );
+
+      // log withdrawal proof
+      console.log("Withdrawal proof:", withdrawalProof);
     });
   });
 
-
-  const parseMessagePassedEvent = (iface: L2ToL1MessagePasserInterface, log: Log | EventLog): { evt: MessagePassedEvent.Event, withdrawalTx: Types.WithdrawalTransactionStruct } => {
+  const parseMessagePassedEvent = (
+    iface: L2ToL1MessagePasserInterface,
+    log: Log | EventLog,
+  ): {
+    evt: MessagePassedEvent.Event;
+    withdrawalTx: Types.WithdrawalTransactionStruct;
+  } => {
     const event = iface.parseLog({
-      topics: [...log.topics], data: log.data
-    })!
-
+      topics: [...log.topics],
+      data: log.data,
+    })!;
 
     return {
       evt: event as unknown as MessagePassedEvent.Event,
@@ -158,7 +196,7 @@ describe("Cross-chain interaction", function () {
         sender: event.args.sender,
         target: event.args.target,
         value: event.args.value,
-      }
-    }
-  }
+      },
+    };
+  };
 });
