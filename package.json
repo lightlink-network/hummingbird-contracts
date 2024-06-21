@@ -16,9 +16,11 @@
     "node": "v18.16.0"
   },
   "dependencies": {
+    "@eth-optimism/core-utils": "^0.13.2",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
     "@openzeppelin/contracts": "^5.0.1",
     "@openzeppelin/contracts-upgradeable": "^5.0.1",
+    "bignumber.js": "^9.1.2",
     "blobstream-contracts": "github:celestiaorg/blobstream-contracts",
     "dotenv": "^16.3.1",
     "openzeppelin-contracts": "github:OpenZeppelin/openzeppelin-contracts",
