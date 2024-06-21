@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { JsonRpcProvider } from "ethers";
+import { JsonRpcProvider, Log, EventLog } from "ethers";
 import { startNetworks } from "../scripts/lib/startNetworks";
 import { ChildProcess } from "child_process";
 import { setupCanonicalStateChain, pushRandomHeader } from "./lib/chain";
@@ -10,8 +10,11 @@ import {
   L2ToL1MessagePasser,
   BridgeProofHelper,
 } from "../typechain-types";
+import { Types } from "../typechain-types/contracts/L1/test/BridgeProofHelper";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
+import { MessagePassedEvent, L2ToL1MessagePasserInterface } from "../typechain-types/contracts/L2/L2ToL1MessagePasser";
+import exp from "constants";
 
 describe("Cross-chain interaction", function () {
   // Networks
@@ -106,7 +109,56 @@ describe("Cross-chain interaction", function () {
     // log headers
     console.log("Header hash:", headerHash);
     console.log("Header:", header);
-
-
   });
+
+  describe("BridgeProofHelper", function () {
+    it("Should verify a proof", async function () {
+      // Initiate withdrawal from L2
+      const initiateTx = await l2ToL1MessagePasser
+        .connect(l2Deployer)
+        .initiateWithdrawal(ethers.ZeroAddress, 0, "0x");
+      const initiateReceipt = await initiateTx.wait();
+      const msgPassed = parseMessagePassedEvent(l2ToL1MessagePasser.interface, initiateReceipt!.logs[0])
+
+      // Verify initiateWithdrawal event
+      expect(msgPassed).to.not.be.undefined;
+      expect(msgPassed.withdrawalTx).to.not.be.undefined;
+      expect(msgPassed.withdrawalTx.data, "MessagePassed event: incorrect data").to.equal("0x");
+      expect(msgPassed.withdrawalTx.gasLimit, "MessagePassed event: incorrect gas limit").to.equal(0);
+      expect(msgPassed.withdrawalTx.nonce, "MessagePassed event: incorrect nonce").to.not.be.undefined;
+      expect(msgPassed.withdrawalTx.sender, "MessagePassed event: incorrect sender").to.equal(l2Deployer.address);
+      expect(msgPassed.withdrawalTx.target, "MessagePassed event: incorrect target").to.equal(ethers.ZeroAddress);
+
+      // Get withdrawal tx hash
+      const withdrawalHash = await BridgeProofHelper.connect(l1Deployer).hashWithdrawalTx(
+        msgPassed.withdrawalTx
+      );
+
+      expect(withdrawalHash).to.not.be.undefined;
+      expect(withdrawalHash).to.not.be.empty;
+
+      // Generate proof
+
+    });
+  });
+
+
+  const parseMessagePassedEvent = (iface: L2ToL1MessagePasserInterface, log: Log | EventLog): { evt: MessagePassedEvent.Event, withdrawalTx: Types.WithdrawalTransactionStruct } => {
+    const event = iface.parseLog({
+      topics: [...log.topics], data: log.data
+    })!
+
+
+    return {
+      evt: event as unknown as MessagePassedEvent.Event,
+      withdrawalTx: {
+        data: event.args.data,
+        gasLimit: event.args.gasLimit,
+        nonce: event.args.nonce,
+        sender: event.args.sender,
+        target: event.args.target,
+        value: event.args.value,
+      }
+    }
+  }
 });
