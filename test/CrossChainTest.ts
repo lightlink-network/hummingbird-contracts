@@ -7,6 +7,7 @@ import {
   CanonicalStateChain,
   LightLinkPortal,
   L2ToL1MessagePasser,
+  BridgeProofHelper,
 } from "../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
@@ -24,6 +25,7 @@ describe("Cross-chain interaction", function () {
   let canonicalStateChain: CanonicalStateChain;
   let lightLinkPortal: LightLinkPortal;
   let l2ToL1MessagePasser: L2ToL1MessagePasser;
+  let BridgeProofHelper: BridgeProofHelper;
 
   before(async function () {
     // Start Hardhat network instances
@@ -32,11 +34,11 @@ describe("Cross-chain interaction", function () {
     l2Network = networks.l2Network;
 
     // Set up L1 provider and signer
-    const l1Provider = new ethers.JsonRpcProvider("http://localhost:8545");
+    const l1Provider = new ethers.JsonRpcProvider("http://0.0.0.0:8545");
     l1Deployer = (await l1Provider.getSigner(0)) as any;
 
     // Set up L2 provider and signer
-    const l2Provider = new ethers.JsonRpcProvider("http://localhost:8546");
+    const l2Provider = new ethers.JsonRpcProvider("http://0.0.0.0:8546");
     l2Deployer = (await l2Provider.getSigner(0)) as any;
 
     // Deploy L1 contracts
@@ -49,7 +51,7 @@ describe("Cross-chain interaction", function () {
     canonicalStateChain = _chain.canonicalStateChain;
 
     // LightLinkPortal
-    const lightLinkPortal = await proxyDeployAndInitialize(
+    const lightLinkPortalDeployment = await proxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("LightLinkPortal"),
       [
@@ -58,6 +60,16 @@ describe("Cross-chain interaction", function () {
         ethers.ZeroAddress,
       ],
     );
+    lightLinkPortal = lightLinkPortalDeployment.contract as LightLinkPortal;
+
+
+    // BridgeProofHelper
+    const bridgeProofHelperFactory = await ethers.getContractFactory(
+      "contracts/L1/test/BridgeProofHelper.sol:BridgeProofHelper",
+      l1Deployer,
+    );
+    BridgeProofHelper = (await bridgeProofHelperFactory.deploy()) as any;
+    await BridgeProofHelper.waitForDeployment();
 
     // Deploy L2 contracts
     const L2ToL1MessagePasserFactory = await ethers.getContractFactory(
