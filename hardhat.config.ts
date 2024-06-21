@@ -117,6 +117,7 @@ const config: HardhatUserConfig = {
       "contracts/L1/interfaces/IBlobstreamX.sol",
       "contracts/L2/L2ToL1MessagePasser.sol",
       "contracts/L2/L1Block.sol",
+      "contracts/L1/test/BridgeProofHelper.sol",
     ],
     skipFiles: ["@openzeppelin", "@solarity"],
   },
