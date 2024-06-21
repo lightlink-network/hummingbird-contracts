@@ -40,38 +40,52 @@ const config: HardhatUserConfig = {
     localhost: {
       chainId: 1337,
     },
+    l1: {
+      url: "http://localhost:8545",
+      chainId: 1337,
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+      },
+    },
+    l2: {
+      url: "http://localhost:8546",
+      chainId: 1338,
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+      },
+    },
     sepolia: {
       url: process.env.SEPOLIA_PROVIDER_URL || "",
       accounts: [
         process.env.SEPOLIA_OWNER_PRIVATE_KEY ??
-        "0000000000000000000000000000000000000000000000000000000000000000",
+          "0000000000000000000000000000000000000000000000000000000000000000",
         process.env.SEPOLIA_PUBLISHER_PRIVATE_KEY ??
-        "0000000000000000000000000000000000000000000000000000000000000000",
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     ethereum: {
       url: process.env.ETHEREUM_PROVIDER_URL || "",
       accounts: [
         process.env.ETHEREUM_OWNER_PRIVATE_KEY ??
-        "0000000000000000000000000000000000000000000000000000000000000000",
+          "0000000000000000000000000000000000000000000000000000000000000000",
         process.env.ETHEREUM_PUBLISHER_PRIVATE_KEY ??
-        "0000000000000000000000000000000000000000000000000000000000000000",
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     pegasus: {
       url: process.env.PEGASUS_PROVIDER_URL || "",
       accounts: [
         process.env.PEGASUS_OWNER_PRIVATE_KEY ??
-        "0000000000000000000000000000000000000000000000000000000000000000",
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
     arbSepolia: {
       url: process.env.ARBITRUM_SEPOLIA_PROVIDER_URL || "",
       accounts: [
         process.env.ARBITRUM_SEPOLIA_OWNER_PRIVATE_KEY ??
-        "0000000000000000000000000000000000000000000000000000000000000000",
+          "0000000000000000000000000000000000000000000000000000000000000000",
         process.env.ARBITRUM_SEPOLIA_PUBLISHER_PRIVATE_KEY ??
-        "0000000000000000000000000000000000000000000000000000000000000000",
+          "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
   },
