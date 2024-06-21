@@ -20,24 +20,21 @@ const killProcessOnPort = (port: number): void => {
   }
 };
 
-const startNetwork = (
+const startAnvilNetwork = (
   port: number,
   networkName: string,
   options?: StartNetworkOptions,
 ): Promise<ChildProcess> => {
   return new Promise((resolve, reject) => {
     console.log(`    Starting ${networkName} network on port ${port}...`);
-    const process = exec(
-      `npx hardhat node --port ${port}`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.error(
-            `    Error starting ${networkName} network: ${error.message}`,
-          );
-          reject(error);
-        }
-      },
-    );
+    const process = exec(`anvil --port ${port}`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(
+          `    Error starting ${networkName} network: ${error.message}`,
+        );
+        reject(error);
+      }
+    });
 
     if (options?.logOutput) {
       // Capture and log the output from the process
@@ -62,7 +59,7 @@ const retryStartNetwork = async (
 ): Promise<ChildProcess> => {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      return await startNetwork(port, networkName, options);
+      return await startAnvilNetwork(port, networkName, options);
     } catch (error) {
       console.log(
         `    Retrying to start ${networkName} network on port ${port}... (Attempt ${attempt} of ${retries})`,
@@ -91,7 +88,7 @@ export const startNetworks = async (
     const l2Network = await retryStartNetwork(8546, "l2", options);
     console.log("    L2 network started successfully on port 8546.");
 
-    // Allow some time for Hardhat networks to start
+    // Allow some time for Anvil networks to start
     console.log("    Waiting for networks to be fully operational...");
     await new Promise((resolve) => setTimeout(resolve, 5000));
 

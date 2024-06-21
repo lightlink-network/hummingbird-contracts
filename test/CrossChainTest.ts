@@ -41,7 +41,7 @@ describe("Cross-chain interaction", function () {
   let BridgeProofHelper: BridgeProofHelper;
 
   before(async function () {
-    // Start Hardhat network instances
+    // Start Anvil network instances
     const networks = await startNetworks();
     l1Network = networks.l1Network;
     l2Network = networks.l2Network;
@@ -93,7 +93,7 @@ describe("Cross-chain interaction", function () {
   });
 
   after(async function () {
-    // Kill Hardhat network instances
+    // Kill Anvil network instances
     l1Network.kill();
     l2Network.kill();
   });
