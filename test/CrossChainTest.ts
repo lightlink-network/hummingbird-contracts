@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
+import { JsonRpcProvider } from "ethers";
 import { startNetworks } from "../scripts/lib/startNetworks";
 import { ChildProcess } from "child_process";
 import { setupCanonicalStateChain, pushRandomHeader } from "./lib/chain";
@@ -21,6 +22,10 @@ describe("Cross-chain interaction", function () {
   let l1Deployer: HardhatEthersSigner;
   let l2Deployer: HardhatEthersSigner;
 
+  // Providers 
+  let l1Provider: JsonRpcProvider;
+  let l2Provider: JsonRpcProvider;
+
   // Contracts
   let canonicalStateChain: CanonicalStateChain;
   let lightLinkPortal: LightLinkPortal;
@@ -34,11 +39,11 @@ describe("Cross-chain interaction", function () {
     l2Network = networks.l2Network;
 
     // Set up L1 provider and signer
-    const l1Provider = new ethers.JsonRpcProvider("http://0.0.0.0:8545");
+    l1Provider = new ethers.JsonRpcProvider("http://0.0.0.0:8545");
     l1Deployer = (await l1Provider.getSigner(0)) as any;
 
     // Set up L2 provider and signer
-    const l2Provider = new ethers.JsonRpcProvider("http://0.0.0.0:8546");
+    l2Provider = new ethers.JsonRpcProvider("http://0.0.0.0:8546");
     l2Deployer = (await l2Provider.getSigner(0)) as any;
 
     // Deploy L1 contracts
@@ -101,5 +106,7 @@ describe("Cross-chain interaction", function () {
     // log headers
     console.log("Header hash:", headerHash);
     console.log("Header:", header);
+
+
   });
 });
