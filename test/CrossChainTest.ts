@@ -9,6 +9,7 @@ import {
   L2ToL1MessagePasser,
 } from "../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
+import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
 
 describe("Cross-chain interaction", function () {
   // Networks
@@ -39,10 +40,6 @@ describe("Cross-chain interaction", function () {
     l2Deployer = (await l2Provider.getSigner(0)) as any;
 
     // Deploy L1 contracts
-    const proxyFactory = await ethers.getContractFactory(
-      "CoreProxy",
-      l1Deployer,
-    );
 
     // CanonicalStateChain
     const _chain = await setupCanonicalStateChain(
@@ -52,24 +49,15 @@ describe("Cross-chain interaction", function () {
     canonicalStateChain = _chain.canonicalStateChain;
 
     // LightLinkPortal
-    const lightLinkPortalFactory = await ethers.getContractFactory(
-      "LightLinkPortal",
+    const lightLinkPortal = await proxyDeployAndInitialize(
       l1Deployer,
-    );
-    const lightLinkPortalImplementation = await lightLinkPortalFactory.deploy();
-
-    const lightLinkPortalProxy = await proxyFactory.deploy(
-      await lightLinkPortalImplementation.getAddress(),
-      lightLinkPortalImplementation.interface.encodeFunctionData("initialize", [
+      await ethers.getContractFactory("LightLinkPortal"),
+      [
         await canonicalStateChain.getAddress(),
         ethers.ZeroAddress,
         ethers.ZeroAddress,
-      ]),
+      ],
     );
-
-    lightLinkPortal = lightLinkPortalFactory.attach(
-      await lightLinkPortalProxy.getAddress(),
-    ) as LightLinkPortal;
 
     // Deploy L2 contracts
     const L2ToL1MessagePasserFactory = await ethers.getContractFactory(
@@ -97,5 +85,9 @@ describe("Cross-chain interaction", function () {
       l1Deployer,
       canonicalStateChain,
     );
+
+    // log headers
+    console.log("Header hash:", headerHash);
+    console.log("Header:", header);
   });
 });
