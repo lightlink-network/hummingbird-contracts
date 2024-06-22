@@ -3,7 +3,8 @@ import { ethers } from "hardhat";
 import { JsonRpcProvider, Log, EventLog } from "ethers";
 import { startNetworks } from "../scripts/lib/startNetworks";
 import { ChildProcess } from "child_process";
-import { setupCanonicalStateChain, pushRandomHeader } from "./lib/chain";
+import { setupCanonicalStateChain, pushRandomHeader, makeNextBlock } from "./lib/chain";
+import { BigNumber } from '@ethersproject/bignumber';
 import {
   CanonicalStateChain,
   LightLinkPortal,
@@ -46,6 +47,8 @@ describe("Cross-chain interaction", function () {
     l1Network = networks.l1Network;
     l2Network = networks.l2Network;
 
+    console.log("Anvil networks started");
+
     // Set up L1 provider and signer
     l1Provider = new ethers.JsonRpcProvider("http://0.0.0.0:8545");
     l1Deployer = (await l1Provider.getSigner(0)) as any;
@@ -62,6 +65,8 @@ describe("Cross-chain interaction", function () {
       l1Deployer.address,
     );
     canonicalStateChain = _chain.canonicalStateChain;
+
+    console.log("CanonicalStateChain deployed");
 
     // LightLinkPortal
     const lightLinkPortalDeployment = await proxyDeployAndInitialize(
@@ -155,48 +160,148 @@ describe("Cross-chain interaction", function () {
       const withdrawalHash = await BridgeProofHelper.connect(
         l1Deployer,
       ).hashWithdrawalTx(msgPassed.withdrawalTx);
-
       expect(withdrawalHash).to.not.be.undefined;
       expect(withdrawalHash).to.not.be.empty;
+
+      const l2Block = await l2Provider.send("eth_getBlockByNumber", ["latest", false]);
 
       // Calculate message slot
       const messageSlot = hashMessageHash(withdrawalHash);
 
       // Generate proof
       let withdrawalProof = await makeStateTrieProof(
-        l1Provider,
-        1, // block number
+        l2Provider,
+        BigNumber.from(l2Block.number), // block number
         await l2ToL1MessagePasser.getAddress(),
         messageSlot,
       );
 
-      // log withdrawal proof
-      console.log("Withdrawal proof:", withdrawalProof);
+      // construct a phony output 
+      const output: Types.OutputRootProofStruct = {
+        version: ethers.ZeroHash,
+        latestBlockhash: l2Block.hash,
+        stateRoot: l2Block.stateRoot,
+        messagePasserStorageRoot: withdrawalProof.storageRoot,
+      }
+
+      // Calculate the output root
+      const outputRoot = ethers.keccak256(
+        ethers.AbiCoder.defaultAbiCoder().encode(
+          ["bytes32", "bytes32", "bytes32", "bytes32"],
+          [
+            output.version,
+            output.stateRoot,
+            output.messagePasserStorageRoot,
+            output.latestBlockhash,
+          ],
+        ),
+      );
+
+      // Verify proof
+      const verified = await BridgeProofHelper.connect(
+        l1Deployer,
+      ).checkProof(
+        outputRoot,
+        output,
+        withdrawalHash,
+        withdrawalProof.storageProof,
+      );
+      expect(verified, "Proof verification failed").to.be.true;
+    }); // it("Should verify a proof")
+  }); // describe("BridgeProofHelper")
+
+  describe("LightLinkPortal", function () {
+    it("Prove withdrawal", async function () {
+
+      // Initiate withdrawal from L2
+
+      const initiateTx = await l2ToL1MessagePasser
+        .connect(l2Deployer)
+        .initiateWithdrawal(ethers.ZeroAddress, 0, "0x");
+      const initiateReceipt = await initiateTx.wait();
+      const msgPassed = parseMessagePassedEvent(
+        l2ToL1MessagePasser.interface,
+        initiateReceipt!.logs[0],
+      );
+
+      const withdrawalHash = await BridgeProofHelper.connect(
+        l1Deployer,
+      ).hashWithdrawalTx(msgPassed.withdrawalTx);
+
+
+      // Generate proofs
+
+      const l2Block = await l2Provider.send("eth_getBlockByNumber", ["latest", false]);
+      const messageSlot = hashMessageHash(withdrawalHash);
+
+      let withdrawalProof = await makeStateTrieProof(
+        l2Provider,
+        BigNumber.from(l2Block.number),
+        await l2ToL1MessagePasser.getAddress(),
+        messageSlot,
+      );
+
+      const output: Types.OutputRootProofStruct = {
+        version: ethers.ZeroHash,
+        latestBlockhash: l2Block.hash,
+        stateRoot: l2Block.stateRoot,
+        messagePasserStorageRoot: withdrawalProof.storageRoot,
+      }
+
+      // Push a new header to L1
+
+      const [nextHeader,] = await makeNextBlock(l1Deployer, canonicalStateChain)
+      nextHeader.outputRoot = hashOutput(output);
+      const pushTx = await canonicalStateChain.connect(l1Deployer).pushBlock(nextHeader);
+      expect(pushTx, "Failed to push block").to.emit(canonicalStateChain, "BlockAdded");
+
+      // Prove withdrawal
+
+      const proveTx = await lightLinkPortal
+        .connect(l1Deployer)
+        .proveWithdrawalTransaction(msgPassed.withdrawalTx, await canonicalStateChain.chainHead(), output, withdrawalProof.storageProof)
+      expect(proveTx, "Failed to prove withdrawal").to.emit(lightLinkPortal, "WithdrawalProven");
+
     });
-  });
 
-  const parseMessagePassedEvent = (
-    iface: L2ToL1MessagePasserInterface,
-    log: Log | EventLog,
-  ): {
-    evt: MessagePassedEvent.Event;
-    withdrawalTx: Types.WithdrawalTransactionStruct;
-  } => {
-    const event = iface.parseLog({
-      topics: [...log.topics],
-      data: log.data,
-    })!;
-
-    return {
-      evt: event as unknown as MessagePassedEvent.Event,
-      withdrawalTx: {
-        data: event.args.data,
-        gasLimit: event.args.gasLimit,
-        nonce: event.args.nonce,
-        sender: event.args.sender,
-        target: event.args.target,
-        value: event.args.value,
-      },
-    };
-  };
+  }); // describe("LightLinkPortal")
 });
+
+const parseMessagePassedEvent = (
+  iface: L2ToL1MessagePasserInterface,
+  log: Log | EventLog,
+): {
+  evt: MessagePassedEvent.Event;
+  withdrawalTx: Types.WithdrawalTransactionStruct;
+} => {
+  const event = iface.parseLog({
+    topics: [...log.topics],
+    data: log.data,
+  })!;
+
+  return {
+    evt: event as unknown as MessagePassedEvent.Event,
+    withdrawalTx: {
+      data: event.args.data,
+      gasLimit: event.args.gasLimit,
+      nonce: event.args.nonce,
+      sender: event.args.sender,
+      target: event.args.target,
+      value: event.args.value,
+    },
+  };
+};
+
+const hashOutput = (output: Types.OutputRootProofStruct): string => {
+  return ethers.keccak256(
+    ethers.AbiCoder.defaultAbiCoder().encode(
+      ["bytes32", "bytes32", "bytes32", "bytes32"],
+      [
+        output.version,
+        output.stateRoot,
+        output.messagePasserStorageRoot,
+        output.latestBlockhash,
+      ],
+    ),
+  );
+};

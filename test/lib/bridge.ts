@@ -2,7 +2,7 @@
 import { ethers } from "ethers";
 import { toHexString, toRpcHexString } from "@eth-optimism/core-utils";
 import * as rlp from "rlp";
-import { BigNumber } from "bignumber.js";
+import { BigNumber } from '@ethersproject/bignumber';
 
 /**
  * Fix for the case where the final proof element is less than 32 bytes and the element exists
@@ -51,7 +51,7 @@ export const maybeAddProofNode = (key: string, proof: string[]) => {
  */
 export const makeStateTrieProof = async (
   provider: ethers.JsonRpcProvider,
-  blockNumber: number,
+  blockNumber: BigNumber,
   address: string,
   slot: string,
 ): Promise<{
@@ -74,7 +74,7 @@ export const makeStateTrieProof = async (
   return {
     accountProof: proof.accountProof,
     storageProof: proof.storageProof[0].proof,
-    storageValue: new BigNumber(proof.storageProof[0].value),
+    storageValue: BigNumber.from(proof.storageProof[0].value),
     storageRoot: proof.storageHash,
   };
 };
