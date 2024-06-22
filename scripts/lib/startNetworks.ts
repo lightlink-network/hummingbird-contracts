@@ -1,4 +1,5 @@
 import { exec, ChildProcess, execSync } from "child_process";
+import axios from "axios";
 
 interface StartNetworkOptions {
   logOutput?: boolean;
@@ -90,7 +91,9 @@ export const startNetworks = async (
 
     // Allow some time for Anvil networks to start
     console.log("    Waiting for networks to be fully operational...");
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await Promise.all([
+      waitForRpcEndpoint("http://0.0.0.0:8545"),
+      waitForRpcEndpoint("http://0.0.0.0:8546")]);
 
     console.log("    Networks are up and running.\n\n");
     return { l1Network, l2Network };
@@ -99,3 +102,34 @@ export const startNetworks = async (
     throw error;
   }
 };
+
+const waitForRpcEndpoint = async (endpoint: string) => {
+  const interval = 250;
+  const maxAttempts = 30;
+
+  for (let i = 0; i < maxAttempts; i++) {
+    const isAvailable = await isEndpointAvailable(endpoint);
+    if (isAvailable) {
+      return true;
+    }
+
+    await delay(interval);
+  }
+  return false;
+}
+
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+const isEndpointAvailable = async (endpoint: string): Promise<boolean> => {
+  try {
+    const response = await axios.post(endpoint, {
+      jsonrpc: "2.0",
+      method: "anvil_nodeInfo",
+      params: [],
+      id: 1
+    });
+    return response.status === 200 && response.data.result != undefined;
+  } catch (error) {
+    return false;
+  }
+}
