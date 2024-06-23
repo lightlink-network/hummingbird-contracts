@@ -25,7 +25,7 @@ describe("L2ToL1MessagePasser", function () {
 
   describe("Receive", function () {
     it("Should initiate a withdrawal", async function () {
-      // Initiate withdrawal via L2ToL1MessagePasser by sendind ether to it
+      // Initiate withdrawal via L2ToL1MessagePasser by sending ether to it
       const tx = await deployer.sendTransaction({
         to: l2ToL1MessagePasser.getAddress(),
         value: ethers.parseEther("1"),
