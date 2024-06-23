@@ -4,11 +4,11 @@ import {
   CanonicalStateChain,
   ChainOracle,
   Challenge,
-} from "../typechain-types";
+} from "../../../../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 // import { MOCK_DATA } from "./mock/mock_challengeL2Tx";
-import { setupCanonicalStateChain } from "./lib/chain";
-import { provideHeader, provideLegacyTx } from "./lib/oracle";
+import { setupCanonicalStateChain } from "../../../lib/chain";
+import { provideHeader, provideLegacyTx } from "../../../lib/oracle";
 
 // TODO: re-enable this test after challenge l2 Tx is full implemented.
 // describe("ChallengeL2Tx", function () {

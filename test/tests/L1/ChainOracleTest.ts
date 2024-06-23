@@ -5,15 +5,15 @@ import {
   pushRandomHeader,
   setupCanonicalStateChain,
   makeNextBlock,
-} from "./lib/chain";
-import { chainOracleMockData as MOCK_DATA } from "./mock/mock_chainOracle";
-import { challengeL2TxMockData as MOCK_DATA2 } from "./mock/mock_challengeL2Tx";
+} from "../../lib/chain";
+import { chainOracleMockData as MOCK_DATA } from "../../mock/mock_chainOracle";
+import { challengeL2TxMockData as MOCK_DATA2 } from "../../mock/mock_challengeL2Tx";
 import {
   CanonicalStateChain,
   ChainOracle,
   MockDAOracle,
   RLPReader,
-} from "../typechain-types";
+} from "../../../typechain-types";
 
 describe("ChainOracle", function () {
   let owner: HardhatEthersSigner;
@@ -34,7 +34,9 @@ describe("ChainOracle", function () {
     const _MockDaOracle = await ethers.getContractFactory("MockDAOracle");
     mockDaOracle = (await _MockDaOracle.deploy()) as any;
 
-    const RLPReaderFactory = await ethers.getContractFactory("RLPReader");
+    const RLPReaderFactory = await ethers.getContractFactory(
+      "contracts/L1/RLPReader.sol:RLPReader",
+    );
     rlpReader = (await RLPReaderFactory.deploy()) as any;
 
     const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
@@ -469,7 +471,9 @@ describe("ChainOracle", function () {
 
   describe("setRLPReader", function () {
     it("happy path", async function () {
-      const RLPReaderFactory = await ethers.getContractFactory("RLPReader");
+      const RLPReaderFactory = await ethers.getContractFactory(
+        "contracts/L1/RLPReader.sol:RLPReader",
+      );
       const rlpReader = (await RLPReaderFactory.deploy()) as any;
 
       await expect(
@@ -481,7 +485,9 @@ describe("ChainOracle", function () {
     });
 
     it("should revert as non owner", async function () {
-      const RLPReaderFactory = await ethers.getContractFactory("RLPReader");
+      const RLPReaderFactory = await ethers.getContractFactory(
+        "contracts/L1/RLPReader.sol:RLPReader",
+      );
       const rlpReader = (await RLPReaderFactory.deploy()) as any;
 
       await expect(

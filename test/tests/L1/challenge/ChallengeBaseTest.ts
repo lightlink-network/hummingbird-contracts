@@ -2,15 +2,15 @@ import { ethers } from "hardhat";
 import { expect } from "chai";
 import { Contract, toBigInt } from "ethers";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { setupCanonicalStateChain } from "./lib/chain";
+import { setupCanonicalStateChain } from "../../../lib/chain";
 import {
   CanonicalStateChain,
   Challenge,
   Challenge__factory,
-} from "../typechain-types";
+} from "../../../../typechain-types";
 
-import { pushRandomHeader } from "./lib/chain";
-import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
+import { pushRandomHeader } from "../../../lib/chain";
+import { proxyDeployAndInitialize } from "../../../../scripts/lib/deploy";
 
 type Header = CanonicalStateChain.HeaderStruct;
 

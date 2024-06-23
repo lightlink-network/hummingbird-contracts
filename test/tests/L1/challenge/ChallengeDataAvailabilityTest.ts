@@ -2,16 +2,16 @@ import { ethers } from "hardhat";
 import { expect } from "chai";
 import { Contract, toBigInt } from "ethers";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { setupCanonicalStateChain } from "./lib/chain";
+import { setupCanonicalStateChain } from "../../../lib/chain";
 import {
   CanonicalStateChain,
   Challenge,
   Challenge__factory,
-} from "../typechain-types";
+} from "../../../../typechain-types";
 
-import { pushRandomHeader } from "./lib/chain";
-import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
-import { challengeDAMockData as MOCK_DATA } from "./mock/mock_challengeDa";
+import { pushRandomHeader } from "../../../lib/chain";
+import { proxyDeployAndInitialize } from "../../../../scripts/lib/deploy";
+import { challengeDAMockData as MOCK_DATA } from "../../../mock/mock_challengeDa";
 
 type Header = CanonicalStateChain.HeaderStruct;
 

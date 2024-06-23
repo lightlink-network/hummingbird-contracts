@@ -1,8 +1,8 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { pushRandomHeader, setupCanonicalStateChain } from "./lib/chain";
-import { CanonicalStateChain } from "../typechain-types";
+import { pushRandomHeader, setupCanonicalStateChain } from "../../lib/chain";
+import { CanonicalStateChain } from "../../../typechain-types";
 
 describe("CanonicalStateChain", function () {
   let canonicalStateChain: CanonicalStateChain;

@@ -1,26 +1,30 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { JsonRpcProvider, Log, EventLog } from "ethers";
-import { startNetworks } from "../scripts/lib/startNetworks";
+import { startNetworks } from "../../scripts/lib/startNetworks";
 import { ChildProcess } from "child_process";
-import { setupCanonicalStateChain, pushRandomHeader, makeNextBlock } from "./lib/chain";
-import { BigNumber } from '@ethersproject/bignumber';
+import {
+  setupCanonicalStateChain,
+  pushRandomHeader,
+  makeNextBlock,
+} from "../lib/chain";
+import { BigNumber } from "@ethersproject/bignumber";
 import {
   CanonicalStateChain,
   LightLinkPortal,
   L2ToL1MessagePasser,
   BridgeProofHelper,
-} from "../typechain-types";
-import { Types } from "../typechain-types/contracts/L1/test/BridgeProofHelper";
+} from "../../typechain-types";
+import { Types } from "../../typechain-types/contracts/L1/test/BridgeProofHelper";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { proxyDeployAndInitialize } from "../scripts/lib/deploy";
+import { proxyDeployAndInitialize } from "../../scripts/lib/deploy";
 import {
   MessagePassedEvent,
   L2ToL1MessagePasserInterface,
-} from "../typechain-types/contracts/L2/L2ToL1MessagePasser";
+} from "../../typechain-types/contracts/L2/L2ToL1MessagePasser";
 import exp from "constants";
 
-import { makeStateTrieProof, hashMessageHash } from "../test/lib/bridge";
+import { makeStateTrieProof, hashMessageHash } from "../lib/bridge";
 
 describe("Cross-chain interaction", function () {
   // Networks
@@ -103,23 +107,6 @@ describe("Cross-chain interaction", function () {
     l2Network.kill();
   });
 
-  it("Should interact with L1 and L2", async function () {
-    // Initiate withdrawal from L2
-    await l2ToL1MessagePasser
-      .connect(l2Deployer)
-      .initiateWithdrawal(ethers.ZeroAddress, 0, "0x");
-
-    // Push a new header to L1
-    const [headerHash, header] = await pushRandomHeader(
-      l1Deployer,
-      canonicalStateChain,
-    );
-
-    // log headers
-    console.log("Header hash:", headerHash);
-    console.log("Header:", header);
-  });
-
   describe("BridgeProofHelper", function () {
     it("Should verify a proof", async function () {
       // Initiate withdrawal from L2
@@ -163,7 +150,10 @@ describe("Cross-chain interaction", function () {
       expect(withdrawalHash).to.not.be.undefined;
       expect(withdrawalHash).to.not.be.empty;
 
-      const l2Block = await l2Provider.send("eth_getBlockByNumber", ["latest", false]);
+      const l2Block = await l2Provider.send("eth_getBlockByNumber", [
+        "latest",
+        false,
+      ]);
 
       // Calculate message slot
       const messageSlot = hashMessageHash(withdrawalHash);
@@ -176,13 +166,13 @@ describe("Cross-chain interaction", function () {
         messageSlot,
       );
 
-      // construct a phony output 
+      // construct a phony output
       const output: Types.OutputRootProofStruct = {
         version: ethers.ZeroHash,
         latestBlockhash: l2Block.hash,
         stateRoot: l2Block.stateRoot,
         messagePasserStorageRoot: withdrawalProof.storageRoot,
-      }
+      };
 
       // Calculate the output root
       const outputRoot = ethers.keccak256(
@@ -198,9 +188,7 @@ describe("Cross-chain interaction", function () {
       );
 
       // Verify proof
-      const verified = await BridgeProofHelper.connect(
-        l1Deployer,
-      ).checkProof(
+      const verified = await BridgeProofHelper.connect(l1Deployer).checkProof(
         outputRoot,
         output,
         withdrawalHash,
@@ -212,7 +200,6 @@ describe("Cross-chain interaction", function () {
 
   describe("LightLinkPortal", function () {
     it("Prove withdrawal", async function () {
-
       // Initiate withdrawal from L2
 
       const initiateTx = await l2ToL1MessagePasser
@@ -228,10 +215,12 @@ describe("Cross-chain interaction", function () {
         l1Deployer,
       ).hashWithdrawalTx(msgPassed.withdrawalTx);
 
-
       // Generate proofs
 
-      const l2Block = await l2Provider.send("eth_getBlockByNumber", ["latest", false]);
+      const l2Block = await l2Provider.send("eth_getBlockByNumber", [
+        "latest",
+        false,
+      ]);
       const messageSlot = hashMessageHash(withdrawalHash);
 
       let withdrawalProof = await makeStateTrieProof(
@@ -246,24 +235,35 @@ describe("Cross-chain interaction", function () {
         latestBlockhash: l2Block.hash,
         stateRoot: l2Block.stateRoot,
         messagePasserStorageRoot: withdrawalProof.storageRoot,
-      }
+      };
 
       // Push a new header to L1
 
-      const [nextHeader,] = await makeNextBlock(l1Deployer, canonicalStateChain)
+      const [nextHeader] = await makeNextBlock(l1Deployer, canonicalStateChain);
       nextHeader.outputRoot = hashOutput(output);
-      const pushTx = await canonicalStateChain.connect(l1Deployer).pushBlock(nextHeader);
-      expect(pushTx, "Failed to push block").to.emit(canonicalStateChain, "BlockAdded");
+      const pushTx = await canonicalStateChain
+        .connect(l1Deployer)
+        .pushBlock(nextHeader);
+      expect(pushTx, "Failed to push block").to.emit(
+        canonicalStateChain,
+        "BlockAdded",
+      );
 
       // Prove withdrawal
 
       const proveTx = await lightLinkPortal
         .connect(l1Deployer)
-        .proveWithdrawalTransaction(msgPassed.withdrawalTx, await canonicalStateChain.chainHead(), output, withdrawalProof.storageProof)
-      expect(proveTx, "Failed to prove withdrawal").to.emit(lightLinkPortal, "WithdrawalProven");
-
+        .proveWithdrawalTransaction(
+          msgPassed.withdrawalTx,
+          await canonicalStateChain.chainHead(),
+          output,
+          withdrawalProof.storageProof,
+        );
+      expect(proveTx, "Failed to prove withdrawal").to.emit(
+        lightLinkPortal,
+        "WithdrawalProven",
+      );
     });
-
   }); // describe("LightLinkPortal")
 });
 

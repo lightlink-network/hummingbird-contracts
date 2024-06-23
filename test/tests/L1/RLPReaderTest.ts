@@ -1,12 +1,14 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { RLPReader } from "../typechain-types";
+import { RLPReader } from "../../../typechain-types";
 
 describe("RLPReader", function () {
   let rlpReader: RLPReader;
 
   beforeEach(async function () {
-    const RLPReaderFactory = await ethers.getContractFactory("RLPReader");
+    const RLPReaderFactory = await ethers.getContractFactory(
+      "contracts/L1/RLPReader.sol:RLPReader",
+    );
     rlpReader = (await RLPReaderFactory.deploy()) as any;
   });
 
