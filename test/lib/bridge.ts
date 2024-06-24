@@ -5,6 +5,7 @@ import * as rlp from "rlp";
 import { BigNumber } from '@ethersproject/bignumber';
 import { Types } from "../../typechain-types/contracts/L1/LightLinkPortal";
 import { L2ToL1MessagePasser, L2ToL1MessagePasserInterface, MessagePassedEvent } from "../../typechain-types/contracts/L2/L2ToL1MessagePasser";
+import { PayableOverrides } from "../../typechain-types/common";
 
 /**
  * Fix for the case where the final proof element is less than 32 bytes and the element exists
@@ -155,11 +156,12 @@ export const initiateWithdraw = async (
   sender: Signer,
   target: AddressLike,
   gasLimit: BigNumberish,
-  data: BytesLike
+  data: BytesLike,
+  overrides: PayableOverrides = {},
 ) => {
   const initiateTx = await contract.
     connect(sender).
-    initiateWithdrawal(target, gasLimit, data);
+    initiateWithdrawal(target, gasLimit, data, overrides);
   const initiateReceipt = await initiateTx.wait();
 
   const { withdrawalTx } = parseMessagePassedEvent(
