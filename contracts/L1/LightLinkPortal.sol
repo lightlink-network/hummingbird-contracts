@@ -223,7 +223,10 @@ contract LightLinkPortal is Initializable, ResourceMetering {
         view
         returns (address addr_, uint8 decimals_)
     {
-        (addr_, decimals_) = systemConfig.gasPayingToken();
+        // (addr_, decimals_) = systemConfig.gasPayingToken();
+        // TODO: Uncomment the above line when the gas paying token is implemented.
+        addr_ = Constants.ETHER;
+        decimals_ = 18;
     }
 
     /// @notice Getter for the resource config.
