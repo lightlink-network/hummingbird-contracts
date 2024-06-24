@@ -14,6 +14,8 @@ import {
   LightLinkPortal,
   L2ToL1MessagePasser,
   BridgeProofHelper,
+  ChallengeHeader,
+  Challenge,
 } from "../../typechain-types";
 import { Types } from "../../typechain-types/contracts/L1/test/BridgeProofHelper";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
@@ -44,6 +46,7 @@ describe("Cross-chain interaction", function () {
   let lightLinkPortal: LightLinkPortal;
   let l2ToL1MessagePasser: L2ToL1MessagePasser;
   let BridgeProofHelper: BridgeProofHelper;
+  let challenge: Challenge;
 
   before(async function () {
     // Start Anvil network instances
@@ -69,8 +72,19 @@ describe("Cross-chain interaction", function () {
       l1Deployer.address,
     );
     canonicalStateChain = _chain.canonicalStateChain;
-
     console.log("CanonicalStateChain deployed");
+
+    // Challenge
+    const challengeDeployment = await proxyDeployAndInitialize(
+      l1Deployer,
+      await ethers.getContractFactory("Challenge"),
+      [
+        await canonicalStateChain.getAddress(),
+        ethers.ZeroAddress,
+        ethers.ZeroAddress,
+      ],
+    );
+    challenge = challengeDeployment.contract as Challenge;
 
     // LightLinkPortal
     const lightLinkPortalDeployment = await proxyDeployAndInitialize(
@@ -78,7 +92,7 @@ describe("Cross-chain interaction", function () {
       await ethers.getContractFactory("LightLinkPortal"),
       [
         await canonicalStateChain.getAddress(),
-        ethers.ZeroAddress,
+        await challengeDeployment.address,
         ethers.ZeroAddress,
       ],
     );
@@ -163,7 +177,6 @@ describe("Cross-chain interaction", function () {
 
   describe("LightLinkPortal", function () {
     it("Prove withdrawal", async function () {
-
       // Initiate withdrawal from L2
       const withdrawal = await initiateWithdraw(
         l2ToL1MessagePasser,
@@ -206,5 +219,84 @@ describe("Cross-chain interaction", function () {
         "WithdrawalProven",
       );
     });
+
+    it("Finalize Withdrawal", async function () {
+
+      // Initiate withdrawal from L2
+
+      const recipient = randomAddress();
+      const withdrawal = await initiateWithdraw(
+        l2ToL1MessagePasser,
+        l2Deployer,
+        recipient,
+        21000,
+        "0x",
+        {
+          value: ethers.parseEther("1"),
+        },
+      );
+
+      // Generate proofs
+      const { withdrawalProof, outputProof, outputRoot } = await getWithdrawalProofs(
+        l2Provider,
+        withdrawal.initiateTx.blockNumber ?? "latest",
+        l2ToL1MessagePasser,
+        withdrawal.messageSlot,
+      );
+
+      // Push a new header to L1
+      const [nextHeader] = await makeNextBlock(l1Deployer, canonicalStateChain);
+      nextHeader.outputRoot = outputRoot;
+      const pushTx = await canonicalStateChain
+        .connect(l1Deployer)
+        .pushBlock(nextHeader);
+      expect(pushTx, "Failed to push block").to.emit(
+        canonicalStateChain,
+        "BlockAdded",
+      );
+
+
+      // Prove withdrawal
+      const proveTx = await
+        lightLinkPortal
+          .connect(l1Deployer)
+          .proveWithdrawalTransaction(
+            withdrawal.withdrawalTx,
+            await canonicalStateChain.chainHead(),
+            outputProof,
+            withdrawalProof.storageProof,
+          )
+      expect(proveTx, "Failed to prove withdrawal").to.emit(
+        lightLinkPortal,
+        "WithdrawalProven",
+      );
+
+      // get finalization seconds from challenge 
+      const finalizationSeconds = await challenge.connect(l1Deployer).finalizationSeconds();
+
+      // move time forward
+      await l1Provider.send("evm_increaseTime", [Number(finalizationSeconds) * 2]);
+      await l1Provider.send("evm_mine", []);
+
+      // fund the contract
+      await lightLinkPortal.connect(l1Deployer).donateETH({ value: ethers.parseEther("3") });
+
+      // Finalize withdrawal
+      const finalizeTx = await lightLinkPortal
+        .connect(l1Deployer)
+        .finalizeWithdrawalTransaction(
+          withdrawal.withdrawalTx
+        );
+      expect(finalizeTx, "Failed to finalize withdrawal").to.emit(
+        lightLinkPortal,
+        "WithdrawalFinalized",
+      );
+
+      expect(await l1Provider.getBalance(recipient)).to.equal(ethers.parseEther("1"));
+    });
+
   }); // describe("LightLinkPortal")
 });
+
+
+const randomAddress = () => ethers.Wallet.createRandom().address;
