@@ -295,7 +295,33 @@ describe("Cross-chain interaction", function () {
       expect(await l1Provider.getBalance(recipient)).to.equal(ethers.parseEther("1"));
     });
 
+    it("Deposit", async function () {
+      const recipient = randomAddress();
+      const value = ethers.parseEther("1");
+
+      const depositTx = await lightLinkPortal
+        .connect(l1Deployer)
+        .depositTransaction(
+          recipient,
+          value,
+          21000,
+          false,
+          "0x",
+          {
+            value: value,
+          },
+        );
+
+      expect(depositTx, "Failed to deposit").to.emit(
+        lightLinkPortal,
+        "TransactionDeposited",
+      );
+
+    });
+
   }); // describe("LightLinkPortal")
+
+
 });
 
 
