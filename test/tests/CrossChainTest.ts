@@ -92,8 +92,7 @@ describe("Cross-chain interaction", function () {
       await ethers.getContractFactory("LightLinkPortal"),
       [
         await canonicalStateChain.getAddress(),
-        await challengeDeployment.address,
-        ethers.ZeroAddress,
+        await challengeDeployment.address
       ],
     );
     lightLinkPortal = lightLinkPortalDeployment.contract as LightLinkPortal;

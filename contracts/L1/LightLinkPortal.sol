@@ -2,11 +2,11 @@
 pragma solidity 0.8.22;
 
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeCall} from "../libraries/SafeCall.sol";
 // import {L2OutputOracle} from "../L1/L2OutputOracle.sol";
 import {ICanonicalStateChain} from "./interfaces/ICanonicalStateChain.sol";
 import {IChallengeBase} from "./interfaces/IChallengeBase.sol";
-import {SystemConfig} from "../L1/SystemConfig.sol";
 // import {SuperchainConfig} from "src/L1/SuperchainConfig.sol";
 import {Constants} from "../libraries/Constants.sol";
 import {Types} from "../libraries/Types.sol";
@@ -25,7 +25,7 @@ import "../libraries/PortalErrors.sol";
 /// @notice The LightLinkPortal is a low-level contract responsible for passing messages between L1
 ///         and L2. Messages sent directly to the LightLinkPortal have no form of replayability.
 ///         Users are encouraged to use the L1CrossDomainMessenger for a higher-level interface.
-contract LightLinkPortal is Initializable, ResourceMetering {
+contract LightLinkPortal is Initializable, ResourceMetering, Ownable {
     /// @notice Allows for interactions with non standard ERC20 tokens.
     using SafeERC20 for IERC20;
 
@@ -59,6 +59,8 @@ contract LightLinkPortal is Initializable, ResourceMetering {
     /// @notice A mapping of withdrawal hashes to `ProvenWithdrawal` data.
     mapping(bytes32 => ProvenWithdrawal) public provenWithdrawals;
 
+    ResourceConfig public resourceConfig;
+
     /// @custom:legacy
     /// @custom:spacer paused
     /// @notice Spacer for backwards compatibility.
@@ -70,10 +72,6 @@ contract LightLinkPortal is Initializable, ResourceMetering {
 
     /// @notice Contract of the ChallengeBase.
     IChallengeBase challenge;
-
-    /// @notice Contract of the SystemConfig.
-    /// @custom:network-specific
-    SystemConfig public systemConfig;
 
     /// @custom:spacer disputeGameFactory
     /// @notice Spacer for backwards compatibility.
@@ -144,25 +142,29 @@ contract LightLinkPortal is Initializable, ResourceMetering {
     }
 
     /// @notice Constructs the LightLinkPortal contract.
-    constructor() {
+    constructor() Ownable(msg.sender) {
         initialize({
             _l2Oracle: ICanonicalStateChain(address(0)),
-            _challenge: IChallengeBase(address(0)),
-            _systemConfig: SystemConfig(address(0))
+            _challenge: IChallengeBase(address(0))
         });
     }
 
     /// @notice Initializer.
     /// @param _l2Oracle Contract of the L2OutputOracle.
-    /// @param _systemConfig Contract of the SystemConfig.
     function initialize(
         ICanonicalStateChain _l2Oracle,
-        IChallengeBase _challenge,
-        SystemConfig _systemConfig
+        IChallengeBase _challenge
     ) public initializer {
         l2Oracle = _l2Oracle;
         challenge = _challenge;
-        systemConfig = _systemConfig;
+        resourceConfig = ResourceConfig({
+            maxResourceLimit: 20_000_000,
+            elasticityMultiplier: 10,
+            baseFeeMaxChangeDenominator: 8,
+            minimumBaseFee: 1 gwei,
+            systemTxMaxGas: 1_000_000,
+            maximumBaseFee: type(uint128).max
+        });
         if (l2Sender == address(0)) {
             l2Sender = Constants.DEFAULT_L2_SENDER;
         }
@@ -239,7 +241,7 @@ contract LightLinkPortal is Initializable, ResourceMetering {
         override
         returns (ResourceMetering.ResourceConfig memory)
     {
-        return systemConfig.resourceConfig();
+        return resourceConfig;
     }
 
     /// @notice Proves a withdrawal transaction.
@@ -611,9 +613,7 @@ contract LightLinkPortal is Initializable, ResourceMetering {
         uint8 _decimals,
         bytes32 _name,
         bytes32 _symbol
-    ) external {
-        if (msg.sender != address(systemConfig)) revert Unauthorized();
-
+    ) external onlyOwner {
         // Set L2 deposit gas as used without paying burning gas. Ensures that deposits cannot use too much L2 gas.
         // This value must be large enough to cover the cost of calling `L1Block.setGasPayingToken`.
         useGas(SYSTEM_DEPOSIT_GAS_LIMIT);
