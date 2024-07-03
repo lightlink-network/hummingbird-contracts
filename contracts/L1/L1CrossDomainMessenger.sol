@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.22;
 
-import {Predeploys} from "../libraries/Predeploys.sol";
+// import {Predeploys} from "../libraries/Predeploys.sol";
 import {Constants} from "../libraries/Constants.sol";
 import {LightLinkPortal} from "./LightLinkPortal.sol";
 import {CrossDomainMessenger} from "../libraries/CrossDomainMessenger.sol";
@@ -20,19 +20,26 @@ contract L1CrossDomainMessenger is CrossDomainMessenger {
     /// @custom:semver 2.4.0
     string public constant version = "2.4.0";
 
+    address l2CrossDomainMessenger;
+
     /// @notice Constructs the L1CrossDomainMessenger contract.
     constructor() CrossDomainMessenger() {
-        initialize({_portal: LightLinkPortal(payable(address(0)))});
+        initialize({
+            _portal: LightLinkPortal(payable(address(0))),
+            _l2crossDomainMessenger: address(0)
+        });
     }
 
     /// @notice Initializes the contract.
     /// @param _portal Contract of the LightLinkPortal contract on this network.
-    function initialize(LightLinkPortal _portal) public initializer {
+    function initialize(
+        LightLinkPortal _portal,
+        address _l2crossDomainMessenger
+    ) public initializer {
         portal = _portal;
+        l2CrossDomainMessenger = _l2crossDomainMessenger;
         __CrossDomainMessenger_init({
-            _otherMessenger: CrossDomainMessenger(
-                Predeploys.L2_CROSS_DOMAIN_MESSENGER
-            )
+            _otherMessenger: CrossDomainMessenger(l2CrossDomainMessenger)
         });
     }
 
