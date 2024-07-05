@@ -4,7 +4,7 @@ pragma solidity 0.8.22;
 //  import {Predeploys} from "src/libraries/Predeploys.sol";
 import {StandardBridge} from "../universal/StandardBridge.sol";
 import {LightLinkMintableERC20} from "../universal/LightLinkMintableERC20.sol";
-import {CrossDomainMessenger} from "../libraries/CrossDomainMessenger.sol";
+import {CrossDomainMessenger} from "../universal/CrossDomainMessenger.sol";
 import {L1Block} from "../L2/L1Block.sol";
 
 /// @custom:proxied

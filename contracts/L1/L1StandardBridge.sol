@@ -4,7 +4,7 @@ pragma solidity 0.8.22;
 import {Constants} from "../libraries/Constants.sol";
 // import {Predeploys} from "src/libraries/Predeploys.sol";
 import {StandardBridge} from "../universal/StandardBridge.sol";
-import {CrossDomainMessenger} from "../libraries/CrossDomainMessenger.sol";
+import {CrossDomainMessenger} from "../universal/CrossDomainMessenger.sol";
 // import {SuperchainConfig} from "src/L1/SuperchainConfig.sol";
 import {LightLinkPortal} from "../L1/LightLinkPortal.sol";
 

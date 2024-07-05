@@ -7,7 +7,7 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {SafeCall} from "../libraries/SafeCall.sol";
 import {ILightLinkMintableERC20, ILegacyMintableERC20} from "../universal/ILightLinkMintableERC20.sol";
-import {CrossDomainMessenger} from "../libraries/CrossDomainMessenger.sol";
+import {CrossDomainMessenger} from "./CrossDomainMessenger.sol";
 import {LightLinkMintableERC20} from "../universal/LightLinkMintableERC20.sol";
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {Constants} from "../libraries/Constants.sol";

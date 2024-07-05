@@ -3,7 +3,7 @@ pragma solidity 0.8.22;
 
 import {AddressAliasHelper} from "../libraries/AddressAliasHelper.sol";
 // import {Predeploys} from "../libraries/Predeploys.sol";
-import {CrossDomainMessenger} from "../libraries/CrossDomainMessenger.sol";
+import {CrossDomainMessenger} from "../universal/CrossDomainMessenger.sol";
 import {L2ToL1MessagePasser} from "./L2ToL1MessagePasser.sol";
 import {Constants} from "../libraries/Constants.sol";
 import {L1Block} from "./L1Block.sol";

@@ -2,10 +2,10 @@
 pragma solidity 0.8.22;
 
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {SafeCall} from "./SafeCall.sol";
-import {Hashing} from "./Hashing.sol";
-import {Encoding} from "./Encoding.sol";
-import {Constants} from "./Constants.sol";
+import {SafeCall} from "../libraries/SafeCall.sol";
+import {Hashing} from "../libraries/Hashing.sol";
+import {Encoding} from "../libraries/Encoding.sol";
+import {Constants} from "../libraries/Constants.sol";
 
 /// @custom:legacy
 /// @title CrossDomainMessengerLegacySpacer0

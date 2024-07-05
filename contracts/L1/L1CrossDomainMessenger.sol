@@ -4,7 +4,7 @@ pragma solidity 0.8.22;
 // import {Predeploys} from "../libraries/Predeploys.sol";
 import {Constants} from "../libraries/Constants.sol";
 import {LightLinkPortal} from "./LightLinkPortal.sol";
-import {CrossDomainMessenger} from "../libraries/CrossDomainMessenger.sol";
+import {CrossDomainMessenger} from "../universal/CrossDomainMessenger.sol";
 
 /// @custom:proxied
 /// @title L1CrossDomainMessenger
