@@ -154,6 +154,8 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable {
 
     /// @notice Initializer.
     /// @param _l2Oracle Contract of the L2OutputOracle.
+    /// @param _challenge Contract of the ChallengeBase.
+    /// @param _l1BlockAttributes Contract of the L1BlockAttributes.
     function initialize(
         ICanonicalStateChain _l2Oracle,
         IChallengeBase _challenge,

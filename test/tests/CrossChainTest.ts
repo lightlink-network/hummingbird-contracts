@@ -5,28 +5,22 @@ import { startNetworks } from "../../scripts/lib/startNetworks";
 import { ChildProcess } from "child_process";
 import {
   setupCanonicalStateChain,
-  pushRandomHeader,
   makeNextBlock,
 } from "../lib/chain";
-import { BigNumber } from "@ethersproject/bignumber";
 import {
   CanonicalStateChain,
   LightLinkPortal,
   L2ToL1MessagePasser,
   BridgeProofHelper,
-  ChallengeHeader,
   Challenge,
+  L2CrossDomainMessenger,
+  L1CrossDomainMessenger,
+  L1Block,
 } from "../../typechain-types";
-import { Types } from "../../typechain-types/contracts/L1/test/BridgeProofHelper";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { proxyDeployAndInitialize } from "../../scripts/lib/deploy";
-import {
-  MessagePassedEvent,
-  L2ToL1MessagePasserInterface,
-} from "../../typechain-types/contracts/L2/L2ToL1MessagePasser";
-import exp from "constants";
-
-import { makeStateTrieProof, hashMessageHash, initiateWithdraw, getWithdrawalProofs } from "../lib/bridge";
+import { initiateWithdraw, getWithdrawalProofs } from "../lib/bridge";
+import { assert } from "console";
 
 describe("Cross-chain interaction", function () {
   // Networks
@@ -36,6 +30,7 @@ describe("Cross-chain interaction", function () {
   // Signers
   let l1Deployer: HardhatEthersSigner;
   let l2Deployer: HardhatEthersSigner;
+  let l2Depositor: HardhatEthersSigner;
 
   // Providers
   let l1Provider: JsonRpcProvider;
@@ -47,6 +42,9 @@ describe("Cross-chain interaction", function () {
   let l2ToL1MessagePasser: L2ToL1MessagePasser;
   let BridgeProofHelper: BridgeProofHelper;
   let challenge: Challenge;
+  let l2CrossDomainMessenger: L2CrossDomainMessenger;
+  let l1CrossDomainMessenger: L1CrossDomainMessenger;
+  let l1Block: L1Block;
 
   before(async function () {
     // Start Anvil network instances
@@ -66,7 +64,7 @@ describe("Cross-chain interaction", function () {
 
     // Deploy L1 contracts
 
-    // CanonicalStateChain
+    // - CanonicalStateChain
     const _chain = await setupCanonicalStateChain(
       l1Deployer,
       l1Deployer.address,
@@ -74,7 +72,7 @@ describe("Cross-chain interaction", function () {
     canonicalStateChain = _chain.canonicalStateChain;
     console.log("CanonicalStateChain deployed");
 
-    // Challenge
+    // - Challenge
     const challengeDeployment = await proxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("Challenge"),
@@ -86,19 +84,19 @@ describe("Cross-chain interaction", function () {
     );
     challenge = challengeDeployment.contract as Challenge;
 
-    // LightLinkPortal
+    // - LightLinkPortal
     const lightLinkPortalDeployment = await proxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("LightLinkPortal"),
       [
         await canonicalStateChain.getAddress(),
         await challengeDeployment.address,
-        ethers.ZeroAddress,
+        ethers.ZeroAddress, // L1Block address 
       ],
     );
     lightLinkPortal = lightLinkPortalDeployment.contract as LightLinkPortal;
 
-    // BridgeProofHelper
+    // - BridgeProofHelper
     const bridgeProofHelperFactory = await ethers.getContractFactory(
       "contracts/L1/test/BridgeProofHelper.sol:BridgeProofHelper",
       l1Deployer,
@@ -107,12 +105,83 @@ describe("Cross-chain interaction", function () {
     await BridgeProofHelper.waitForDeployment();
 
     // Deploy L2 contracts
+
+    // - L2ToL1MessagePasser
     const L2ToL1MessagePasserFactory = await ethers.getContractFactory(
       "contracts/L2/L2ToL1MessagePasser.sol:L2ToL1MessagePasser",
       l2Deployer,
     );
     l2ToL1MessagePasser = (await L2ToL1MessagePasserFactory.deploy()) as any;
     await l2ToL1MessagePasser.waitForDeployment();
+
+    // - L1Block 
+    const L1BlockFactory = await ethers.getContractFactory(
+      "contracts/L2/L1Block.sol:L1Block",
+      l2Deployer,
+    );
+    l1Block = (await L1BlockFactory.deploy()) as any;
+
+    // Cross domain messengers
+    // - Infer deployment addresses before deploying
+    const l2CrossDomainMessengerAddr = ethers.getCreateAddress({
+      from: l2Deployer.address,
+      nonce: await l2Provider.getTransactionCount(l2Deployer.address) + 1,
+      // +1 because implementation will be deployed first
+    });
+    const l1CrossDomainMessengerAddr = ethers.getCreateAddress({
+      from: l1Deployer.address,
+      nonce: await l1Provider.getTransactionCount(l1Deployer.address) + 1,
+      // +1 because implementation will be deployed first
+    });
+
+    // - Deploy cross domain messengers
+    console.log("Deploying cross domain messengers");
+    const L2CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
+      l2Deployer,
+      await ethers.getContractFactory("L2CrossDomainMessenger"),
+      [l1CrossDomainMessengerAddr, await l2ToL1MessagePasser.getAddress(), await l1Block.getAddress()],
+    );
+    l2CrossDomainMessenger = L2CrossDomainMessengerDeployment.contract as L2CrossDomainMessenger;
+
+    const L1CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
+      l1Deployer,
+      await ethers.getContractFactory("L1CrossDomainMessenger"),
+      [await lightLinkPortal.getAddress(), l2CrossDomainMessengerAddr],
+    );
+    l1CrossDomainMessenger = L1CrossDomainMessengerDeployment.contract as L1CrossDomainMessenger;
+
+    expect(l2CrossDomainMessengerAddr, "address mismatch").to.equal(
+      await l2CrossDomainMessenger.getAddress(),
+    );
+
+    expect(l1CrossDomainMessengerAddr, "address mismatch").to.equal(
+      await l1CrossDomainMessenger.getAddress(),
+    );
+
+    // Impersonate l2 Depositor account
+    console.log("Impersonating L2 depositor account");
+    await l2Provider.send("hardhat_impersonateAccount", [
+      "0xDeaDDEaDDeAdDeAdDEAdDEaddeAddEAdDEAd0001",
+    ]);
+
+    l2Depositor = await l2Provider.getSigner(
+      "0xDeaDDEaDDeAdDeAdDEAdDEaddeAddEAdDEAd0001",
+    ) as any;
+
+    console.log("L2 depositor account impersonated - funding...");
+    await l2Deployer.sendTransaction({
+      to: l2Depositor.address,
+      value: ethers.parseEther("1"),
+    });
+
+    // Setup GasPayingToken in L1Block
+    console.log("Setting up GasPayingToken in L1Block");
+    await l1Block.connect(l2Depositor).setGasPayingToken(
+      "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE", // Constants.ETHER
+      18,
+      ethers.encodeBytes32String("Ether"),
+      ethers.encodeBytes32String("ETH"),
+    );
   });
 
   after(async function () {
