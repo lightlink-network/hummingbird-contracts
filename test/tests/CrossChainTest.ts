@@ -16,6 +16,7 @@ import {
   L2CrossDomainMessenger,
   L1CrossDomainMessenger,
   L1Block,
+  PingPong,
 } from "../../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { proxyDeployAndInitialize } from "../../scripts/lib/deploy";
@@ -387,8 +388,32 @@ describe("Cross-chain interaction", function () {
       );
 
     });
-
   }); // describe("LightLinkPortal")
+
+  describe("L1CrossDomainMessenger", function () {
+    it("Pong", async function () {
+      // deploy pingpong contract to l2
+      const PingPongFactory = await ethers.getContractFactory("PingPong");
+      const pingPong = await PingPongFactory.connect(l2Deployer).deploy() as PingPong
+
+      // encode call: `ping("Hello L2!")`
+      const callData = pingPong.interface.encodeFunctionData("ping", ["Hello L2!"]);
+
+      // estimate gas
+      const gasEstimate = await l2Deployer.estimateGas({
+        to: await pingPong.getAddress(),
+        data: callData,
+      });
+
+      const msgTx = await l1CrossDomainMessenger.connect(l1Deployer).sendMessage(
+        await pingPong.getAddress(),
+        callData,
+        gasEstimate,
+      );
+
+      expect(msgTx, "Failed to send message").to.emit(lightLinkPortal, "TransactionDeposited");
+    });
+  }); // describe("L1CrossDomainMessenger")
 
 
 });
