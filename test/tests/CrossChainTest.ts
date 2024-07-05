@@ -20,7 +20,7 @@ import {
 } from "../../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { proxyDeployAndInitialize } from "../../scripts/lib/deploy";
-import { initiateWithdraw, getWithdrawalProofs } from "../lib/bridge";
+import { initiateWithdraw, getWithdrawalProofs, sendMessageL2ToL1 } from "../lib/bridge";
 import { assert } from "console";
 
 describe("Cross-chain interaction", function () {
@@ -415,6 +415,81 @@ describe("Cross-chain interaction", function () {
     });
   }); // describe("L1CrossDomainMessenger")
 
+  describe("L2CrossDomainMessenger", function () {
+    it("Pong", async function () {
+      // deploy pingpong contract to l1
+      const PingPongFactory = await ethers.getContractFactory("PingPong");
+      const pingPong = await PingPongFactory.connect(l1Deployer).deploy() as PingPong
+
+      // encode call: `ping("Hello L1!")`
+      const callData = pingPong.interface.encodeFunctionData("ping", ["Hello L1!"]);
+
+      // send message
+      const withdrawal = await sendMessageL2ToL1(
+        l2CrossDomainMessenger,
+        l2ToL1MessagePasser,
+        l2Deployer,
+        l1Provider,
+        await pingPong.getAddress(),
+        callData,
+      )
+
+      // Generate withdrawal proofs
+      const { withdrawalProof, outputProof, outputRoot } = await getWithdrawalProofs(
+        l2Provider,
+        withdrawal.sendMessageTx.blockNumber ?? "latest",
+        l2ToL1MessagePasser,
+        withdrawal.messageSlot,
+      );
+
+      // Push a new header to L1
+      const [nextHeader] = await makeNextBlock(l1Deployer, canonicalStateChain);
+      nextHeader.outputRoot = outputRoot;
+      const pushTx = await canonicalStateChain
+        .connect(l1Deployer)
+        .pushBlock(nextHeader);
+      expect(pushTx, "Failed to push block").to.emit(
+        canonicalStateChain,
+        "BlockAdded",
+      );
+
+      // Prove withdrawal
+      const proveTx = await
+        lightLinkPortal
+          .connect(l1Deployer)
+          .proveWithdrawalTransaction(
+            withdrawal.withdrawalTx,
+            await canonicalStateChain.chainHead(),
+            outputProof,
+            withdrawalProof.storageProof,
+          )
+      expect(proveTx, "Failed to prove withdrawal").to.emit(
+        lightLinkPortal,
+        "WithdrawalProven",
+      );
+
+      // get finalization seconds from challenge 
+      const finalizationSeconds = await challenge.connect(l1Deployer).finalizationSeconds();
+
+      // move time forward
+      await l1Provider.send("evm_increaseTime", [Number(finalizationSeconds) * 2]);
+      await l1Provider.send("evm_mine", []);
+
+      // Finalize withdrawal
+      const finalizeTx = await lightLinkPortal
+        .connect(l1Deployer)
+        .finalizeWithdrawalTransaction(
+          withdrawal.withdrawalTx
+        );
+      expect(finalizeTx, "Failed to finalize withdrawal").to.emit(
+        lightLinkPortal,
+        "WithdrawalFinalized",
+      );
+      expect(finalizeTx, "Failed to call ping").to.emit(pingPong, "Pong");
+
+    });
+
+  }); // describe("L2CrossDomainMessenger")
 
 });
 

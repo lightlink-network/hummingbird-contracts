@@ -6,6 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { Types } from "../../typechain-types/contracts/L1/LightLinkPortal";
 import { L2ToL1MessagePasser, L2ToL1MessagePasserInterface, MessagePassedEvent } from "../../typechain-types/contracts/L2/L2ToL1MessagePasser";
 import { PayableOverrides } from "../../typechain-types/common";
+import { L2CrossDomainMessenger } from "../../typechain-types";
 
 /**
  * Fix for the case where the final proof element is less than 32 bytes and the element exists
@@ -174,6 +175,40 @@ export const initiateWithdraw = async (
 
   return { initiateTx, withdrawalTx, withdrawalHash, messageSlot };
 }
+
+export const sendMessageL2ToL1 = async (
+  messenger: L2CrossDomainMessenger,
+  bridge: L2ToL1MessagePasser,
+  sender: Signer,
+  l1Provider: ethers.JsonRpcProvider,
+  target: AddressLike,
+  callData: string
+) => {
+
+  const gasLimit = await l1Provider.estimateGas({
+    to: target,
+    data: callData,
+  });
+
+  const sendMessageTx = await messenger.connect(sender).sendMessage(
+    target,
+    callData,
+    gasLimit,
+  );
+
+  const sendMessageReceipt = await sendMessageTx.wait();
+
+  const { withdrawalTx } = parseMessagePassedEvent(
+    bridge.interface,
+    sendMessageReceipt!.logs[0],
+  );
+
+  const withdrawalHash = hashWithdrawalTx(withdrawalTx);
+  const messageSlot = hashMessageHash(withdrawalHash);
+
+  return { sendMessageTx, withdrawalTx, withdrawalHash, messageSlot };
+};
+
 
 /**
  * Generates a withdrawal proof for a given withdrawal transaction.
