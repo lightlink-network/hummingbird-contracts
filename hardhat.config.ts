@@ -88,6 +88,15 @@ const config: HardhatUserConfig = {
           "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
+    devnet: {
+      url: process.env.DEVNET_PROVIDER_URL || "",
+      accounts: [
+        process.env.DEVNET_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.DEVNET_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+      ],
+    },
   },
   mocha: {
     timeout: 200000,
@@ -100,9 +109,13 @@ const config: HardhatUserConfig = {
     L1Etherscan: process.env.ETHERSCAN_API_KEY,
     darkMode: true,
   },
+  sourcify: {
+    enabled: false,
+  },
   etherscan: {
     apiKey: {
       hardhat: "123456",
+      devnet: "12345678",
       ethereum: process.env.ETHERSCAN_API_KEY || "",
       sepolia: process.env.ETHERSCAN_API_KEY || "",
       arbSepolia: process.env.ETHERSCAN_API_KEY || "",
@@ -114,6 +127,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api-sepolia.arbiscan.io/api",
           browserURL: "https://sepolia.arbiscan.io",
+        },
+      },
+      {
+        network: "devnet",
+        chainId: 88,
+        urls: {
+          apiURL: "https://devnet.lightlink.io/api",
+          browserURL: "https://devnet.lightlink.io",
         },
       },
     ],

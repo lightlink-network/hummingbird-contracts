@@ -2,6 +2,15 @@ import { ethers } from "hardhat";
 import { log } from "../lib/log";
 import { proxyDeployAndInitialize } from "../lib/deploy";
 
+// npx hardhat verify --contract contracts/L1/L1CrossDomainMessenger.sol:L1CrossDomainMessenger --network sepolia 0x719E6614628552CFE0CE83B61778b2eA8A5c2147
+// npx hardhat verify --contract contracts/L1/L1StandardBridge.sol:L1StandardBridge --network sepolia 0xFe1F82B89E458F3236098cCa992209306FE45b47
+// npx hardhat verify --contract contracts/L1/LightLinkPortal.sol:LightLinkPortal --network sepolia 0xc537029Daf5489d9D4B377324027a7677fEC0515
+
+// npx hardhat verify --contract contracts/L2/L2ToL1MessagePasser.sol:L2ToL1MessagePasser --network pegasus 0x5FbDB2315678afecb367f032d93F642f64180aa3
+// npx hardhat verify --contract contracts/L2/L2StandardBridge.sol:L2StandardBridge --network pegasus 0x5FbDB2315678afecb367f032d93F642f64180aa3
+// npx hardhat verify --contract contracts/L2/L2CrossDomainMessenger.sol:L2CrossDomainMessenger --network pegasus 0x719E6614628552CFE0CE83B61778b2eA8A5c2147
+// npx hardhat verify --contract contracts/L2/L1Block.sol:L1Block --network pegasus 0x719E6614628552CFE0CE83B61778b2eA8A5c2147
+
 const CanonicalStateChain = "0x91C0b1164aB51c3310A7B0ceAEb208016671B1b9";
 const Challenge = "0x98BAa45355ea1e6F0ABC74d6a38EBc8e82c57015";
 
@@ -22,13 +31,14 @@ const main = async () => {
   log("Deploying L2ToL1MessagePasser to L2...");
   const L2ToL1MessagePasser = await ethers.getContractFactory(
     "L2ToL1MessagePasser",
+    l2Deployer,
   );
   const l2ToL1MessagePasser = await L2ToL1MessagePasser.deploy();
   await l2ToL1MessagePasser.waitForDeployment();
 
   // Deploy L1Block contract to L2
   log("Deploying L1Block to L2...");
-  const L1Block = await ethers.getContractFactory("L1Block");
+  const L1Block = await ethers.getContractFactory("L1Block", l2Deployer);
   const l1Block = await L1Block.deploy();
   await l1Block.waitForDeployment();
 
