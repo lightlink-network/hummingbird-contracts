@@ -10,7 +10,7 @@ const main = async () => {
 
     // deploy pingpong contract to l2
     const PingPongFactory = await ethers.getContractFactory("PingPong");
-    const pingPong = await PingPongFactory.connect(l1wallet).deploy();
+    const pingPong = await PingPongFactory.connect(l2wallet).deploy();
 
     // attach l1CrossDomainMessenger contract
     const L1CrossDomainMessengerFactory = await ethers.getContractFactory("L1CrossDomainMessenger");
@@ -27,7 +27,6 @@ const main = async () => {
         data: callData,
     });
 
-
     const msgTx = await l1CrossDomainMessenger.connect(l1wallet).sendMessage(
         await pingPong.getAddress(),
         callData,
@@ -37,8 +36,7 @@ const main = async () => {
         }
     );
 
-
-    // console.log("Message sent to L2:", msgTx.hash);
+    console.log("Message sent to L2:", msgTx.hash);
 }
 
 main()
