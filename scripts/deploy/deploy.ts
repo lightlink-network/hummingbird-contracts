@@ -44,7 +44,7 @@ const main = async () => {
 
   // Step 4. Deploy required RLPReader lib
   log("Deploying RLPReader...");
-  const RLPReader = await ethers.getContractFactory("RLPReader");
+  const RLPReader = await ethers.getContractFactory("contracts/L1/RLPReader.sol:RLPReader");
   const rlpReader = await RLPReader.deploy();
   await rlpReader.waitForDeployment();
   const rlpReaderAddr = await rlpReader.getAddress();

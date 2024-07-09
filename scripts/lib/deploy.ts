@@ -98,6 +98,8 @@ export const getBlobstreamXAddr = (chainId: any) => {
       }
       return process.env.BLOBSTREAM_SEPOLIA!;
     default:
-      throw new Error("BlobstreamX address not found for chain id: " + chainId);
+      // throw new Error("BlobstreamX address not found for chain id: " + chainId);
+      console.warn("BlobstreamX address not found for chain id: " + chainId);
+      return ethers.ZeroAddress;
   }
 };

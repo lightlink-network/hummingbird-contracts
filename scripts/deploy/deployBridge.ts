@@ -11,8 +11,8 @@ import { proxyDeployAndInitialize } from "../lib/deploy";
 // npx hardhat verify --contract contracts/L2/L2CrossDomainMessenger.sol:L2CrossDomainMessenger --network pegasus 0x719E6614628552CFE0CE83B61778b2eA8A5c2147
 // npx hardhat verify --contract contracts/L2/L1Block.sol:L1Block --network pegasus 0x719E6614628552CFE0CE83B61778b2eA8A5c2147
 
-const CanonicalStateChain = "0x91C0b1164aB51c3310A7B0ceAEb208016671B1b9";
-const Challenge = "0x98BAa45355ea1e6F0ABC74d6a38EBc8e82c57015";
+const CanonicalStateChain = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const Challenge = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
 
 const main = async () => {
   const l1Provider = new ethers.JsonRpcProvider(process.env.L1_RPC_URL!);
@@ -152,6 +152,6 @@ const main = async () => {
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    error(error);
+    console.error(error);
     process.exit(1);
   });
