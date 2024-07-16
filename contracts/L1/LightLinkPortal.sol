@@ -62,37 +62,12 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
 
     ResourceConfig public resourceConfig;
 
-    /// @custom:legacy
-    /// @custom:spacer paused
-    /// @notice Spacer for backwards compatibility.
-    bool private spacer_53_0_1;
-
     /// @notice Contract of the L2OutputOracle.
     /// @custom:network-specific
     ICanonicalStateChain public l2Oracle;
 
     /// @notice Contract of the ChallengeBase.
     IChallengeBase challenge;
-
-    /// @custom:spacer disputeGameFactory
-    /// @notice Spacer for backwards compatibility.
-    address private spacer_56_0_20;
-
-    /// @custom:spacer provenWithdrawals
-    /// @notice Spacer for backwards compatibility.
-    bytes32 private spacer_57_0_32;
-
-    /// @custom:spacer disputeGameBlacklist
-    /// @notice Spacer for backwards compatibility.
-    bytes32 private spacer_58_0_32;
-
-    /// @custom:spacer respectedGameType + respectedGameTypeUpdatedAt
-    /// @notice Spacer for backwards compatibility.
-    bytes32 private spacer_59_0_32;
-
-    /// @custom:spacer proofSubmitters
-    /// @notice Spacer for backwards compatibility.
-    bytes32 private spacer_60_0_32;
 
     /// @notice Represents the amount of native asset minted in L2. This may not
     ///         be 100% accurate due to the ability to send ether to the contract
@@ -656,4 +631,6 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
     ) internal view returns (bool) {
         return block.timestamp > _timestamp + challenge.finalizationSeconds();
     }
+
+    uint256[50] private __gap;
 }
