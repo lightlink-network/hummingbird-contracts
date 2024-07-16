@@ -96,6 +96,6 @@ contract L1CrossDomainMessenger is CrossDomainMessenger {
 
     /// @inheritdoc CrossDomainMessenger
     function paused() public view override returns (bool) {
-        return false;
+        return portal.paused();
     }
 }

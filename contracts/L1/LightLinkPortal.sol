@@ -19,13 +19,14 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {L1Block} from "../L2/L1Block.sol";
 // import {Predeploys} from "../libraries/Predeploys.sol";
 import "../libraries/PortalErrors.sol";
+import "../libraries/Pausible.sol";
 
 /// @custom:proxied
 /// @title LightLinkPortal
 /// @notice The LightLinkPortal is a low-level contract responsible for passing messages between L1
 ///         and L2. Messages sent directly to the LightLinkPortal have no form of replayability.
 ///         Users are encouraged to use the L1CrossDomainMessenger for a higher-level interface.
-contract LightLinkPortal is Initializable, ResourceMetering, Ownable {
+contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
     /// @notice Allows for interactions with non standard ERC20 tokens.
     using SafeERC20 for IERC20;
 
@@ -131,12 +132,6 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable {
     /// @param success        Whether the withdrawal transaction was successful.
     event WithdrawalFinalized(bytes32 indexed withdrawalHash, bool success);
 
-    /// @notice Reverts when paused.
-    modifier whenNotPaused() {
-        if (paused()) revert CallPaused();
-        _;
-    }
-
     /// @notice Semantic version.
     /// @custom:semver 2.8.1-beta.1
     function version() public pure virtual returns (string memory) {
@@ -144,7 +139,7 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable {
     }
 
     /// @notice Constructs the LightLinkPortal contract.
-    constructor() Ownable(msg.sender) {
+    constructor() Pausable(msg.sender) {
         initialize({
             _l2Oracle: ICanonicalStateChain(address(0)),
             _challenge: IChallengeBase(address(0)),
@@ -186,12 +181,6 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable {
         } else {
             return _balance;
         }
-    }
-
-    /// @notice Getter for the current paused status.
-    /// @return paused_ Whether or not the contract is paused.
-    function paused() public view returns (bool paused_) {
-        paused_ = false; // TODO: Remove this line when the paused status is implemented.
     }
 
     /// @notice Computes the minimum gas limit for a deposit.

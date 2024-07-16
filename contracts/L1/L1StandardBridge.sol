@@ -5,6 +5,7 @@ import {Constants} from "../libraries/Constants.sol";
 // import {Predeploys} from "src/libraries/Predeploys.sol";
 import {StandardBridge} from "../universal/StandardBridge.sol";
 import {CrossDomainMessenger} from "../universal/CrossDomainMessenger.sol";
+import {L1CrossDomainMessenger} from "./L1CrossDomainMessenger.sol";
 // import {SuperchainConfig} from "src/L1/SuperchainConfig.sol";
 import {LightLinkPortal} from "../L1/LightLinkPortal.sol";
 
@@ -107,8 +108,7 @@ contract L1StandardBridge is StandardBridge {
 
     /// @inheritdoc StandardBridge
     function paused() public view override returns (bool) {
-        // return superchainConfig.paused();
-        return false; // TODO: Temporarily disable the pause mechanism
+        return L1CrossDomainMessenger(address(messenger)).paused();
     }
 
     /// @notice Allows EOAs to bridge ETH by sending directly to the bridge.
