@@ -56,10 +56,10 @@ const main = async () => {
     );
 
 
-    console.log("\n\nWithdrawal Tx:", JSON.stringify(withdrawal.withdrawalTx));
-    console.log("Withdrawal Proof:", JSON.stringify(withdrawalProof));
-    console.log("Output Proof:", JSON.stringify(outputProof));
-    console.log("Output Root:", JSON.stringify(outputRoot));
+    console.log("\n\nWithdrawal Tx:", JSON.stringify(withdrawal.withdrawalTx, bigIntReplacer, 2));
+    console.log("Withdrawal Proof:", JSON.stringify(withdrawalProof, bigIntReplacer, 2));
+    console.log("Output Proof:", JSON.stringify(outputProof, bigIntReplacer, 2));
+    console.log("Output Root:", JSON.stringify(outputRoot, bigIntReplacer, 2));
 
 
     console.log("\n\nContinue after rollup block published")
@@ -95,3 +95,15 @@ main()
         console.error(error);
         process.exit(1);
     });
+
+
+const bigIntReplacer = (key: any, value: any) => {
+    // if bigint, convert to string
+    if (typeof value === "bigint") return value.toString();
+    // if BigInt, convert to string
+    if (value?.constructor?.name === "BigInt" || typeof value === "bigint") return value.toString();
+    // if bignumber, convert to string
+    if (value?.constructor?.name === "BigNumber") return value.toString();
+
+    return value;
+}
