@@ -1,9 +1,9 @@
 node_modules
-.env
+.DS_STORE
 
 # Hardhat files
-/cache
-/artifacts
+/hardhat-cache
+/hardhat-artifacts
 
 # TypeChain files
 /typechain
@@ -20,3 +20,10 @@ node_modules
 !.env.example
 
 *.log
+
+# Foundry files
+/target
+forge-artifacts
+forge-cache
+out.json
+bloat*
