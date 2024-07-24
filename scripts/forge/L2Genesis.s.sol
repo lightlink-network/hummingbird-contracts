@@ -168,8 +168,8 @@ contract L2Genesis is Deployer {
         );
 
         // TODO: revert func signatures to original
-        // setL2CrossDomainMessenger(_l1Dependencies.l1CrossDomainMessengerProxy); // 7
-        // setL2StandardBridge(_l1Dependencies.l1StandardBridgeProxy); // 10
+        setL2CrossDomainMessenger(_l1Dependencies.l1CrossDomainMessengerProxy); // 7
+        setL2StandardBridge(_l1Dependencies.l1StandardBridgeProxy); // 10
         setLightLinkMintableERC20Factory(); // 12
         setL1Block(); // 15
         setL2ToL1MessagePasser(); // 16
@@ -200,40 +200,42 @@ contract L2Genesis is Deployer {
         _setImplementationCode(Predeploys.L2_TO_L1_MESSAGE_PASSER);
     }
 
-    // /// @notice This predeploy is following the safety invariant #1.
-    // function setL2CrossDomainMessenger(
-    //     address payable _l1CrossDomainMessengerProxy
-    // ) public {
-    //     address impl = _setImplementationCode(
-    //         Predeploys.L2_CROSS_DOMAIN_MESSENGER
-    //     );
+    /// @notice This predeploy is following the safety invariant #1.
+    function setL2CrossDomainMessenger(
+        address payable _l1CrossDomainMessengerProxy
+    ) public {
+        address impl = _setImplementationCode(
+            Predeploys.L2_CROSS_DOMAIN_MESSENGER
+        );
 
-    //     L2CrossDomainMessenger(impl).initialize({
-    //         _l1CrossDomainMessenger: L1CrossDomainMessenger(address(0))
-    //     });
+        L2CrossDomainMessenger(impl).initialize({
+            _l1CrossDomainMessenger: L1CrossDomainMessenger(address(0))
+        });
 
-    //     L2CrossDomainMessenger(Predeploys.L2_CROSS_DOMAIN_MESSENGER)
-    //         .initialize({
-    //             _l1CrossDomainMessenger: L1CrossDomainMessenger(
-    //                 _l1CrossDomainMessengerProxy
-    //             )
-    //         });
-    // }
+        L2CrossDomainMessenger(Predeploys.L2_CROSS_DOMAIN_MESSENGER)
+            .initialize({
+                _l1CrossDomainMessenger: L1CrossDomainMessenger(
+                    _l1CrossDomainMessengerProxy
+                )
+            });
+    }
 
-    // /// @notice This predeploy is following the safety invariant #1.
-    // function setL2StandardBridge(
-    //     address payable _l1StandardBridgeProxy
-    // ) public {
-    //     address impl = _setImplementationCode(Predeploys.L2_STANDARD_BRIDGE);
+    /// @notice This predeploy is following the safety invariant #1.
+    function setL2StandardBridge(
+        address payable _l1StandardBridgeProxy
+    ) public {
+        address impl = _setImplementationCode(Predeploys.L2_STANDARD_BRIDGE);
 
-    //     L2StandardBridge(payable(impl)).initialize({
-    //         _otherBridge: L1StandardBridge(payable(address(0)))
-    //     });
+        L2StandardBridge(payable(impl)).initialize({
+            _otherBridge: L1StandardBridge(payable(address(0))),
+            _legacyERC20ETH: address(0)
+        });
 
-    //     L2StandardBridge(payable(Predeploys.L2_STANDARD_BRIDGE)).initialize({
-    //         _otherBridge: L1StandardBridge(_l1StandardBridgeProxy)
-    //     });
-    // }
+        L2StandardBridge(payable(Predeploys.L2_STANDARD_BRIDGE)).initialize({
+            _otherBridge: L1StandardBridge(_l1StandardBridgeProxy),
+            _legacyERC20ETH: address(0)
+        });
+    }
 
     /// @notice This predeploy is following the safety invariant #1.
     function setLightLinkMintableERC20Factory() public {
