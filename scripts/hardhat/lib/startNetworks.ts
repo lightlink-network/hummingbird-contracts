@@ -1,8 +1,10 @@
 import { exec, ChildProcess, execSync } from "child_process";
 import axios from "axios";
+import { existsSync, fstatSync } from "fs";
 
 interface StartNetworkOptions {
   logOutput?: boolean;
+  genesisFile?: string;
 }
 
 const killProcessOnPort = (port: number): void => {
@@ -28,12 +30,31 @@ const startAnvilNetwork = (
 ): Promise<ChildProcess> => {
   return new Promise((resolve, reject) => {
     console.log(`    Starting ${networkName} network on port ${port}...`);
-    const process = exec(`anvil --port ${port}`, (error, stdout, stderr) => {
+    let cmd = `anvil --port ${port}`;
+
+    // if genesis file is provided, use it
+    if (options?.genesisFile) {
+      if (!existsSync(options.genesisFile)) {
+        console.error(
+          `    Error starting ${networkName} network: Genesis file not found at ${options.genesisFile}`,
+        );
+        reject(new Error("Genesis file not found"));
+      }
+
+      console.log(`    Using genesis file: ${options.genesisFile}`);
+      cmd += ` --init ${options.genesisFile} --chain-id 5555`;
+    }
+
+    const process = exec(cmd, (error, stdout, stderr) => {
       if (error) {
         console.error(
           `    Error starting ${networkName} network: ${error.message}`,
         );
         reject(error);
+      }
+
+      if (options?.genesisFile) {
+        console.log(stdout);
       }
     });
 
@@ -83,7 +104,7 @@ export const startNetworks = async (
   console.log("    Starting networks...");
 
   try {
-    const l1Network = await retryStartNetwork(8545, "l1", options);
+    const l1Network = await retryStartNetwork(8545, "l1", {});
     console.log("    L1 network started successfully on port 8545.");
 
     const l2Network = await retryStartNetwork(8546, "l2", options);
@@ -93,7 +114,8 @@ export const startNetworks = async (
     console.log("    Waiting for networks to be fully operational...");
     await Promise.all([
       waitForRpcEndpoint("http://0.0.0.0:8545"),
-      waitForRpcEndpoint("http://0.0.0.0:8546")]);
+      waitForRpcEndpoint("http://0.0.0.0:8546"),
+    ]);
 
     console.log("    Networks are up and running.\n\n");
     return { l1Network, l2Network };
@@ -105,7 +127,7 @@ export const startNetworks = async (
 
 const waitForRpcEndpoint = async (endpoint: string) => {
   const interval = 250;
-  const maxAttempts = 30;
+  const maxAttempts = 60;
 
   for (let i = 0; i < maxAttempts; i++) {
     const isAvailable = await isEndpointAvailable(endpoint);
@@ -116,9 +138,9 @@ const waitForRpcEndpoint = async (endpoint: string) => {
     await delay(interval);
   }
   return false;
-}
+};
 
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 const isEndpointAvailable = async (endpoint: string): Promise<boolean> => {
   try {
@@ -126,10 +148,10 @@ const isEndpointAvailable = async (endpoint: string): Promise<boolean> => {
       jsonrpc: "2.0",
       method: "anvil_nodeInfo",
       params: [],
-      id: 1
+      id: 1,
     });
     return response.status === 200 && response.data.result != undefined;
   } catch (error) {
     return false;
   }
-}
+};

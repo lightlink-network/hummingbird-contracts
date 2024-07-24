@@ -14,6 +14,9 @@ import {
   L1CrossDomainMessenger,
   L1Block,
   PingPong,
+  L2CrossDomainMessenger__factory,
+  L2ToL1MessagePasser__factory,
+  L1Block__factory,
 } from "../../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { proxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
@@ -50,7 +53,9 @@ describe("Cross-chain interaction", function () {
 
   before(async function () {
     // Start Anvil network instances
-    const networks = await startNetworks();
+    const networks = await startNetworks({
+      genesisFile: "test/tests/genesis.json",
+    });
     l1Network = networks.l1Network;
     l2Network = networks.l2Network;
 
@@ -63,6 +68,9 @@ describe("Cross-chain interaction", function () {
     // Set up L2 provider and signer
     l2Provider = new ethers.JsonRpcProvider("http://0.0.0.0:8546");
     l2Deployer = (await l2Provider.getSigner(0)) as any;
+
+    console.log("L1 ChainID", (await l1Provider.getNetwork()).chainId);
+    console.log("L2 ChainID", (await l2Provider.getNetwork()).chainId);
 
     // Deploy L1 contracts
 
@@ -93,7 +101,6 @@ describe("Cross-chain interaction", function () {
       [
         await canonicalStateChain.getAddress(),
         await challengeDeployment.address,
-        ethers.ZeroAddress, // L1Block address
       ],
     );
     lightLinkPortal = lightLinkPortalDeployment.contract as LightLinkPortal;
@@ -106,65 +113,32 @@ describe("Cross-chain interaction", function () {
     BridgeProofHelper = (await bridgeProofHelperFactory.deploy()) as any;
     await BridgeProofHelper.waitForDeployment();
 
-    // Deploy L2 contracts
-
-    // - L2ToL1MessagePasser
-    const L2ToL1MessagePasserFactory = await ethers.getContractFactory(
-      "contracts/L2/L2ToL1MessagePasser.sol:L2ToL1MessagePasser",
+    // Link L2 contract predeploys
+    l2ToL1MessagePasser = L2ToL1MessagePasser__factory.connect(
+      "0x4200000000000000000000000000000000000016",
       l2Deployer,
     );
-    l2ToL1MessagePasser = (await L2ToL1MessagePasserFactory.deploy()) as any;
-    await l2ToL1MessagePasser.waitForDeployment();
 
-    // - L1Block
-    const L1BlockFactory = await ethers.getContractFactory(
-      "contracts/L2/L1Block.sol:L1Block",
+    l1Block = L1Block__factory.connect(
+      "0x4200000000000000000000000000000000000015",
       l2Deployer,
     );
-    l1Block = (await L1BlockFactory.deploy()) as any;
 
-    // Cross domain messengers
-    // - Infer deployment addresses before deploying
-    const l2CrossDomainMessengerAddr = ethers.getCreateAddress({
-      from: l2Deployer.address,
-      nonce: (await l2Provider.getTransactionCount(l2Deployer.address)) + 1,
-      // +1 because implementation will be deployed first
-    });
-    const l1CrossDomainMessengerAddr = ethers.getCreateAddress({
-      from: l1Deployer.address,
-      nonce: (await l1Provider.getTransactionCount(l1Deployer.address)) + 1,
-      // +1 because implementation will be deployed first
-    });
+    l2CrossDomainMessenger = L2CrossDomainMessenger__factory.connect(
+      "0x4200000000000000000000000000000000000016",
+      l2Deployer,
+    );
 
-    // - Deploy cross domain messengers
+    // - Deploy cross domain messenger on L1
     console.log("Deploying cross domain messengers");
-    const L2CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
-      l2Deployer,
-      await ethers.getContractFactory("L2CrossDomainMessenger"),
-      [
-        l1CrossDomainMessengerAddr,
-        await l2ToL1MessagePasser.getAddress(),
-        await l1Block.getAddress(),
-      ],
-    );
-    l2CrossDomainMessenger =
-      L2CrossDomainMessengerDeployment.contract as L2CrossDomainMessenger;
 
     const L1CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("L1CrossDomainMessenger"),
-      [await lightLinkPortal.getAddress(), l2CrossDomainMessengerAddr],
+      [await lightLinkPortal.getAddress()],
     );
     l1CrossDomainMessenger =
       L1CrossDomainMessengerDeployment.contract as L1CrossDomainMessenger;
-
-    expect(l2CrossDomainMessengerAddr, "address mismatch").to.equal(
-      await l2CrossDomainMessenger.getAddress(),
-    );
-
-    expect(l1CrossDomainMessengerAddr, "address mismatch").to.equal(
-      await l1CrossDomainMessenger.getAddress(),
-    );
 
     // Impersonate l2 Depositor account
     console.log("Impersonating L2 depositor account");
