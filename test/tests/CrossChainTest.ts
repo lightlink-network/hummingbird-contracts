@@ -125,7 +125,7 @@ describe("Cross-chain interaction", function () {
     );
 
     l2CrossDomainMessenger = L2CrossDomainMessenger__factory.connect(
-      "0x4200000000000000000000000000000000000016",
+      "0x4200000000000000000000000000000000000007",
       l2Deployer,
     );
 
