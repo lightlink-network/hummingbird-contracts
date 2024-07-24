@@ -42,7 +42,7 @@ const startAnvilNetwork = (
       }
 
       console.log(`    Using genesis file: ${options.genesisFile}`);
-      cmd += ` --init ${options.genesisFile} --chain-id 5555`;
+      cmd += ` --init ${options.genesisFile}`;
     }
 
     const process = exec(cmd, (error, stdout, stderr) => {
