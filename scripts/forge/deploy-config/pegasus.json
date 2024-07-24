@@ -1,0 +1,6 @@
+{
+    "l2ChainID": 10,
+    "proxyAdminOwner": "0x7871d1187A97cbbE40710aC119AA3d412944e4Fe",
+    "l1CrossDomainMessengerProxy": "0x7871d1187A97cbbE40710aC119AA3d412944e4Fe",
+    "l1StandardBridgeProxy": "0x7871d1187A97cbbE40710aC119AA3d412944e4Fe"
+}
