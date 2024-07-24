@@ -5,7 +5,7 @@ import {
   CanonicalStateChain__factory,
   CanonicalStateChain,
 } from "../../typechain-types";
-import { proxyDeployAndInitialize } from "../../scripts/lib/deploy";
+import { proxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
 
 type Header = CanonicalStateChain.HeaderStruct;
 

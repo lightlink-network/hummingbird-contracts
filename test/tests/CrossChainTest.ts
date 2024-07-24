@@ -1,12 +1,9 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { JsonRpcProvider, Log, EventLog } from "ethers";
-import { startNetworks } from "../../scripts/lib/startNetworks";
+import { startNetworks } from "../../scripts/hardhat/lib/startNetworks";
 import { ChildProcess } from "child_process";
-import {
-  setupCanonicalStateChain,
-  makeNextBlock,
-} from "../lib/chain";
+import { setupCanonicalStateChain, makeNextBlock } from "../lib/chain";
 import {
   CanonicalStateChain,
   LightLinkPortal,
@@ -19,8 +16,12 @@ import {
   PingPong,
 } from "../../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { proxyDeployAndInitialize } from "../../scripts/lib/deploy";
-import { initiateWithdraw, getWithdrawalProofs, sendMessageL2ToL1 } from "../lib/bridge";
+import { proxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
+import {
+  initiateWithdraw,
+  getWithdrawalProofs,
+  sendMessageL2ToL1,
+} from "../lib/bridge";
 import { assert } from "console";
 
 describe("Cross-chain interaction", function () {
@@ -92,7 +93,7 @@ describe("Cross-chain interaction", function () {
       [
         await canonicalStateChain.getAddress(),
         await challengeDeployment.address,
-        ethers.ZeroAddress, // L1Block address 
+        ethers.ZeroAddress, // L1Block address
       ],
     );
     lightLinkPortal = lightLinkPortalDeployment.contract as LightLinkPortal;
@@ -115,7 +116,7 @@ describe("Cross-chain interaction", function () {
     l2ToL1MessagePasser = (await L2ToL1MessagePasserFactory.deploy()) as any;
     await l2ToL1MessagePasser.waitForDeployment();
 
-    // - L1Block 
+    // - L1Block
     const L1BlockFactory = await ethers.getContractFactory(
       "contracts/L2/L1Block.sol:L1Block",
       l2Deployer,
@@ -126,12 +127,12 @@ describe("Cross-chain interaction", function () {
     // - Infer deployment addresses before deploying
     const l2CrossDomainMessengerAddr = ethers.getCreateAddress({
       from: l2Deployer.address,
-      nonce: await l2Provider.getTransactionCount(l2Deployer.address) + 1,
+      nonce: (await l2Provider.getTransactionCount(l2Deployer.address)) + 1,
       // +1 because implementation will be deployed first
     });
     const l1CrossDomainMessengerAddr = ethers.getCreateAddress({
       from: l1Deployer.address,
-      nonce: await l1Provider.getTransactionCount(l1Deployer.address) + 1,
+      nonce: (await l1Provider.getTransactionCount(l1Deployer.address)) + 1,
       // +1 because implementation will be deployed first
     });
 
@@ -140,16 +141,22 @@ describe("Cross-chain interaction", function () {
     const L2CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
       l2Deployer,
       await ethers.getContractFactory("L2CrossDomainMessenger"),
-      [l1CrossDomainMessengerAddr, await l2ToL1MessagePasser.getAddress(), await l1Block.getAddress()],
+      [
+        l1CrossDomainMessengerAddr,
+        await l2ToL1MessagePasser.getAddress(),
+        await l1Block.getAddress(),
+      ],
     );
-    l2CrossDomainMessenger = L2CrossDomainMessengerDeployment.contract as L2CrossDomainMessenger;
+    l2CrossDomainMessenger =
+      L2CrossDomainMessengerDeployment.contract as L2CrossDomainMessenger;
 
     const L1CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("L1CrossDomainMessenger"),
       [await lightLinkPortal.getAddress(), l2CrossDomainMessengerAddr],
     );
-    l1CrossDomainMessenger = L1CrossDomainMessengerDeployment.contract as L1CrossDomainMessenger;
+    l1CrossDomainMessenger =
+      L1CrossDomainMessengerDeployment.contract as L1CrossDomainMessenger;
 
     expect(l2CrossDomainMessengerAddr, "address mismatch").to.equal(
       await l2CrossDomainMessenger.getAddress(),
@@ -165,9 +172,9 @@ describe("Cross-chain interaction", function () {
       "0xDeaDDEaDDeAdDeAdDEAdDEaddeAddEAdDEAd0001",
     ]);
 
-    l2Depositor = await l2Provider.getSigner(
+    l2Depositor = (await l2Provider.getSigner(
       "0xDeaDDEaDDeAdDeAdDEAdDEaddeAddEAdDEAd0001",
-    ) as any;
+    )) as any;
 
     console.log("L2 depositor account impersonated - funding...");
     await l2Deployer.sendTransaction({
@@ -227,12 +234,13 @@ describe("Cross-chain interaction", function () {
       ).to.equal(ethers.ZeroAddress);
 
       // Generate proof
-      const { withdrawalProof, outputProof, outputRoot } = await getWithdrawalProofs(
-        l2Provider,
-        withdrawal.initiateTx.blockNumber ?? "latest",
-        l2ToL1MessagePasser,
-        withdrawal.messageSlot,
-      );
+      const { withdrawalProof, outputProof, outputRoot } =
+        await getWithdrawalProofs(
+          l2Provider,
+          withdrawal.initiateTx.blockNumber ?? "latest",
+          l2ToL1MessagePasser,
+          withdrawal.messageSlot,
+        );
 
       // Verify proof
       const verified = await BridgeProofHelper.connect(l1Deployer).checkProof(
@@ -257,12 +265,13 @@ describe("Cross-chain interaction", function () {
       );
 
       // Generate proofs
-      const { withdrawalProof, outputProof, outputRoot } = await getWithdrawalProofs(
-        l2Provider,
-        withdrawal.initiateTx.blockNumber ?? "latest",
-        l2ToL1MessagePasser,
-        withdrawal.messageSlot,
-      );
+      const { withdrawalProof, outputProof, outputRoot } =
+        await getWithdrawalProofs(
+          l2Provider,
+          withdrawal.initiateTx.blockNumber ?? "latest",
+          l2ToL1MessagePasser,
+          withdrawal.messageSlot,
+        );
 
       // Push a new header to L1
       const [nextHeader] = await makeNextBlock(l1Deployer, canonicalStateChain);
@@ -291,7 +300,6 @@ describe("Cross-chain interaction", function () {
     });
 
     it("Finalize Withdrawal", async function () {
-
       // Initiate withdrawal from L2
 
       const recipient = randomAddress();
@@ -307,12 +315,13 @@ describe("Cross-chain interaction", function () {
       );
 
       // Generate proofs
-      const { withdrawalProof, outputProof, outputRoot } = await getWithdrawalProofs(
-        l2Provider,
-        withdrawal.initiateTx.blockNumber ?? "latest",
-        l2ToL1MessagePasser,
-        withdrawal.messageSlot,
-      );
+      const { withdrawalProof, outputProof, outputRoot } =
+        await getWithdrawalProofs(
+          l2Provider,
+          withdrawal.initiateTx.blockNumber ?? "latest",
+          l2ToL1MessagePasser,
+          withdrawal.messageSlot,
+        );
 
       // Push a new header to L1
       const [nextHeader] = await makeNextBlock(l1Deployer, canonicalStateChain);
@@ -325,44 +334,48 @@ describe("Cross-chain interaction", function () {
         "BlockAdded",
       );
 
-
       // Prove withdrawal
-      const proveTx = await
-        lightLinkPortal
-          .connect(l1Deployer)
-          .proveWithdrawalTransaction(
-            withdrawal.withdrawalTx,
-            await canonicalStateChain.chainHead(),
-            outputProof,
-            withdrawalProof.storageProof,
-          )
+      const proveTx = await lightLinkPortal
+        .connect(l1Deployer)
+        .proveWithdrawalTransaction(
+          withdrawal.withdrawalTx,
+          await canonicalStateChain.chainHead(),
+          outputProof,
+          withdrawalProof.storageProof,
+        );
       expect(proveTx, "Failed to prove withdrawal").to.emit(
         lightLinkPortal,
         "WithdrawalProven",
       );
 
-      // get finalization seconds from challenge 
-      const finalizationSeconds = await challenge.connect(l1Deployer).finalizationSeconds();
+      // get finalization seconds from challenge
+      const finalizationSeconds = await challenge
+        .connect(l1Deployer)
+        .finalizationSeconds();
 
       // move time forward
-      await l1Provider.send("evm_increaseTime", [Number(finalizationSeconds) * 2]);
+      await l1Provider.send("evm_increaseTime", [
+        Number(finalizationSeconds) * 2,
+      ]);
       await l1Provider.send("evm_mine", []);
 
       // fund the contract
-      await lightLinkPortal.connect(l1Deployer).donateETH({ value: ethers.parseEther("3") });
+      await lightLinkPortal
+        .connect(l1Deployer)
+        .donateETH({ value: ethers.parseEther("3") });
 
       // Finalize withdrawal
       const finalizeTx = await lightLinkPortal
         .connect(l1Deployer)
-        .finalizeWithdrawalTransaction(
-          withdrawal.withdrawalTx
-        );
+        .finalizeWithdrawalTransaction(withdrawal.withdrawalTx);
       expect(finalizeTx, "Failed to finalize withdrawal").to.emit(
         lightLinkPortal,
         "WithdrawalFinalized",
       );
 
-      expect(await l1Provider.getBalance(recipient)).to.equal(ethers.parseEther("1"));
+      expect(await l1Provider.getBalance(recipient)).to.equal(
+        ethers.parseEther("1"),
+      );
     });
 
     it("Deposit", async function () {
@@ -371,22 +384,14 @@ describe("Cross-chain interaction", function () {
 
       const depositTx = await lightLinkPortal
         .connect(l1Deployer)
-        .depositTransaction(
-          recipient,
-          value,
-          21000,
-          false,
-          "0x",
-          {
-            value: value,
-          },
-        );
+        .depositTransaction(recipient, value, 21000, false, "0x", {
+          value: value,
+        });
 
       expect(depositTx, "Failed to deposit").to.emit(
         lightLinkPortal,
         "TransactionDeposited",
       );
-
     });
   }); // describe("LightLinkPortal")
 
@@ -394,10 +399,14 @@ describe("Cross-chain interaction", function () {
     it("Pong", async function () {
       // deploy pingpong contract to l2
       const PingPongFactory = await ethers.getContractFactory("PingPong");
-      const pingPong = await PingPongFactory.connect(l2Deployer).deploy() as PingPong
+      const pingPong = (await PingPongFactory.connect(
+        l2Deployer,
+      ).deploy()) as PingPong;
 
       // encode call: `ping("Hello L2!")`
-      const callData = pingPong.interface.encodeFunctionData("ping", ["Hello L2!"]);
+      const callData = pingPong.interface.encodeFunctionData("ping", [
+        "Hello L2!",
+      ]);
 
       // estimate gas
       const gasEstimate = await l2Deployer.estimateGas({
@@ -405,13 +414,14 @@ describe("Cross-chain interaction", function () {
         data: callData,
       });
 
-      const msgTx = await l1CrossDomainMessenger.connect(l1Deployer).sendMessage(
-        await pingPong.getAddress(),
-        callData,
-        gasEstimate,
-      );
+      const msgTx = await l1CrossDomainMessenger
+        .connect(l1Deployer)
+        .sendMessage(await pingPong.getAddress(), callData, gasEstimate);
 
-      expect(msgTx, "Failed to send message").to.emit(lightLinkPortal, "TransactionDeposited");
+      expect(msgTx, "Failed to send message").to.emit(
+        lightLinkPortal,
+        "TransactionDeposited",
+      );
     });
   }); // describe("L1CrossDomainMessenger")
 
@@ -419,10 +429,14 @@ describe("Cross-chain interaction", function () {
     it("Pong", async function () {
       // deploy pingpong contract to l1
       const PingPongFactory = await ethers.getContractFactory("PingPong");
-      const pingPong = await PingPongFactory.connect(l1Deployer).deploy() as PingPong
+      const pingPong = (await PingPongFactory.connect(
+        l1Deployer,
+      ).deploy()) as PingPong;
 
       // encode call: `ping("Hello L1!")`
-      const callData = pingPong.interface.encodeFunctionData("ping", ["Hello L1!"]);
+      const callData = pingPong.interface.encodeFunctionData("ping", [
+        "Hello L1!",
+      ]);
 
       // send message
       const withdrawal = await sendMessageL2ToL1(
@@ -432,15 +446,16 @@ describe("Cross-chain interaction", function () {
         l1Provider,
         await pingPong.getAddress(),
         callData,
-      )
+      );
 
       // Generate withdrawal proofs
-      const { withdrawalProof, outputProof, outputRoot } = await getWithdrawalProofs(
-        l2Provider,
-        withdrawal.sendMessageTx.blockNumber ?? "latest",
-        l2ToL1MessagePasser,
-        withdrawal.messageSlot,
-      );
+      const { withdrawalProof, outputProof, outputRoot } =
+        await getWithdrawalProofs(
+          l2Provider,
+          withdrawal.sendMessageTx.blockNumber ?? "latest",
+          l2ToL1MessagePasser,
+          withdrawal.messageSlot,
+        );
 
       // Push a new header to L1
       const [nextHeader] = await makeNextBlock(l1Deployer, canonicalStateChain);
@@ -454,44 +469,41 @@ describe("Cross-chain interaction", function () {
       );
 
       // Prove withdrawal
-      const proveTx = await
-        lightLinkPortal
-          .connect(l1Deployer)
-          .proveWithdrawalTransaction(
-            withdrawal.withdrawalTx,
-            await canonicalStateChain.chainHead(),
-            outputProof,
-            withdrawalProof.storageProof,
-          )
+      const proveTx = await lightLinkPortal
+        .connect(l1Deployer)
+        .proveWithdrawalTransaction(
+          withdrawal.withdrawalTx,
+          await canonicalStateChain.chainHead(),
+          outputProof,
+          withdrawalProof.storageProof,
+        );
       expect(proveTx, "Failed to prove withdrawal").to.emit(
         lightLinkPortal,
         "WithdrawalProven",
       );
 
-      // get finalization seconds from challenge 
-      const finalizationSeconds = await challenge.connect(l1Deployer).finalizationSeconds();
+      // get finalization seconds from challenge
+      const finalizationSeconds = await challenge
+        .connect(l1Deployer)
+        .finalizationSeconds();
 
       // move time forward
-      await l1Provider.send("evm_increaseTime", [Number(finalizationSeconds) * 2]);
+      await l1Provider.send("evm_increaseTime", [
+        Number(finalizationSeconds) * 2,
+      ]);
       await l1Provider.send("evm_mine", []);
 
       // Finalize withdrawal
       const finalizeTx = await lightLinkPortal
         .connect(l1Deployer)
-        .finalizeWithdrawalTransaction(
-          withdrawal.withdrawalTx
-        );
+        .finalizeWithdrawalTransaction(withdrawal.withdrawalTx);
       expect(finalizeTx, "Failed to finalize withdrawal").to.emit(
         lightLinkPortal,
         "WithdrawalFinalized",
       );
       expect(finalizeTx, "Failed to call ping").to.emit(pingPong, "Pong");
-
     });
-
   }); // describe("L2CrossDomainMessenger")
-
 });
-
 
 const randomAddress = () => ethers.Wallet.createRandom().address;
