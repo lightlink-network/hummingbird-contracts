@@ -2,7 +2,7 @@
 pragma solidity 0.8.22;
 
 import {Constants} from "../libraries/Constants.sol";
-// import {Predeploys} from "src/libraries/Predeploys.sol";
+import {Predeploys} from "contracts/libraries/Predeploys.sol";
 import {StandardBridge} from "../universal/StandardBridge.sol";
 import {CrossDomainMessenger} from "../universal/CrossDomainMessenger.sol";
 import {L1CrossDomainMessenger} from "./L1CrossDomainMessenger.sol";
@@ -88,21 +88,15 @@ contract L1StandardBridge is StandardBridge {
 
     /// @notice Constructs the L1StandardBridge contract.
     constructor() StandardBridge() {
-        initialize({
-            _messenger: CrossDomainMessenger(address(0)),
-            _l2StandardBridge: address(0)
-        });
+        initialize({_messenger: CrossDomainMessenger(address(0))});
     }
 
     /// @notice Initializer.
-    /// @param _messenger        Contract for the CrossDomainMessenger on this network.
-    function initialize(
-        CrossDomainMessenger _messenger,
-        address _l2StandardBridge
-    ) public initializer {
+    /// @param _messenger Contract for the CrossDomainMessenger on this network.
+    function initialize(CrossDomainMessenger _messenger) public initializer {
         __StandardBridge_init({
             _messenger: _messenger,
-            _otherBridge: StandardBridge(payable(_l2StandardBridge))
+            _otherBridge: StandardBridge(payable(Predeploys.L2_STANDARD_BRIDGE))
         });
     }
 
