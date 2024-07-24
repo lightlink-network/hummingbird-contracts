@@ -1,8 +1,9 @@
 [profile.default]
-src = 'contracts/L2'
+src = 'contracts'
 out = 'forge-artifacts'
 libs = ['node_modules', 'lib']
 test = 'test'
+via_ir = true
 cache_path  = 'forge-cache'
 remappings = [
     '@openzeppelin/=node_modules/@openzeppelin/',
