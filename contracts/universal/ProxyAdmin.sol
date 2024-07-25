@@ -54,7 +54,7 @@ contract ProxyAdmin is Ownable {
     bool internal upgrading;
 
     /// @param _owner Address of the initial owner of this contract.
-    constructor(address _owner) Ownable() {
+    constructor(address _owner) Ownable(msg.sender) {
         _transferOwnership(_owner);
     }
 
