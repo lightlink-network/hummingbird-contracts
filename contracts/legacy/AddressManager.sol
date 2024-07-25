@@ -10,6 +10,8 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 ///         proxy system instead, but this contract is still necessary for backwards compatibility
 ///         with several older contracts.
 contract AddressManager is Ownable {
+    constructor() Ownable(msg.sender) {}
+
     /// @notice Mapping of the hashes of string names to addresses.
     mapping(bytes32 => address) private addresses;
 
