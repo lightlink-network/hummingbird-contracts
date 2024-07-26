@@ -10,7 +10,7 @@ import {
 } from "../../../../typechain-types";
 import { makeNextBlock, setupCanonicalStateChain } from "../../../lib/chain";
 import { challengeL2HeaderMockData as MOCK_DATA } from "../../../mock/mock_challengeL2Header";
-import { proxyDeployAndInitialize } from "../../../../scripts/lib/deploy";
+import { proxyDeployAndInitialize } from "../../../../scripts/hardhat/lib/deploy";
 import { provideHeader } from "../../../lib/oracle";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 

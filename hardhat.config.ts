@@ -3,6 +3,7 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 import "@solarity/hardhat-gobind";
+import "@nomicfoundation/hardhat-foundry";
 import "./tasks/rollupHead";
 import "./tasks/challengeL2Header";
 import "./tasks/pushRBlock";
@@ -11,6 +12,10 @@ import "solidity-coverage";
 cfg();
 
 const config: HardhatUserConfig = {
+  paths: {
+    artifacts: "./hardhat-artifacts",
+    cache: "./hardhat-cache",
+  },
   solidity: {
     compilers: [
       {

@@ -10,7 +10,7 @@ import {
 } from "../../../../typechain-types";
 
 import { pushRandomHeader } from "../../../lib/chain";
-import { proxyDeployAndInitialize } from "../../../../scripts/lib/deploy";
+import { proxyDeployAndInitialize } from "../../../../scripts/hardhat/lib/deploy";
 
 type Header = CanonicalStateChain.HeaderStruct;
 

@@ -17,7 +17,7 @@ import {ResourceMetering} from "../L1/ResourceMetering.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {L1Block} from "../L2/L1Block.sol";
-// import {Predeploys} from "../libraries/Predeploys.sol";
+import {Predeploys} from "../libraries/Predeploys.sol";
 import "../libraries/PortalErrors.sol";
 import "../libraries/Pausible.sol";
 
@@ -76,8 +76,6 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
     ///         It is not safe to trust `ERC20.balanceOf` as it may lie.
     uint256 internal _balance;
 
-    address l1BlockAttributes;
-
     /// @notice Emitted when a transaction is deposited from L1 to L2.
     ///         The parameters of this event are read by the rollup node and used to derive deposit
     ///         transactions on L2.
@@ -117,23 +115,19 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
     constructor() Pausable(msg.sender) {
         initialize({
             _l2Oracle: ICanonicalStateChain(address(0)),
-            _challenge: IChallengeBase(address(0)),
-            _l1BlockAttributes: address(0)
+            _challenge: IChallengeBase(address(0))
         });
     }
 
     /// @notice Initializer.
     /// @param _l2Oracle Contract of the L2OutputOracle.
     /// @param _challenge Contract of the ChallengeBase.
-    /// @param _l1BlockAttributes Contract of the L1BlockAttributes.
     function initialize(
         ICanonicalStateChain _l2Oracle,
-        IChallengeBase _challenge,
-        address _l1BlockAttributes
+        IChallengeBase _challenge
     ) public initializer {
         l2Oracle = _l2Oracle;
         challenge = _challenge;
-        l1BlockAttributes = _l1BlockAttributes;
         resourceConfig = ResourceConfig({
             maxResourceLimit: 20_000_000,
             elasticityMultiplier: 10,
@@ -593,7 +587,7 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
         // token in the L1Block predeploy contract.
         emit TransactionDeposited(
             Constants.DEPOSITOR_ACCOUNT,
-            l1BlockAttributes,
+            Predeploys.L1_BLOCK_ATTRIBUTES,
             DEPOSIT_VERSION,
             abi.encodePacked(
                 uint256(0), // mint

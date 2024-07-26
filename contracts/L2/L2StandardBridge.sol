@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.22;
 
-//  import {Predeploys} from "src/libraries/Predeploys.sol";
+import {Predeploys} from "contracts/libraries/Predeploys.sol";
 import {StandardBridge} from "../universal/StandardBridge.sol";
 import {LightLinkMintableERC20} from "../universal/LightLinkMintableERC20.sol";
 import {CrossDomainMessenger} from "../universal/CrossDomainMessenger.sol";
@@ -55,15 +55,12 @@ contract L2StandardBridge is StandardBridge {
     string public constant version = "1.10.0";
 
     address legacyERC20ETH;
-    address l1Block;
 
     /// @notice Constructs the L2StandardBridge contract.
     constructor() StandardBridge() {
         initialize({
             _otherBridge: StandardBridge(payable(address(0))),
-            _l2CrossDomainMessenger: address(0),
-            _legacyERC20ETH: address(0),
-            _l1Block: address(0)
+            _legacyERC20ETH: address(0)
         });
     }
 
@@ -71,14 +68,13 @@ contract L2StandardBridge is StandardBridge {
     /// @param _otherBridge Contract for the corresponding bridge on the other chain.
     function initialize(
         StandardBridge _otherBridge,
-        address _l2CrossDomainMessenger,
-        address _legacyERC20ETH,
-        address _l1Block
+        address _legacyERC20ETH
     ) public initializer {
         legacyERC20ETH = _legacyERC20ETH;
-        l1Block = _l1Block;
         __StandardBridge_init({
-            _messenger: CrossDomainMessenger(_l2CrossDomainMessenger),
+            _messenger: CrossDomainMessenger(
+                Predeploys.L2_CROSS_DOMAIN_MESSENGER
+            ),
             _otherBridge: _otherBridge
         });
     }
@@ -102,7 +98,8 @@ contract L2StandardBridge is StandardBridge {
         override
         returns (address addr_, uint8 decimals_)
     {
-        (addr_, decimals_) = L1Block(l1Block).gasPayingToken();
+        (addr_, decimals_) = L1Block(Predeploys.L1_BLOCK_ATTRIBUTES)
+            .gasPayingToken();
     }
 
     /// @custom:legacy

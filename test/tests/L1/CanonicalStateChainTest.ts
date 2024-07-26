@@ -378,6 +378,7 @@ describe("CanonicalStateChain", function () {
       ).to.emit(canonicalStateChain, "RolledBack");
     });
   });
+
   describe("setMaxPointers", function () {
     it("setMaxPointers should update maxPointers var", async function () {
       expect(
@@ -399,6 +400,39 @@ describe("CanonicalStateChain", function () {
         canonicalStateChain,
         "OwnableUnauthorizedAccount",
       );
+    });
+  });
+
+  describe("getL2Output", function () {
+    it("Should return the expect L2Output", async function () {
+      const header: CanonicalStateChain.HeaderStruct = {
+        epoch: 1,
+        l2Height: 1,
+        prevHash: _chain.genesisHash,
+        outputRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1, shareStart: 1, shareLen: 1 }],
+      };
+
+      await expect(
+        canonicalStateChain
+          .connect(publisher)
+          .getFunction("pushBlock")
+          .send(header),
+      )
+        .to.emit(canonicalStateChain, "BlockAdded")
+        .withArgs(1);
+
+      const res = await canonicalStateChain.getL2Output(1);
+      expect(res[0]).to.equal(ethers.keccak256(ethers.toUtf8Bytes("0")));
+    });
+  });
+
+  describe("startingTimestamp", function () {
+    it("Should return timestamp of genesis block", async function () {
+      const genesisBlockHash = await canonicalStateChain.chain(0);
+      const header = await canonicalStateChain.headerMetadata(genesisBlockHash);
+      const timestamp = await canonicalStateChain.startingTimestamp();
+      expect(timestamp).to.be.equal(header[0]);
     });
   });
 });
