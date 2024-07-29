@@ -4,9 +4,10 @@
     "test": "hardhat test"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-foundry": "^1.1.2",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.3",
-    "@solarity/hardhat-gobind": "^1.1.0",
+    "@solarity/hardhat-gobind": "^1.2.2",
     "@types/node": "^20.10.7",
     "hardhat": "^2.19.4",
     "prettier": "^3.2.5",
@@ -16,12 +17,16 @@
     "node": "v18.16.0"
   },
   "dependencies": {
+    "@eth-optimism/core-utils": "^0.13.2",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
     "@openzeppelin/contracts": "^5.0.1",
     "@openzeppelin/contracts-upgradeable": "^5.0.1",
+    "axios": "^1.7.2",
+    "bignumber.js": "^9.1.2",
     "blobstream-contracts": "github:celestiaorg/blobstream-contracts",
     "dotenv": "^16.3.1",
     "openzeppelin-contracts": "github:OpenZeppelin/openzeppelin-contracts",
+    "solady": "^0.0.209",
     "solidity-coverage": "^0.8.12"
   },
   "overrides": {
