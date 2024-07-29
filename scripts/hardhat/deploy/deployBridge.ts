@@ -2,15 +2,6 @@ import { ethers } from "hardhat";
 import { log } from "../lib/log";
 import { proxyDeployAndInitialize } from "../lib/deploy";
 
-// npx hardhat verify --contract contracts/L1/L1CrossDomainMessenger.sol:L1CrossDomainMessenger --network sepolia 0x719E6614628552CFE0CE83B61778b2eA8A5c2147
-// npx hardhat verify --contract contracts/L1/L1StandardBridge.sol:L1StandardBridge --network sepolia 0xFe1F82B89E458F3236098cCa992209306FE45b47
-// npx hardhat verify --contract contracts/L1/LightLinkPortal.sol:LightLinkPortal --network sepolia 0xc537029Daf5489d9D4B377324027a7677fEC0515
-
-// npx hardhat verify --contract contracts/L2/L2ToL1MessagePasser.sol:L2ToL1MessagePasser --network pegasus 0x5FbDB2315678afecb367f032d93F642f64180aa3
-// npx hardhat verify --contract contracts/L2/L2StandardBridge.sol:L2StandardBridge --network pegasus 0x5FbDB2315678afecb367f032d93F642f64180aa3
-// npx hardhat verify --contract contracts/L2/L2CrossDomainMessenger.sol:L2CrossDomainMessenger --network pegasus 0x719E6614628552CFE0CE83B61778b2eA8A5c2147
-// npx hardhat verify --contract contracts/L2/L1Block.sol:L1Block --network pegasus 0x719E6614628552CFE0CE83B61778b2eA8A5c2147
-
 const CanonicalStateChain =
   process.env.CANONICAL_STATE_CHAIN_ADDR ?? ethers.ZeroAddress;
 const Challenge = process.env.CHALLENGE_ADDR ?? ethers.ZeroAddress;
