@@ -14,7 +14,7 @@ export const proxyDeployAndInitialize = async (
 
   // step 2: deploy proxy contract
   const proxyFactory = await ethers.getContractFactory(
-    "contracts/universal/Proxy.sol:Proxy.sol",
+    "contracts/universal/Proxy.sol:Proxy",
     signer,
   );
   const proxy: Proxy = (await proxyFactory
