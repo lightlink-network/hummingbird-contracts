@@ -1,12 +1,15 @@
 import { ethers } from "hardhat";
-import { setupCanonicalStateChain } from "../../test/lib/chain";
+import { setupCanonicalStateChain } from "../../../test/lib/chain";
 import {
   Challenge,
   LightLinkPortal,
   L2CrossDomainMessenger,
   L1CrossDomainMessenger,
-} from "../../typechain-types";
-import { uupsProxyDeployAndInitialize } from "../lib/deploy";
+} from "../../../typechain-types";
+import {
+  proxyDeployAndInitialize,
+  uupsProxyDeployAndInitialize,
+} from "../lib/deploy";
 import { startNetworks } from "../lib/startNetworks";
 
 const main = async () => {
@@ -45,7 +48,7 @@ const main = async () => {
   const challenge = challengeDeployment.contract as Challenge;
 
   // - LightLinkPortal
-  const lightLinkPortalDeployment = await uupsProxyDeployAndInitialize(
+  const lightLinkPortalDeployment = await proxyDeployAndInitialize(
     l1Deployer,
     await ethers.getContractFactory("LightLinkPortal"),
     [
@@ -97,7 +100,7 @@ const main = async () => {
 
   // - Deploy cross domain messengers
   console.log("Deploying cross domain messengers");
-  const L2CrossDomainMessengerDeployment = await uupsProxyDeployAndInitialize(
+  const L2CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
     l2Deployer,
     await ethers.getContractFactory("L2CrossDomainMessenger"),
     [
@@ -109,7 +112,7 @@ const main = async () => {
   const l2CrossDomainMessenger =
     L2CrossDomainMessengerDeployment.contract as L2CrossDomainMessenger;
 
-  const L1CrossDomainMessengerDeployment = await uupsProxyDeployAndInitialize(
+  const L1CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
     l1Deployer,
     await ethers.getContractFactory("L1CrossDomainMessenger"),
     [await lightLinkPortal.getAddress(), l2CrossDomainMessengerAddr],

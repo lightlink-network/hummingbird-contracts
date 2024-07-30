@@ -30,7 +30,7 @@ export const proxyDeployAndInitialize = async (
   const proxyAddress = await proxy.getAddress();
 
   return {
-    contract: await implementationFactory.attach(proxyAddress),
+    contract: await implementationFactory.attach(proxyAddress).connect(signer),
     address: proxyAddress,
     implementation,
     implementationAddress,

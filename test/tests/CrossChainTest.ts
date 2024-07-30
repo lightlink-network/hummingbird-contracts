@@ -29,6 +29,8 @@ import {
   sendMessageL2ToL1,
 } from "../lib/bridge";
 import { assert } from "console";
+import { Proxy } from "../../typechain-types/contracts/universal";
+import { Proxy__factory } from "../../typechain-types/factories/contracts/universal";
 
 describe("Cross-chain interaction", function () {
   // Networks
@@ -495,6 +497,32 @@ describe("Cross-chain interaction", function () {
       expect(finalizeTx, "Failed to call ping").to.emit(pingPong, "Pong");
     });
   }); // describe("L2CrossDomainMessenger")
+
+  describe("Proxy", async function () {
+    it("Upgrade LightLinkPortal", async function () {
+      // step 1: deploy new implementation
+      const newLightLinkPortalFactory =
+        await ethers.getContractFactory("LightLinkPortal");
+      const newLightLinkPortal = (await newLightLinkPortalFactory
+        .connect(l1Deployer)
+        .deploy()) as LightLinkPortal;
+
+      // step 2: upgrade proxy contract
+      const proxy = Proxy__factory.connect(
+        await lightLinkPortal.getAddress(),
+        l1Deployer,
+      );
+      const upgradeTx = await proxy
+        .connect(l1Deployer)
+        .upgradeTo(await newLightLinkPortal.getAddress());
+
+      expect(upgradeTx, "Failed to upgrade proxy").to.emit(proxy, "Upgraded");
+
+      expect(await proxy.implementation()).to.equal(
+        await newLightLinkPortal.getAddress(),
+      );
+    });
+  });
 });
 
 const randomAddress = () => ethers.Wallet.createRandom().address;
