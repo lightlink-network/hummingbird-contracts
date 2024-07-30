@@ -19,7 +19,10 @@ import {
   L1Block__factory,
 } from "../../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { uupsProxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
+import {
+  proxyDeployAndInitialize,
+  uupsProxyDeployAndInitialize,
+} from "../../scripts/hardhat/lib/deploy";
 import {
   initiateWithdraw,
   getWithdrawalProofs,
@@ -95,12 +98,13 @@ describe("Cross-chain interaction", function () {
     challenge = challengeDeployment.contract as Challenge;
 
     // - LightLinkPortal
-    const lightLinkPortalDeployment = await uupsProxyDeployAndInitialize(
+    const lightLinkPortalDeployment = await proxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("LightLinkPortal"),
       [
         await canonicalStateChain.getAddress(),
         await challengeDeployment.address,
+        l1Deployer.address,
       ],
     );
     lightLinkPortal = lightLinkPortalDeployment.contract as LightLinkPortal;
@@ -132,7 +136,7 @@ describe("Cross-chain interaction", function () {
     // - Deploy cross domain messenger on L1
     console.log("Deploying cross domain messengers");
 
-    const L1CrossDomainMessengerDeployment = await uupsProxyDeployAndInitialize(
+    const L1CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("L1CrossDomainMessenger"),
       [await lightLinkPortal.getAddress()],
@@ -228,6 +232,19 @@ describe("Cross-chain interaction", function () {
   }); // describe("BridgeProofHelper")
 
   describe("LightLinkPortal", function () {
+    it("Correct owner", async function () {
+      expect(await lightLinkPortal.connect(l1Deployer).owner()).to.equal(
+        l1Deployer.address,
+      );
+    });
+
+    it("Can Pause and Upause", async function () {
+      await lightLinkPortal.connect(l1Deployer).pause();
+      expect(await lightLinkPortal.connect(l1Deployer).paused()).to.be.true;
+      await lightLinkPortal.connect(l1Deployer).unpause();
+      expect(await lightLinkPortal.connect(l1Deployer).paused()).to.be.false;
+    });
+
     it("Prove withdrawal", async function () {
       // Initiate withdrawal from L2
       const withdrawal = await initiateWithdraw(

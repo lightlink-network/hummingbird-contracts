@@ -115,7 +115,8 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
     constructor() Pausable(msg.sender) {
         initialize({
             _l2Oracle: ICanonicalStateChain(address(0)),
-            _challenge: IChallengeBase(address(0))
+            _challenge: IChallengeBase(address(0)),
+            _newOwner: address(0)
         });
     }
 
@@ -124,7 +125,8 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
     /// @param _challenge Contract of the ChallengeBase.
     function initialize(
         ICanonicalStateChain _l2Oracle,
-        IChallengeBase _challenge
+        IChallengeBase _challenge,
+        address _newOwner
     ) public initializer {
         l2Oracle = _l2Oracle;
         challenge = _challenge;
@@ -139,6 +141,7 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
         if (l2Sender == address(0)) {
             l2Sender = Constants.DEFAULT_L2_SENDER;
         }
+        _transferOwnership(_newOwner);
         __ResourceMetering_init();
     }
 
