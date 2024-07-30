@@ -626,5 +626,13 @@ contract LightLinkPortal is Initializable, ResourceMetering, Ownable, Pausable {
         return block.timestamp > _timestamp + challenge.finalizationSeconds();
     }
 
+    function setAddresses(
+        ICanonicalStateChain _l2Oracle,
+        IChallengeBase _challenge
+    ) external onlyOwner {
+        l2Oracle = _l2Oracle;
+        challenge = _challenge;
+    }
+
     uint256[50] private __gap;
 }
