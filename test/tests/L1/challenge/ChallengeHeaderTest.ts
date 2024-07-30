@@ -9,7 +9,7 @@ import {
   Challenge__factory,
   ChallengeTest,
 } from "../../../../typechain-types";
-import { proxyDeployAndInitialize } from "../../../../scripts/hardhat/lib/deploy";
+import { uupsProxyDeployAndInitialize } from "../../../../scripts/hardhat/lib/deploy";
 
 type Header = CanonicalStateChain.HeaderStruct;
 
@@ -35,7 +35,7 @@ describe("ChallengeHeader", function () {
     genesisHash = _chain.genesisHash;
     genesisHeader = _chain.genesisHeader;
 
-    const deployment = await proxyDeployAndInitialize(
+    const deployment = await uupsProxyDeployAndInitialize(
       owner,
       await ethers.getContractFactory("Challenge"),
       [

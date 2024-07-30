@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { log } from "../lib/log";
-import { proxyDeployAndInitialize } from "../lib/deploy";
+import { uupsProxyDeployAndInitialize } from "../lib/deploy";
 
 // npx hardhat verify --contract contracts/L1/L1CrossDomainMessenger.sol:L1CrossDomainMessenger --network sepolia 0x719E6614628552CFE0CE83B61778b2eA8A5c2147
 // npx hardhat verify --contract contracts/L1/L1StandardBridge.sol:L1StandardBridge --network sepolia 0xFe1F82B89E458F3236098cCa992209306FE45b47
@@ -30,7 +30,7 @@ const main = async () => {
 
   // Deploy LightLinkPortal contract to L1
   log("Deploying LightLinkPortal to L1...");
-  const lightLinkPortal = await proxyDeployAndInitialize(
+  const lightLinkPortal = await uupsProxyDeployAndInitialize(
     l1Deployer,
     await ethers.getContractFactory("LightLinkPortal"),
     [CanonicalStateChain, Challenge],
@@ -38,7 +38,7 @@ const main = async () => {
 
   // Deploy L1CrossDomainMessenger contract to L1
   log("Deploying L1CrossDomainMessenger to L1...");
-  const L1CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
+  const L1CrossDomainMessengerDeployment = await uupsProxyDeployAndInitialize(
     l1Deployer,
     await ethers.getContractFactory("L1CrossDomainMessenger"),
     [lightLinkPortal.address],
@@ -47,7 +47,7 @@ const main = async () => {
 
   // Deploy L1StandardBridge contract to L1
   log("Deploying L1StandardBridge to L1...");
-  const L1StandardBridgeDeployment = await proxyDeployAndInitialize(
+  const L1StandardBridgeDeployment = await uupsProxyDeployAndInitialize(
     l1Deployer,
     await ethers.getContractFactory("L1StandardBridge"),
     [l1CrossDomainMessengerAddr],

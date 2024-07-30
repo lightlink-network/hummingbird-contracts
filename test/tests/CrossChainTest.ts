@@ -19,7 +19,7 @@ import {
   L1Block__factory,
 } from "../../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { proxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
+import { uupsProxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
 import {
   initiateWithdraw,
   getWithdrawalProofs,
@@ -83,7 +83,7 @@ describe("Cross-chain interaction", function () {
     console.log("CanonicalStateChain deployed");
 
     // - Challenge
-    const challengeDeployment = await proxyDeployAndInitialize(
+    const challengeDeployment = await uupsProxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("Challenge"),
       [
@@ -95,7 +95,7 @@ describe("Cross-chain interaction", function () {
     challenge = challengeDeployment.contract as Challenge;
 
     // - LightLinkPortal
-    const lightLinkPortalDeployment = await proxyDeployAndInitialize(
+    const lightLinkPortalDeployment = await uupsProxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("LightLinkPortal"),
       [
@@ -132,7 +132,7 @@ describe("Cross-chain interaction", function () {
     // - Deploy cross domain messenger on L1
     console.log("Deploying cross domain messengers");
 
-    const L1CrossDomainMessengerDeployment = await proxyDeployAndInitialize(
+    const L1CrossDomainMessengerDeployment = await uupsProxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("L1CrossDomainMessenger"),
       [await lightLinkPortal.getAddress()],

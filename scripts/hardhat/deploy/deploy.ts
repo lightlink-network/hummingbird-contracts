@@ -3,7 +3,7 @@ import { verify } from "../../utils/verify";
 import { log } from "../lib/log";
 import {
   createGenesisHeader,
-  proxyDeployAndInitialize,
+  uupsProxyDeployAndInitialize,
   getBlobstreamXAddr,
 } from "../lib/deploy";
 
@@ -18,8 +18,9 @@ const main = async () => {
 
   // Step 1. Get deployer/signer account
   let [owner, publisher] = await ethers.getSigners();
-  if (publisher === undefined) { // somestimes if owner, and publisher are the same, publisher is undefined
-    log("Publisher account not found. Using owner account as publisher.")
+  if (publisher === undefined) {
+    // somestimes if owner, and publisher are the same, publisher is undefined
+    log("Publisher account not found. Using owner account as publisher.");
     publisher = owner;
   }
 
@@ -36,7 +37,7 @@ const main = async () => {
 
   // Step 3. Deploy CanonicalStateChain contract as proxy
   log("Deploying CanonicalStateChain...");
-  const canonicalStateChain = await proxyDeployAndInitialize(
+  const canonicalStateChain = await uupsProxyDeployAndInitialize(
     owner,
     await ethers.getContractFactory("CanonicalStateChain"),
     [publisherAddr, genesisHeader],
@@ -44,14 +45,16 @@ const main = async () => {
 
   // Step 4. Deploy required RLPReader lib
   log("Deploying RLPReader...");
-  const RLPReader = await ethers.getContractFactory("contracts/L1/RLPReader.sol:RLPReader");
+  const RLPReader = await ethers.getContractFactory(
+    "contracts/L1/RLPReader.sol:RLPReader",
+  );
   const rlpReader = await RLPReader.deploy();
   await rlpReader.waitForDeployment();
   const rlpReaderAddr = await rlpReader.getAddress();
 
   // Step 5. Deploying ChainOracle contract as a proxy
   log("Deploying ChainOracle...");
-  const chainOracle = await proxyDeployAndInitialize(
+  const chainOracle = await uupsProxyDeployAndInitialize(
     owner,
     await ethers.getContractFactory("ChainOracle"),
     [canonicalStateChain.address, blobstreamXAddr, rlpReaderAddr],
@@ -59,7 +62,7 @@ const main = async () => {
 
   // Step 6. Deploy Challenge contract as a proxy
   log("Deploying Challenge...");
-  const challenge = await proxyDeployAndInitialize(
+  const challenge = await uupsProxyDeployAndInitialize(
     owner,
     await ethers.getContractFactory("Challenge"),
     [canonicalStateChain.address, blobstreamXAddr, chainOracle.address],

@@ -10,7 +10,7 @@ import {
 } from "../../../../typechain-types";
 import { makeNextBlock, setupCanonicalStateChain } from "../../../lib/chain";
 import { challengeL2HeaderMockData as MOCK_DATA } from "../../../mock/mock_challengeL2Header";
-import { proxyDeployAndInitialize } from "../../../../scripts/hardhat/lib/deploy";
+import { uupsProxyDeployAndInitialize } from "../../../../scripts/hardhat/lib/deploy";
 import { provideHeader } from "../../../lib/oracle";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 
@@ -51,7 +51,7 @@ describe("ChallengeL2Header", function () {
     // const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
     // const chainOracleFactory = await ethers.getContractFactory("ChainOracle");
     // const chainOracleImplementation = await chainOracleFactory.deploy();
-    const chainOracleDeployment = await proxyDeployAndInitialize(
+    const chainOracleDeployment = await uupsProxyDeployAndInitialize(
       owner,
       await ethers.getContractFactory("ChainOracle"),
       [
@@ -67,7 +67,7 @@ describe("ChallengeL2Header", function () {
     );
 
     // 3. setup challenge
-    const challengeDeployment = await proxyDeployAndInitialize(
+    const challengeDeployment = await uupsProxyDeployAndInitialize(
       owner,
       await ethers.getContractFactory("Challenge"),
       [
