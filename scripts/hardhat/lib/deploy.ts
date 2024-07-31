@@ -22,7 +22,7 @@ export const proxyDeployAndInitialize = async (
     .deploy(signer.address)) as any;
   await proxy.waitForDeployment();
 
-  proxy.upgradeToAndCall(
+  await proxy.upgradeToAndCall(
     implementationAddress,
     implementation.interface.encodeFunctionData("initialize", args),
   );
