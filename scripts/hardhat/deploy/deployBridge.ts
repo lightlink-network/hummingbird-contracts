@@ -24,7 +24,7 @@ const main = async () => {
   const lightLinkPortal = await proxyDeployAndInitialize(
     l1Deployer,
     await ethers.getContractFactory("LightLinkPortal"),
-    [CanonicalStateChain, Challenge],
+    [CanonicalStateChain, Challenge, l1Deployer.address],
   );
 
   // Deploy L1CrossDomainMessenger contract to L1

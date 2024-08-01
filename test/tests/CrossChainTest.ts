@@ -19,13 +19,18 @@ import {
   L1Block__factory,
 } from "../../typechain-types";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { proxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
+import {
+  proxyDeployAndInitialize,
+  uupsProxyDeployAndInitialize,
+} from "../../scripts/hardhat/lib/deploy";
 import {
   initiateWithdraw,
   getWithdrawalProofs,
   sendMessageL2ToL1,
 } from "../lib/bridge";
 import { assert } from "console";
+import { Proxy } from "../../typechain-types/contracts/universal";
+import { Proxy__factory } from "../../typechain-types/factories/contracts/universal";
 
 describe("Cross-chain interaction", function () {
   // Networks
@@ -83,7 +88,7 @@ describe("Cross-chain interaction", function () {
     console.log("CanonicalStateChain deployed");
 
     // - Challenge
-    const challengeDeployment = await proxyDeployAndInitialize(
+    const challengeDeployment = await uupsProxyDeployAndInitialize(
       l1Deployer,
       await ethers.getContractFactory("Challenge"),
       [
@@ -101,6 +106,7 @@ describe("Cross-chain interaction", function () {
       [
         await canonicalStateChain.getAddress(),
         await challengeDeployment.address,
+        l1Deployer.address,
       ],
     );
     lightLinkPortal = lightLinkPortalDeployment.contract as LightLinkPortal;
@@ -228,6 +234,19 @@ describe("Cross-chain interaction", function () {
   }); // describe("BridgeProofHelper")
 
   describe("LightLinkPortal", function () {
+    it("Correct owner", async function () {
+      expect(await lightLinkPortal.connect(l1Deployer).owner()).to.equal(
+        l1Deployer.address,
+      );
+    });
+
+    it("Can Pause and Upause", async function () {
+      await lightLinkPortal.connect(l1Deployer).pause();
+      expect(await lightLinkPortal.connect(l1Deployer).paused()).to.be.true;
+      await lightLinkPortal.connect(l1Deployer).unpause();
+      expect(await lightLinkPortal.connect(l1Deployer).paused()).to.be.false;
+    });
+
     it("Prove withdrawal", async function () {
       // Initiate withdrawal from L2
       const withdrawal = await initiateWithdraw(
@@ -478,6 +497,32 @@ describe("Cross-chain interaction", function () {
       expect(finalizeTx, "Failed to call ping").to.emit(pingPong, "Pong");
     });
   }); // describe("L2CrossDomainMessenger")
+
+  describe("Proxy", async function () {
+    it("Upgrade LightLinkPortal", async function () {
+      // step 1: deploy new implementation
+      const newLightLinkPortalFactory =
+        await ethers.getContractFactory("LightLinkPortal");
+      const newLightLinkPortal = (await newLightLinkPortalFactory
+        .connect(l1Deployer)
+        .deploy()) as LightLinkPortal;
+
+      // step 2: upgrade proxy contract
+      const proxy = Proxy__factory.connect(
+        await lightLinkPortal.getAddress(),
+        l1Deployer,
+      );
+      const upgradeTx = await proxy
+        .connect(l1Deployer)
+        .upgradeTo(await newLightLinkPortal.getAddress());
+
+      const upgradeTxReceipt = await upgradeTx.wait();
+      expect(upgradeTxReceipt, "Failed to upgrade proxy").to.emit(
+        proxy,
+        "Upgraded",
+      );
+    });
+  });
 });
 
 const randomAddress = () => ethers.Wallet.createRandom().address;

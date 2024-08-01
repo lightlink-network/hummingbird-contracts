@@ -1,13 +1,7 @@
 import { ethers } from "hardhat";
-import { CanonicalStateChain } from "../../typechain-types";
+import { CanonicalStateChain } from "../../../typechain-types";
+import { Proxy } from "../../../typechain-types/contracts/universal";
 
-/**
- * Deploy a Proxy and contract and initialize it.
- * @param signer The signer to deploy the contract.
- * @param implementationFactory The factory of the implementation contract.
- * @param args The arguments to initialize on the contract.
- * @returns The proxy and implementation contract.
- */
 export const proxyDeployAndInitialize = async (
   signer: any,
   implementationFactory: any,
@@ -19,7 +13,49 @@ export const proxyDeployAndInitialize = async (
   const implementationAddress = await implementation.getAddress();
 
   // step 2: deploy proxy contract
-  const proxyFactory: any = await ethers.getContractFactory("CoreProxy");
+  const proxyFactory = await ethers.getContractFactory(
+    "contracts/universal/Proxy.sol:Proxy",
+    signer,
+  );
+  const proxy: Proxy = (await proxyFactory
+    .connect(signer)
+    .deploy(signer.address)) as any;
+  await proxy.waitForDeployment();
+
+  await proxy.upgradeToAndCall(
+    implementationAddress,
+    implementation.interface.encodeFunctionData("initialize", args),
+  );
+
+  const proxyAddress = await proxy.getAddress();
+
+  return {
+    contract: await implementationFactory.attach(proxyAddress).connect(signer),
+    address: proxyAddress,
+    implementation,
+    implementationAddress,
+  };
+};
+
+/**
+ * Deploy a Proxy and contract and initialize it.
+ * @param signer The signer to deploy the contract.
+ * @param implementationFactory The factory of the implementation contract.
+ * @param args The arguments to initialize on the contract.
+ * @returns The proxy and implementation contract.
+ */
+export const uupsProxyDeployAndInitialize = async (
+  signer: any,
+  implementationFactory: any,
+  args: any[],
+) => {
+  // step 1: deploy implementation contract
+  const implementation = await implementationFactory.connect(signer).deploy();
+  await implementation.waitForDeployment();
+  const implementationAddress = await implementation.getAddress();
+
+  // step 2: deploy proxy contract
+  const proxyFactory = await ethers.getContractFactory("CoreProxy");
   const contract = await proxyFactory
     .connect(signer)
     .deploy(
@@ -46,9 +82,11 @@ export const deployAndInitialize = async (
   await contract.waitForDeployment();
   await contract.initialize(...args);
 
-
-  return { contract: await factory.attach(contract.address), address: contract.address };
-}
+  return {
+    contract: await factory.attach(contract.address),
+    address: contract.address,
+  };
+};
 
 export const createGenesisHeader = async (providerRPC: string) => {
   const rpc = new ethers.JsonRpcProvider(providerRPC);
@@ -61,15 +99,15 @@ export const createGenesisHeader = async (providerRPC: string) => {
 
   // calculate output root:
   const versionHash = ethers.ZeroHash;
-  const stateRoot = latestBlock.stateRoot
+  const stateRoot = latestBlock.stateRoot;
   const withdrawalRoot = ethers.ZeroHash;
-  const blockHash = latestBlock.hash
+  const blockHash = latestBlock.hash;
 
   const outputRoot = ethers.keccak256(
     ethers.solidityPacked(
       ["bytes32", "bytes32", "bytes32", "bytes32"],
-      [versionHash, stateRoot, withdrawalRoot, blockHash]
-    )
+      [versionHash, stateRoot, withdrawalRoot, blockHash],
+    ),
   );
 
   // Step 3. Build genesis header from latest L2 block

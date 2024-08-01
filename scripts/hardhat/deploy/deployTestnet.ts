@@ -1,12 +1,15 @@
 import { ethers } from "hardhat";
-import { setupCanonicalStateChain } from "../../test/lib/chain";
+import { setupCanonicalStateChain } from "../../../test/lib/chain";
 import {
   Challenge,
   LightLinkPortal,
   L2CrossDomainMessenger,
   L1CrossDomainMessenger,
-} from "../../typechain-types";
-import { proxyDeployAndInitialize } from "../lib/deploy";
+} from "../../../typechain-types";
+import {
+  proxyDeployAndInitialize,
+  uupsProxyDeployAndInitialize,
+} from "../lib/deploy";
 import { startNetworks } from "../lib/startNetworks";
 
 const main = async () => {
@@ -33,7 +36,7 @@ const main = async () => {
   console.log("CanonicalStateChain deployed");
 
   // - Challenge
-  const challengeDeployment = await proxyDeployAndInitialize(
+  const challengeDeployment = await uupsProxyDeployAndInitialize(
     l1Deployer,
     await ethers.getContractFactory("Challenge"),
     [

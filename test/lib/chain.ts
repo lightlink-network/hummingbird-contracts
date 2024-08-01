@@ -5,7 +5,7 @@ import {
   CanonicalStateChain__factory,
   CanonicalStateChain,
 } from "../../typechain-types";
-import { proxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
+import { uupsProxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
 
 type Header = CanonicalStateChain.HeaderStruct;
 
@@ -21,7 +21,7 @@ export const setupCanonicalStateChain = async (
     celestiaPointers: [],
   };
 
-  const deployed = await proxyDeployAndInitialize(
+  const deployed = await uupsProxyDeployAndInitialize(
     signer,
     await ethers.getContractFactory("CanonicalStateChain"),
     [publisher, genesisHeader],

@@ -10,7 +10,7 @@ import {
 } from "../../../../typechain-types";
 
 import { pushRandomHeader } from "../../../lib/chain";
-import { proxyDeployAndInitialize } from "../../../../scripts/hardhat/lib/deploy";
+import { uupsProxyDeployAndInitialize } from "../../../../scripts/hardhat/lib/deploy";
 import { challengeDAMockData as MOCK_DATA } from "../../../mock/mock_challengeDa";
 
 type Header = CanonicalStateChain.HeaderStruct;
@@ -49,7 +49,7 @@ describe("ChallengeDataAvailability", function () {
     const _MockDaOracle = await ethers.getContractFactory("MockDAOracle");
     mockDaOracle = (await _MockDaOracle.deploy()) as any;
 
-    const deployment = await proxyDeployAndInitialize(
+    const deployment = await uupsProxyDeployAndInitialize(
       owner,
       await ethers.getContractFactory("Challenge"),
       [
