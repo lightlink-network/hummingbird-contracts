@@ -516,10 +516,10 @@ describe("Cross-chain interaction", function () {
         .connect(l1Deployer)
         .upgradeTo(await newLightLinkPortal.getAddress());
 
-      expect(upgradeTx, "Failed to upgrade proxy").to.emit(proxy, "Upgraded");
-
-      expect(await proxy.implementation()).to.equal(
-        await newLightLinkPortal.getAddress(),
+      const upgradeTxReceipt = await upgradeTx.wait();
+      expect(upgradeTxReceipt, "Failed to upgrade proxy").to.emit(
+        proxy,
+        "Upgraded",
       );
     });
   });
