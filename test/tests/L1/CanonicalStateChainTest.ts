@@ -99,6 +99,23 @@ describe("CanonicalStateChain", function () {
         .withArgs(1);
     });
 
+    it("Should emit an OutputProposed event when called by the publisher", async function () {
+      const header: CanonicalStateChain.HeaderStruct = {
+        epoch: 1,
+        l2Height: 1,
+        prevHash: _chain.genesisHash,
+        outputRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+        celestiaPointers: [{ height: 1, shareStart: 1, shareLen: 1 }],
+      };
+
+      await expect(
+        canonicalStateChain
+          .connect(publisher)
+          .getFunction("pushBlock")
+          .send(header),
+      ).to.emit(canonicalStateChain, "OutputProposed");
+    });
+
     it("Should revert as epoch is too low", async function () {
       const header: CanonicalStateChain.HeaderStruct = {
         epoch: 0,

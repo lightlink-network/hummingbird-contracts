@@ -66,6 +66,18 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
     /// @param challenge - The new challenge contract address.
     event ChallengeChanged(address indexed challenge);
 
+    /// @notice Emitted when an output is proposed.
+    /// @param outputRoot    The output root.
+    /// @param l2OutputIndex The index of the output in the l2Outputs array.
+    /// @param l2BlockNumber The L2 block number of the output root.
+    /// @param l1Timestamp   The L1 timestamp when proposed.
+    event OutputProposed(
+        bytes32 indexed outputRoot,
+        uint256 indexed l2OutputIndex,
+        uint256 indexed l2BlockNumber,
+        uint256 l1Timestamp
+    );
+
     /// @notice The address of the publisher. The publisher is the only address
     ///         that can add new blocks to the chain.
     address public publisher;
@@ -164,6 +176,12 @@ contract CanonicalStateChain is UUPSUpgradeable, OwnableUpgradeable {
         );
 
         emit BlockAdded(chainHead);
+        emit OutputProposed(
+            _header.outputRoot,
+            chainHead,
+            _header.l2Height,
+            block.timestamp
+        );
     }
 
     /// @notice Returns the hash of a block header.
