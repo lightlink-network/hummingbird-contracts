@@ -1,5 +1,5 @@
 import { ethers, network } from "hardhat";
-import { verify } from "../../utils/verify";
+import { verify } from "../../../utils/verify";
 
 // Set current addresses
 const challengeContractProxyAddr = "CONTRACT_ADDRESS";

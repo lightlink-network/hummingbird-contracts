@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { TransactionReceipt } from "ethers";
-import { CanonicalStateChain } from "../../typechain-types";
+import { CanonicalStateChain } from "../../../typechain-types";
 import {
   formatFixedEther,
   formatGWEI,

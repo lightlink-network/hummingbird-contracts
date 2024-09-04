@@ -1,13 +1,18 @@
 import { ethers } from "hardhat";
-import { L2ToL1MessagePasser, LightLinkPortal, CanonicalStateChain } from "../../typechain-types";
+import {
+  L2ToL1MessagePasser,
+  LightLinkPortal,
+  CanonicalStateChain,
+} from "../../../typechain-types";
 import {
   getWithdrawalProofs,
   parseMessagePassedEvent,
   hashWithdrawalTx,
   hashMessageHash,
-} from "../../test/lib/bridge";
+} from "../../../test/lib/bridge";
 
-const withdrawalTxHash = "0x6b2a64008dcc75eec7f9a1e0cb764f9556f2fd5f855f838fb57c5cd0c53c9ae4";
+const withdrawalTxHash =
+  "0x6b2a64008dcc75eec7f9a1e0cb764f9556f2fd5f855f838fb57c5cd0c53c9ae4";
 
 const lightLinkPortalAddress = "0x9aBbc181B8b6F6591e70BF785bBb6d999C314925";
 const l2ToL1MessagePasserAddress = "0xd8D3a8C83a598550D1C2Cf40932EAE9C9C217E21";
@@ -21,19 +26,23 @@ const l2wallet = new ethers.Wallet(process.env.L2_DEPLOYER_KEY!, l2Provider);
 
 const main = async () => {
   // attach LightLinkPortal contract
-  const LightLinkPortalFactory = await ethers.getContractFactory("LightLinkPortal");
+  const LightLinkPortalFactory =
+    await ethers.getContractFactory("LightLinkPortal");
   const lightLinkPortal = LightLinkPortalFactory.connect(l1wallet).attach(
     lightLinkPortalAddress,
   ) as LightLinkPortal;
 
   // attach L2toL1MessagePasser contract
-  const L2ToL1MessagePasserFactory = await ethers.getContractFactory("L2ToL1MessagePasser");
-  const l2ToL1MessagePasser = L2ToL1MessagePasserFactory.connect(l2wallet).attach(
-    l2ToL1MessagePasserAddress,
-  ) as L2ToL1MessagePasser;
+  const L2ToL1MessagePasserFactory = await ethers.getContractFactory(
+    "L2ToL1MessagePasser",
+  );
+  const l2ToL1MessagePasser = L2ToL1MessagePasserFactory.connect(
+    l2wallet,
+  ).attach(l2ToL1MessagePasserAddress) as L2ToL1MessagePasser;
 
   // get tx receipt
-  const withdrawalReceipt = await l2Provider.getTransactionReceipt(withdrawalTxHash);
+  const withdrawalReceipt =
+    await l2Provider.getTransactionReceipt(withdrawalTxHash);
 
   // get csc header that includes withdrawal
   let header = await findHeaderForWithdrawal(withdrawalReceipt?.blockNumber!);
@@ -49,12 +58,13 @@ const main = async () => {
   const messageSlot = hashMessageHash(withdrawalHash);
 
   // generate withdrawal proofs
-  const { withdrawalProof, outputProof, outputRoot } = await getWithdrawalProofs(
-    l2Provider,
-    "0x" + header.header.l2Height.toString(16), // last block in header
-    l2ToL1MessagePasser,
-    messageSlot,
-  );
+  const { withdrawalProof, outputProof, outputRoot } =
+    await getWithdrawalProofs(
+      l2Provider,
+      "0x" + header.header.l2Height.toString(16), // last block in header
+      l2ToL1MessagePasser,
+      messageSlot,
+    );
 
   // send withdrawal proof to L1
   const proveTx = await lightLinkPortal
@@ -69,16 +79,21 @@ const main = async () => {
   console.log("Withdrawal Proven 🎉 Tx Hash:", proveTx.hash);
 };
 
-async function findHeaderForWithdrawal(
-  blockNumber: number,
-): Promise<{ header: CanonicalStateChain.HeaderStructOutput; headerNumber: bigint }> {
+async function findHeaderForWithdrawal(blockNumber: number): Promise<{
+  header: CanonicalStateChain.HeaderStructOutput;
+  headerNumber: bigint;
+}> {
   try {
     if (blockNumber <= 0) {
-      throw new Error("Invalid block number. Block number should be greater than 0.");
+      throw new Error(
+        "Invalid block number. Block number should be greater than 0.",
+      );
     }
 
     // attach CanonicalStateChain contract
-    const canonicalStateChainFactory = await ethers.getContractFactory("CanonicalStateChain");
+    const canonicalStateChainFactory = await ethers.getContractFactory(
+      "CanonicalStateChain",
+    );
     const canonicalStateChain = canonicalStateChainFactory
       .connect(l1wallet)
       .attach(canonicalStateChainAddress) as CanonicalStateChain;
@@ -96,10 +111,13 @@ async function findHeaderForWithdrawal(
     }
 
     while (header && header.l2Height >= blockNumber) {
-      console.log(`Checking header number: ${currentHeaderNum} with L2 height: ${header.l2Height}`);
+      console.log(
+        `Checking header number: ${currentHeaderNum} with L2 height: ${header.l2Height}`,
+      );
 
       const previousHeaderNum = currentHeaderNum - BigInt(1);
-      const previousHeader = await canonicalStateChain.getHeaderByNum(previousHeaderNum);
+      const previousHeader =
+        await canonicalStateChain.getHeaderByNum(previousHeaderNum);
 
       if (!previousHeader || blockNumber > previousHeader.l2Height) {
         console.log(

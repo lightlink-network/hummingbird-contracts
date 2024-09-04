@@ -1,5 +1,4 @@
 import { ethers } from "hardhat";
-import { challenge } from "../../typechain-types/contracts";
 import { chalkFlicker, logProgress, shouldFail, timeAgo } from "./lib/utils";
 import chalk from "chalk";
 
