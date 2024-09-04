@@ -22,6 +22,8 @@ export const proxyDeployAndInitialize = async (
     .deploy(signer.address)) as any;
   await proxy.waitForDeployment();
 
+  const deployTx = await proxy.deploymentTransaction();
+
   await proxy.upgradeToAndCall(
     implementationAddress,
     implementation.interface.encodeFunctionData("initialize", args),
@@ -34,6 +36,7 @@ export const proxyDeployAndInitialize = async (
     address: proxyAddress,
     implementation,
     implementationAddress,
+    deployTx,
   };
 };
 
