@@ -44,6 +44,18 @@ const main = async () => {
     [l1CrossDomainMessengerAddr],
   );
 
+  const portalReceipt = await l1Provider.getTransactionReceipt(
+    lightLinkPortal.deployTx!.hash,
+  );
+
+  // Deploy SystemConfig contract
+  log("Deploying SystemConfig to L1...");
+  const systemConfig = await proxyDeployAndInitialize(
+    l1Deployer,
+    await ethers.getContractFactory("SystemConfig"),
+    [portalReceipt?.blockNumber, lightLinkPortal.address],
+  );
+
   log("Deployment complete!");
 
   // Log deployment addresses
@@ -61,6 +73,11 @@ const main = async () => {
     " L1StandardBridge:",
     `"${L1StandardBridgeDeployment.address}"`,
     `"(impl ${L1StandardBridgeDeployment.implementationAddress})"`,
+  );
+  log(
+    " SystemConfig:",
+    `"${systemConfig.address}"`,
+    `"(impl ${systemConfig.implementationAddress})"`,
   );
 };
 
