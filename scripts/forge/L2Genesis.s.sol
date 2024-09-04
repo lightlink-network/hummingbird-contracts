@@ -233,7 +233,7 @@ contract L2Genesis is Deployer {
 
         L2StandardBridge(payable(Predeploys.L2_STANDARD_BRIDGE)).initialize({
             _otherBridge: L1StandardBridge(_l1StandardBridgeProxy),
-            _legacyERC20ETH: address(0)
+            _legacyERC20ETH: address(0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000)
         });
     }
 
