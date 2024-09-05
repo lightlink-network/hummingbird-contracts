@@ -47,7 +47,7 @@ export const challengeL2HeaderMockData: MockData[] = [
         },
         headerHash:
           "0x2a095c3fb59f3a7a604442d513721666456ea4444a5a4b5fea9995e0f346fbd6",
-       
+
         shareProofs: {
           attestationProof: {
             proof: {
@@ -388,7 +388,7 @@ export const challengeL2HeaderMockData: MockData[] = [
       l2Height: 80745349,
       prevHash:
         "0xb60af11fe3741dce0cce9d55bfdd24281f4da3f91b7adce52c32a9567bb662fe",
-      stateRoot:
+      outputRoot:
         "0x392fc7225ab25e7b2cb04146c5c83b76342b6a21734afd33807bf4d4f235797d",
     },
   },

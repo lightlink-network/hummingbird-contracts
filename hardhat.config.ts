@@ -3,6 +3,7 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 import "@solarity/hardhat-gobind";
+import "@nomicfoundation/hardhat-foundry";
 import "./tasks/rollupHead";
 import "./tasks/challengeL2Header";
 import "./tasks/pushRBlock";
@@ -11,6 +12,10 @@ import "solidity-coverage";
 cfg();
 
 const config: HardhatUserConfig = {
+  paths: {
+    artifacts: "./hardhat-artifacts",
+    cache: "./hardhat-cache",
+  },
   solidity: {
     compilers: [
       {
@@ -40,6 +45,20 @@ const config: HardhatUserConfig = {
     localhost: {
       chainId: 1337,
     },
+    l1: {
+      url: "http://localhost:8545",
+      chainId: 1337,
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+      },
+    },
+    l2: {
+      url: "http://localhost:8546",
+      chainId: 1338,
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+      },
+    },
     sepolia: {
       url: process.env.SEPOLIA_PROVIDER_URL || "",
       accounts: [
@@ -60,6 +79,10 @@ const config: HardhatUserConfig = {
     },
     pegasus: {
       url: process.env.PEGASUS_PROVIDER_URL || "",
+      accounts: [
+        process.env.PEGASUS_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+      ],
     },
     arbSepolia: {
       url: process.env.ARBITRUM_SEPOLIA_PROVIDER_URL || "",
@@ -67,6 +90,15 @@ const config: HardhatUserConfig = {
         process.env.ARBITRUM_SEPOLIA_OWNER_PRIVATE_KEY ??
           "0000000000000000000000000000000000000000000000000000000000000000",
         process.env.ARBITRUM_SEPOLIA_PUBLISHER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+      ],
+    },
+    devnet: {
+      url: process.env.DEVNET_PROVIDER_URL || "",
+      accounts: [
+        process.env.DEVNET_OWNER_PRIVATE_KEY ??
+          "0000000000000000000000000000000000000000000000000000000000000000",
+        process.env.DEVNET_PUBLISHER_PRIVATE_KEY ??
           "0000000000000000000000000000000000000000000000000000000000000000",
       ],
     },
@@ -82,10 +114,15 @@ const config: HardhatUserConfig = {
     L1Etherscan: process.env.ETHERSCAN_API_KEY,
     darkMode: true,
   },
+  sourcify: {
+    enabled: false,
+  },
   etherscan: {
     apiKey: {
       hardhat: "123456",
       mainnet: process.env.ETHERSCAN_API_KEY || "",
+      devnet: "12345678",
+      ethereum: process.env.ETHERSCAN_API_KEY || "",
       sepolia: process.env.ETHERSCAN_API_KEY || "",
       arbSepolia: process.env.ETHERSCAN_API_KEY || "",
     },
@@ -98,6 +135,14 @@ const config: HardhatUserConfig = {
           browserURL: "https://sepolia.arbiscan.io",
         },
       },
+      {
+        network: "devnet",
+        chainId: 88,
+        urls: {
+          apiURL: "https://devnet.lightlink.io/api",
+          browserURL: "https://devnet.lightlink.io",
+        },
+      },
     ],
   },
   gobind: {
@@ -106,10 +151,14 @@ const config: HardhatUserConfig = {
     runOnCompile: false,
     verbose: false,
     onlyFiles: [
-      "contracts/CanonicalStateChain.sol",
-      "contracts/challenge/Challenge.sol",
-      "contracts/ChainOracle.sol",
-      "contracts/interfaces/IBlobstreamX.sol",
+      "contracts/L1/CanonicalStateChain.sol",
+      "contracts/L1/LightLinkPortal.sol",
+      "contracts/L1/challenge/Challenge.sol",
+      "contracts/L1/ChainOracle.sol",
+      "contracts/L1/interfaces/IBlobstreamX.sol",
+      "contracts/L2/L2ToL1MessagePasser.sol",
+      "contracts/L2/L1Block.sol",
+      "contracts/L1/test/BridgeProofHelper.sol",
     ],
     skipFiles: ["@openzeppelin", "@solarity"],
   },

@@ -5,7 +5,7 @@ import {
   CanonicalStateChain__factory,
   CanonicalStateChain,
 } from "../../typechain-types";
-import { proxyDeployAndInitialize } from "../../scripts/lib/deploy";
+import { uupsProxyDeployAndInitialize } from "../../scripts/hardhat/lib/deploy";
 
 type Header = CanonicalStateChain.HeaderStruct;
 
@@ -17,11 +17,11 @@ export const setupCanonicalStateChain = async (
     epoch: BigInt(0),
     l2Height: BigInt(1),
     prevHash: ethers.keccak256(ethers.toUtf8Bytes("0")),
-    stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    outputRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     celestiaPointers: [],
   };
 
-  const deployed = await proxyDeployAndInitialize(
+  const deployed = await uupsProxyDeployAndInitialize(
     signer,
     await ethers.getContractFactory("CanonicalStateChain"),
     [publisher, genesisHeader],
@@ -73,7 +73,7 @@ export const makeNextBlock = async (
     epoch: toBigInt(head.epoch) + 1n,
     l2Height: toBigInt(head.l2Height) + 5n,
     prevHash: headHash,
-    stateRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
+    outputRoot: ethers.keccak256(ethers.toUtf8Bytes("0")),
     celestiaPointers: [
       {
         height: lastPointerHeight + 1n,
