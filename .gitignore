@@ -27,3 +27,6 @@ forge-artifacts
 forge-cache
 out.json
 bloat*
+
+# Security files
+.graphs
