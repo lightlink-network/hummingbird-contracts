@@ -30,3 +30,6 @@ bloat*
 
 # Security files
 .graphs
+
+artifacts
+cache
