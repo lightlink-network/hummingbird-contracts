@@ -1,5 +1,5 @@
 import { ethers, network } from "hardhat";
-import { verify } from "../../utils/verify";
+import { verify } from "../../../utils/verify";
 import { log } from "../lib/log";
 import {
   createGenesisHeader,
@@ -94,31 +94,43 @@ const main = async () => {
     await verify(challenge.implementationAddress);
 
     // Verify Proxies
-    await verify(canonicalStateChain.address, [
-      canonicalStateChain.implementationAddress,
-      canonicalStateChain.implementation.interface.encodeFunctionData(
-        "initialize",
-        [publisherAddr, genesisHeader],
-      ),
-    ]);
+    await verify(
+      canonicalStateChain.address,
+      [
+        canonicalStateChain.implementationAddress,
+        canonicalStateChain.implementation.interface.encodeFunctionData(
+          "initialize",
+          [publisherAddr, genesisHeader],
+        ),
+      ],
+      "contracts/L1/proxy/CoreProxy.sol:CoreProxy",
+    );
 
-    await verify(chainOracle.address, [
-      chainOracle.implementationAddress,
-      chainOracle.implementation.interface.encodeFunctionData("initialize", [
-        canonicalStateChain.address,
-        blobstreamXAddr,
-        rlpReaderAddr,
-      ]),
-    ]);
+    await verify(
+      chainOracle.address,
+      [
+        chainOracle.implementationAddress,
+        chainOracle.implementation.interface.encodeFunctionData("initialize", [
+          canonicalStateChain.address,
+          blobstreamXAddr,
+          rlpReaderAddr,
+        ]),
+      ],
+      "contracts/L1/proxy/CoreProxy.sol:CoreProxy",
+    );
 
-    await verify(challenge.address, [
-      challenge.implementationAddress,
-      challenge.implementation.interface.encodeFunctionData("initialize", [
-        canonicalStateChain.address,
-        blobstreamXAddr,
-        chainOracle.address,
-      ]),
-    ]);
+    await verify(
+      challenge.address,
+      [
+        challenge.implementationAddress,
+        challenge.implementation.interface.encodeFunctionData("initialize", [
+          canonicalStateChain.address,
+          blobstreamXAddr,
+          chainOracle.address,
+        ]),
+      ],
+      "contracts/L1/proxy/CoreProxy.sol:CoreProxy",
+    );
   }
 };
 
