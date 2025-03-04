@@ -13,6 +13,9 @@ const CHAIN_ORACLE_ADDR = process.env.CHAIN_ORACLE_ADDR;
 const CANONICAL_STATE_CHAIN_ADDR = process.env.CANONICAL_STATE_CHAIN_ADDR;
 const SYSTEM_CONFIG_ADDR = process.env.SYSTEM_CONFIG_ADDR;
 const CHALLENGE_ADDR = process.env.CHALLENGE_ADDR;
+const L1_CROSS_DOMAIN_MESSENGER_ADDR =
+  process.env.L1_CROSS_DOMAIN_MESSENGER_ADDR;
+const L1_STANDARD_BRIDGE_ADDR = process.env.L1_STANDARD_BRIDGE_ADDR;
 
 // Create wallet from private key
 const adminWallet = CURRENT_ADMIN_KEY ? new Wallet(CURRENT_ADMIN_KEY) : null;
@@ -40,6 +43,10 @@ const logEnvironmentVariables = () => {
   log(`CANONICAL_STATE_CHAIN_ADDR: ${CANONICAL_STATE_CHAIN_ADDR || "NOT SET"}`);
   log(`SYSTEM_CONFIG_ADDR: ${SYSTEM_CONFIG_ADDR || "NOT SET"}`);
   log(`CHALLENGE_ADDR: ${CHALLENGE_ADDR || "NOT SET"}`);
+  log(
+    `L1_CROSS_DOMAIN_MESSENGER_ADDR: ${L1_CROSS_DOMAIN_MESSENGER_ADDR || "NOT SET"}`,
+  );
+  log(`L1_STANDARD_BRIDGE_ADDR: ${L1_STANDARD_BRIDGE_ADDR || "NOT SET"}`);
   log("=============================");
 };
 
@@ -88,6 +95,10 @@ const main = async () => {
     throw new Error("Missing CANONICAL_STATE_CHAIN_ADDR");
   if (!SYSTEM_CONFIG_ADDR) throw new Error("Missing SYSTEM_CONFIG_ADDR");
   if (!CHALLENGE_ADDR) throw new Error("Missing CHALLENGE_ADDR");
+  if (!L1_CROSS_DOMAIN_MESSENGER_ADDR)
+    throw new Error("Missing L1_CROSS_DOMAIN_MESSENGER_ADDR");
+  if (!L1_STANDARD_BRIDGE_ADDR)
+    throw new Error("Missing L1_STANDARD_BRIDGE_ADDR");
 
   const confirmed = await askForConfirmation(
     `Are you sure you want to transfer ownership of all contracts to ${SAFE_WALLET_ADDRESS}?`,
@@ -158,6 +169,47 @@ const main = async () => {
     signer,
   )) as unknown as Contract;
   await transferOwnership(challenge, "Challenge", signer, SAFE_WALLET_ADDRESS);
+
+  // Transfer proxy admin ownership for op contracts (LightLinkPortal, L1CrossDomainMessenger, L1StandardBridge, SystemConfig)
+  const PROXY_ADMIN_SLOT =
+    "0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103";
+
+  const proxyContracts = [
+    { name: "LightLinkPortal", address: LIGHT_LINK_PORTAL_ADDR },
+    { name: "L1CrossDomainMessenger", address: L1_CROSS_DOMAIN_MESSENGER_ADDR },
+    { name: "L1StandardBridge", address: L1_STANDARD_BRIDGE_ADDR },
+    { name: "SystemConfig", address: SYSTEM_CONFIG_ADDR },
+  ];
+
+  for (const contract of proxyContracts) {
+    const currentAdmin = await ethers.provider.getStorage(
+      contract.address,
+      PROXY_ADMIN_SLOT,
+    );
+    // Remove padding zeros and convert to address
+    const adminAddress = "0x" + currentAdmin.slice(26);
+    log(`\nCurrent ${contract.name} proxy admin: ${adminAddress}`);
+
+    if (adminAddress.toLowerCase() === SAFE_WALLET_ADDRESS.toLowerCase()) {
+      log(`${contract.name} proxy admin already owned by Safe wallet`);
+    } else if (adminAddress.toLowerCase() !== signer.address.toLowerCase()) {
+      log(
+        `Warning: Signer (${signer.address}) is not the current proxy admin (${adminAddress}) for ${contract.name}`,
+      );
+    } else {
+      const proxyAdmin = (await ethers.getContractAt(
+        "contracts/universal/Proxy.sol:Proxy",
+        contract.address,
+        signer,
+      )) as unknown as Contract;
+
+      const tx = await proxyAdmin.changeAdmin(SAFE_WALLET_ADDRESS);
+      await tx.wait();
+      log(
+        `${contract.name} proxy admin transferred to ${SAFE_WALLET_ADDRESS}, tx: ${tx.hash}`,
+      );
+    }
+  }
 
   log("Ownership transfer complete!");
   rl.close();
